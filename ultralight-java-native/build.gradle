@@ -1,0 +1,44 @@
+import net.jan.gradle.cmake.tasks.CMakeBuildTask
+import org.apache.tools.ant.taskdefs.condition.Os
+
+buildscript {
+    dependencies {
+        classpath files("gradle-cmake.jar")
+    }
+}
+
+
+apply plugin: "net.jan.gradle.cmake"
+
+group 'net.janrupf'
+
+task build(type: CMakeBuildTask) {
+    sourceDirectory file("src/main/c")
+    generationDirectory new File(buildDir, "cmake-gen")
+
+    cmake {
+        if(is32bit) {
+            if(!Os.isFamily(Os.FAMILY_WINDOWS)) {
+                throw new GradleException("Only windows supports 32bit currently")
+            } else {
+                arguments = [
+                        "-A", "Win32",
+                        "-T", "host=x64"
+                ]
+            }
+        } else if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+            arguments = [
+                    "-A", "x64",
+                    "-T", "host=x64"
+            ]
+        }
+
+        variables = [
+                "CMAKE_BUILD_TYPE": java.util.Optional.of("Release"),
+                "CMAKE_RUNTIME_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
+                "CMAKE_LIBRARY_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
+                "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
+                "GENERATED_JNI_HEADERS_DIR": java.util.Optional.of(generatedHeadersDir.absolutePath)
+        ]
+    }
+}

@@ -1,0 +1,4 @@
+rootProject.name = 'ultralight-java'
+include 'ultralight-java-base'
+include 'ultralight-java-native'
+
