@@ -1,0 +1,97 @@
+#pragma once
+
+#include <functional>
+
+#include <jni.h>
+#include <Ultralight/Ultralight.h>
+
+namespace ultralight_java {
+    struct UltralightJavaRuntime;
+
+    /**
+     * Wrapper for ultralight::RefPtr to erase their type signature
+     * so they can be passed to java.
+     */
+    struct WrappedRefPtr {
+        /**
+         * Function deleting the value stored in ptr_value.
+         */
+        std::function<void(void *)> deleter;
+
+        /**
+         * Pointer to the ultralight::RefPtr itself.
+         */
+        void *ptr_value;
+    };
+
+    /**
+     * Class used for interfacing with ultralight::RefPtr from java.
+     */
+    class UltralightRefPtrJNI {
+    public:
+        /**
+         * Creates a new java ref pointer implementation from the
+         * given ultralight::RefPtr.
+         *
+         * @tparam T The type of the reference counted object
+         * @param env The JNI environment to use for accessing java
+         * @param ptr The reference pointer to convert to a java object
+         * @return The converted java object
+         */
+        template<typename T>
+        static jobject create(JNIEnv *env, ultralight::RefPtr<T> ptr) {
+            // Move the ref pointer to a heap location
+            auto *moved_ptr = new ultralight::RefPtr<T>(std::move(ptr));
+
+            // Pack the pointer with a deleter and its value
+            auto *wrapped = new WrappedRefPtr{
+                    std::function < void(void * ) > ([](void *to_delete) {
+                        delete reinterpret_cast<ultralight::RefPtr<T> *>(to_delete);
+                    }),
+                    reinterpret_cast<void *>(moved_ptr)
+            };
+
+            return env->NewObject(runtime.ref_ptr.clazz, runtime.ref_ptr.constructor, reinterpret_cast<jlong>(wrapped));
+        }
+
+        /**
+         * Unwraps the ultralight::RefPtr from a WrappedRefPtr.
+         *
+         * @tparam T The type the wrapper pointer contains
+         * @param env The JNI environment to use for accessing java
+         * @param object The java object containing the wrapped pointer as a handle
+         * @return The unwrapped ultralight::RefPtr
+         */
+        template<typename T>
+        static ultralight::RefPtr<T> unwrap_ref_ptr(JNIEnv *env, jobject object) {
+            jlong handle = env->CallLongMethod(object, runtime.object_with_handle.get_handle_method);
+            if(env->ExceptionCheck()) {
+                return nullptr;
+            }
+
+            return unwrap_ref_ptr<T>(handle);
+        }
+
+        /**
+         * Unwraps the ultralight::RefPtr from a WrappedRefPtr.
+         *
+         * @tparam T The type the wrapper pointer contains
+         * @param handle A handle to a WrappedRefPtr struct
+         * @return The unwrapped ultralight::RefPtr
+         */
+        template<typename T>
+        static ultralight::RefPtr<T> unwrap_ref_ptr(jlong handle) {
+            auto *wrapped = reinterpret_cast<WrappedRefPtr *>(handle);
+            return *reinterpret_cast<ultralight::RefPtr<T> *>(wrapped->ptr_value);
+        }
+
+        /**
+         * Deletes a ultralight::RefPtr by unwrapping it from the java object.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param caller_class The caller class, should always be the RefPtr java class
+         * @param handle A pointer wrapped as a long to a ultralight::RefPtr
+         */
+        static void _delete(JNIEnv *env, jclass caller_class, jlong handle);
+    };
+}

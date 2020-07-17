@@ -1,0 +1,37 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group 'net.janrupf'
+
+def lwjglClassifier = {
+    if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return "natives-windows"
+    } else if(Os.isFamily(Os.FAMILY_MAC)) {
+        return "natives-macos"
+    } else if(Os.isFamily(Os.FAMILY_UNIX)) {
+        return "natives-linux"
+    } else {
+        throw new UnsupportedOperationException("This OS is not supported")
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'org.lwjgl', name: 'lwjgl', version: '3.2.2'
+    runtimeOnly group: 'org.lwjgl', name: 'lwjgl', version: '3.2.2', classifier: lwjglClassifier()
+
+    implementation group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.2.2'
+    runtimeOnly group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.2.2', classifier: lwjglClassifier()
+
+    implementation project(':ultralight-java-base')
+
+    testImplementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
+    testRuntimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
+}

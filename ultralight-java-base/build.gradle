@@ -6,88 +6,8 @@ plugins {
 
 group 'net.janrupf'
 
-final def NATIVE_CLASSES = []
-
-static def osDependentBinary(name) {
-    return Os.isFamily(Os.FAMILY_WINDOWS) ? "${name}.exe" : name
-}
-
-static def findJavaH() {
-    def javaHBinary = new File(System.getProperty("java.home"), "bin/${osDependentBinary("javah")}")
-    if (javaHBinary.exists()) {
-        return javaHBinary.absolutePath
-    } else {
-        javaHBinary = new File(System.getProperty("java.home"), "../bin/${osDependentBinary("javah")}")
-        if(javaHBinary.exists()) {
-            return javaHBinary.absolutePath
-        }
-
-        def path = System.getenv("PATH")
-        if (path != null) {
-            String paths = path.split(File.pathSeparator);
-            for (def currentPath in paths) {
-                javaHBinary = new File(currentPath, osDependentBinary("javah"))
-                if (javaHBinary.exists()) {
-                    return javaHBinary.absolutePath
-                }
-            }
-        }
-    }
-
-    throw new GradleException("Failed to find javah required for header generation, " +
-            "please put it on the PATH or run gradle with a JDK installation!")
-}
-
-def javaHCommand = findJavaH()
-
-task generateJniHeaders(dependsOn: compileJava) {
-    doFirst {
-        fileTree(generatedHeadersDir).each {
-            it.delete()
-        }
-    }
-
-    doLast {
-        if (exec {
-            commandLine (javaHCommand,
-                    "-jni",
-                    "-cp", tasks.compileJava.destinationDir.getAbsolutePath() + File.pathSeparator +
-                    sourceSets.main.compileClasspath.asPath,
-                    "-d", generatedHeadersDir,
-                    *NATIVE_CLASSES)
-
-            standardOutput = prefixedOutputStream("[JNI | GEN | INFO] ", System.out)
-            errorOutput = prefixedOutputStream("[JNI | GEN | ERR] ", System.err)
-        }.exitValue != 0) {
-            throw new GradleException("Failed to generate JNI headers")
-        }
-    }
-}
-
 processResources {
     from(nativeBinaries) {
         into "native-binaries"
     }
-}
-
-compileJava.finalizedBy generateJniHeaders
-
-OutputStream prefixedOutputStream(String prefix, OutputStream parentStream) {
-    OutputStream ret = new OutputStream() {
-        StringBuilder builder = new StringBuilder(prefix)
-
-        @Override
-        void write(int i) throws IOException {
-            if (i as char == '\n' as char) {
-                builder.append(i as char)
-                parentStream.write(builder.toString().getBytes())
-                parentStream.flush()
-                builder.setLength(0)
-                builder.append(prefix)
-            } else {
-                builder.append(i as char)
-            }
-        }
-    }
-    return ret
 }

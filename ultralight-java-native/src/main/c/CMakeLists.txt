@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD 17)
 ################################
 # Set up 3rdparty dependencies #
 ################################
-# add_subdirectory(3rdparty)
+add_subdirectory(3rdparty)
 
 #####################
 # Find dependencies #
@@ -38,13 +38,28 @@ endif ()
 set(ULTRALIGHT_JAVA_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include")
 
 set(ULTRALIGHT_JAVA_SOURCE
-        src/ultralight_java.cpp)
+        src/java_bridges/bridged_logger.cpp
+        src/java_bridges/bridged_load_listener.cpp
+        src/java_bridges/proxied_java_exception.cpp
+        src/java_bridges/ultralight_bitmap_jni.cpp
+        src/java_bridges/ultralight_bitmap_surface_jni.cpp
+        src/java_bridges/ultralight_platform_jni.cpp
+        src/java_bridges/ultralight_ref_ptr_jni.cpp
+        src/java_bridges/ultralight_renderer_jni.cpp
+        src/java_bridges/ultralight_surface_jni.cpp
+        src/java_bridges/ultralight_view_jni.cpp
+
+        src/util/jni_reference_wrapper.cpp
+        src/util/temporary_jni.cpp
+        src/util/util.cpp
+
+        src/ultralight_java_instance.cpp)
 
 ##############
 # Add target #
 ##############
 add_library(ultralight-java SHARED ${ULTRALIGHT_JAVA_SOURCE})
-target_link_libraries(ultralight-java PUBLIC ${JNI_LIBRARIES})
+target_link_libraries(ultralight-java PUBLIC ${JNI_LIBRARIES} ultralight)
 target_include_directories(ultralight-java PUBLIC ${ULTRALIGHT_JAVA_INCLUDE_DIR})
 target_include_directories(ultralight-java PRIVATE ${JNI_INCLUDE_DIRS} ${GENERATED_JNI_HEADERS_DIR})
 

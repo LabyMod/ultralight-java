@@ -50,8 +50,6 @@ ext.is32bit = project.hasProperty("32bit")
 
 project(":ultralight-java-base").afterEvaluate { javaProject ->
     project(":ultralight-java-native").afterEvaluate { nativeProject ->
-        nativeProject.tasks["build"].dependsOn(javaProject.tasks["generateJniHeaders"])
-
         if(!isExternalBuild) {
             javaProject.tasks["processResources"].dependsOn(nativeProject.tasks["build"])
         }
