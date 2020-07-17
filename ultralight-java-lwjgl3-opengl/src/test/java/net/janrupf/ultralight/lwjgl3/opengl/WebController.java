@@ -26,6 +26,7 @@ public class WebController {
     private final UltralightRenderer renderer;
     private final UltralightView view;
     private final TestLoadListener loadListener;
+    private final TestInputAdapter inputAdapter;
 
     private int glTexture;
 
@@ -53,6 +54,17 @@ public class WebController {
         this.loadListener = new TestLoadListener();
         this.view.setLoadListener(loadListener);
         this.glTexture = -1;
+
+        this.inputAdapter = new TestInputAdapter(view);
+    }
+
+    /**
+     * Retrieves the input adapter of this web controller.
+     *
+     * @return The input adapter of this web controller
+     */
+    public TestInputAdapter getInputAdapter() {
+        return inputAdapter;
     }
 
     /**
@@ -93,18 +105,21 @@ public class WebController {
         UltralightBitmapSurface surface = (UltralightBitmapSurface) this.view.surface();
         UltralightBitmap bitmap = surface.bitmap();
 
-        ByteBuffer imageData = bitmap.lockPixels();
-
         int width = (int) view.width();
         int height = (int) view.height();
 
         // Prepare OpenGL for 2D textures and bind our texture
         glEnable(GL_TEXTURE_2D);
-        glBindTexture(GL_TEXTURE_2D, this.glTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, imageData);
-        glBindTexture(GL_TEXTURE_2D, this.glTexture);
 
-        bitmap.unlockPixels();
+        if(surface.dirtyBounds().isValid()) {
+            ByteBuffer imageData = bitmap.lockPixels();
+
+            glBindTexture(GL_TEXTURE_2D, this.glTexture);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, imageData);
+
+            bitmap.unlockPixels();
+            surface.clearDirtyBounds();
+        }
 
         // Set up the OpenGL state for rendering of a fullscreen quad
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);

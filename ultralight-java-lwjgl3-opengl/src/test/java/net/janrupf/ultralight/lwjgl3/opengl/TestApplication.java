@@ -44,6 +44,15 @@ public class TestApplication {
         setCallback(GLFW::glfwSetFramebufferSizeCallback, this::updateSize);
 
         this.webController = new WebController();
+
+        TestInputAdapter inputAdapter = webController.getInputAdapter();
+
+        setCallback(GLFW::glfwSetKeyCallback, inputAdapter::keyCallback);
+        setCallback(GLFW::glfwSetCharCallback, inputAdapter::charCallback);
+        setCallback(GLFW::glfwSetCursorPosCallback, inputAdapter::cursorPosCallback);
+        setCallback(GLFW::glfwSetMouseButtonCallback, inputAdapter::mouseButtonCallback);
+        setCallback(GLFW::glfwSetScrollCallback, inputAdapter::scrollCallback);
+        setCallback(GLFW::glfwSetWindowFocusCallback, inputAdapter::focusCallback);
     }
 
     /**
@@ -147,8 +156,8 @@ public class TestApplication {
 
             // Clear the color and depth buffer and then draw
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            drawer.draw();;
 
+            drawer.draw();
             webController.render();
 
             double currentTime = glfwGetTime();

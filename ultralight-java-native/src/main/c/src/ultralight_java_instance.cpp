@@ -272,6 +272,122 @@ namespace ultralight_java {
         runtime.ultralight_load_listener.on_dom_ready_method =
                 env->GetMethodID(runtime.ultralight_load_listener.clazz, "onDOMReady", "()V");
 
+        // Retrieve information about the UltralightKey class
+        runtime.ultralight_key.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightKey")));
+        runtime.ultralight_key.id_field =
+                env->GetFieldID(runtime.ultralight_key.clazz, "id", "I");
+
+        // Retrieve information about the UltralightKeyEvent class
+        runtime.ultralight_key_event.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightKeyEvent")));
+        runtime.ultralight_key_event.type_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "type",
+                                "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
+        runtime.ultralight_key_event.modifiers_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "modifiers", "I");
+        runtime.ultralight_key_event.virtual_key_code_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "virtualKeyCode",
+                                "Lnet/janrupf/ultralight/input/UltralightKey;");
+        runtime.ultralight_key_event.native_key_code_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "nativeKeyCode", "I");
+        runtime.ultralight_key_event.key_identifier_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "keyIdentifier", "Ljava/lang/String;");
+        runtime.ultralight_key_event.text_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "text", "Ljava/lang/String;");
+        runtime.ultralight_key_event.unmodified_text_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "unmodifiedText", "Ljava/lang/String;");
+        runtime.ultralight_key_event.is_keypad_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "isKeypad", "Z");
+        runtime.ultralight_key_event.is_auto_repeat_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "isAutoRepeat", "Z");
+        runtime.ultralight_key_event.is_system_key_field =
+                env->GetFieldID(runtime.ultralight_key_event.clazz, "isSystemKey", "Z");
+
+        // Register native methods for the UltralightKeyEvent class
+        env->RegisterNatives(
+                runtime.ultralight_key_event.clazz,
+                runtime.ultralight_key_event.native_methods.data(),
+                runtime.ultralight_key_event.native_methods.size()
+        );
+
+        // Retrieve information about the UltralightKeyEventType enum
+        runtime.ultralight_key_event_type.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightKeyEventType")));
+        runtime.ultralight_key_event_type.down_field =
+                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "DOWN",
+                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
+        runtime.ultralight_key_event_type.up_field =
+                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "UP",
+                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
+        runtime.ultralight_key_event_type.raw_down_field =
+                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "RAW_DOWN",
+                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
+        runtime.ultralight_key_event_type.char_field =
+                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "CHAR",
+                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
+
+        // Retrieve information about the UltralightMouseEvent class
+        runtime.ultralight_mouse_event.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightMouseEvent")));
+        runtime.ultralight_mouse_event.type_field =
+                env->GetFieldID(runtime.ultralight_mouse_event.clazz, "type",
+                        "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
+        runtime.ultralight_mouse_event.x_field =
+                env->GetFieldID(runtime.ultralight_mouse_event.clazz, "x", "I");
+        runtime.ultralight_mouse_event.y_field =
+                env->GetFieldID(runtime.ultralight_mouse_event.clazz, "y", "I");
+        runtime.ultralight_mouse_event.button_field =
+                env->GetFieldID(runtime.ultralight_mouse_event.clazz, "button",
+                        "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
+
+        // Retrieve information about the UltralightMouseEventButton enum
+        runtime.ultralight_mouse_event_button.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightMouseEventButton")));
+        runtime.ultralight_mouse_event_button.left_field =
+                env->GetStaticFieldID(runtime.ultralight_mouse_event_button.clazz, "LEFT",
+                        "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
+        runtime.ultralight_mouse_event_button.middle_field =
+                env->GetStaticFieldID(runtime.ultralight_mouse_event_button.clazz, "MIDDLE",
+                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
+        runtime.ultralight_mouse_event_button.right_field =
+                env->GetStaticFieldID(runtime.ultralight_mouse_event_button.clazz, "RIGHT",
+                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
+
+        // Retrieve information about the UltralightMouseEventType enum
+        runtime.ultralight_mouse_event_type.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightMouseEventType")));
+        runtime.ultralight_mouse_event_type.moved_field =
+                env->GetStaticFieldID(runtime.ultralight_mouse_event_type.clazz, "MOVED",
+                        "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
+        runtime.ultralight_mouse_event_type.down_field =
+                env->GetStaticFieldID(runtime.ultralight_mouse_event_type.clazz, "DOWN",
+                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
+        runtime.ultralight_mouse_event_type.up_field =
+                env->GetStaticFieldID(runtime.ultralight_mouse_event_type.clazz, "UP",
+                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
+
+        // Retrieve information about the UltralightScrollEvent class
+        runtime.ultralight_scroll_event.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightScrollEvent")));
+        runtime.ultralight_scroll_event.type_field =
+                env->GetFieldID(runtime.ultralight_scroll_event.clazz, "type",
+                        "Lnet/janrupf/ultralight/input/UltralightScrollEventType;");
+        runtime.ultralight_scroll_event.delta_x_field =
+                env->GetFieldID(runtime.ultralight_scroll_event.clazz, "deltaX", "I");
+        runtime.ultralight_scroll_event.delta_y_field =
+                env->GetFieldID(runtime.ultralight_scroll_event.clazz, "deltaY", "I");
+
+        // Retrieve information about the UltralightScrollEventType enum
+        runtime.ultralight_scroll_event_type.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
+                "net/janrupf/ultralight/input/UltralightScrollEventType")));
+        runtime.ultralight_scroll_event_type.by_pixel_field =
+                env->GetStaticFieldID(runtime.ultralight_scroll_event_type.clazz, "BY_PIXEL",
+                        "Lnet/janrupf/ultralight/input/UltralightScrollEventType;");
+        runtime.ultralight_scroll_event_type.by_page_field =
+                env->GetStaticFieldID(runtime.ultralight_scroll_event_type.clazz, "BY_PAGE",
+                                      "Lnet/janrupf/ultralight/input/UltralightScrollEventType;");
+
         // Retrieve information about the JavascriptException class
         runtime.javascript_exception.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/javascript/JavascriptException")));
@@ -304,6 +420,15 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.illegal_state_exception.clazz);
         env->DeleteGlobalRef(runtime.null_pointer_exception.clazz);
         env->DeleteGlobalRef(runtime.javascript_exception.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_scroll_event_type.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_scroll_event.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_mouse_event_type.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_mouse_event_button.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_mouse_event.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_key_event_type.clazz);
+        env->UnregisterNatives(runtime.ultralight_key_event.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_key_event.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_key.clazz);
         env->DeleteGlobalRef(runtime.ultralight_load_listener.clazz);
         env->UnregisterNatives(runtime.ultralight_bitmap.clazz);
         env->DeleteGlobalRef(runtime.ultralight_bitmap.clazz);

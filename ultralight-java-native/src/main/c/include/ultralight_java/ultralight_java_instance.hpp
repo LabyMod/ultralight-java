@@ -5,6 +5,7 @@
 
 #include "ultralight_java/java_bridges/ultralight_bitmap_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_bitmap_surface_jni.hpp"
+#include "ultralight_java/java_bridges/ultralight_key_event_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_platform_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_renderer_jni.hpp"
@@ -231,7 +232,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 25> native_methods = {
+            std::array<JNINativeMethod, 28> native_methods = {
                     JNINativeMethod{
                             const_cast<char *>("url"),
                             const_cast<char *>("()Ljava/lang/String;"),
@@ -336,6 +337,21 @@ namespace ultralight_java {
                             const_cast<char *>("hasInputFocus"),
                             const_cast<char *>("()Z"),
                             reinterpret_cast<void *>(&UltralightViewJNI::has_input_focus)
+                    },
+                    JNINativeMethod{
+                            const_cast<char *>("fireKeyEvent"),
+                            const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightKeyEvent;)V"),
+                            reinterpret_cast<void *>(&UltralightViewJNI::fire_key_event)
+                    },
+                    JNINativeMethod{
+                            const_cast<char *>("fireMouseEvent"),
+                            const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightMouseEvent;)V"),
+                            reinterpret_cast<void *>(&UltralightViewJNI::fire_mouse_event)
+                    },
+                    JNINativeMethod{
+                            const_cast<char *>("fireScrollEvent"),
+                            const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightScrollEvent;)V"),
+                            reinterpret_cast<void *>(&UltralightViewJNI::fire_scroll_event)
                     },
                     JNINativeMethod{
                             const_cast<char *>("setLoadListener"),
@@ -646,6 +662,111 @@ namespace ultralight_java {
             jmethodID on_window_object_ready_method = nullptr;
             jmethodID on_dom_ready_method = nullptr;
         } ultralight_load_listener;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* int */ jfieldID id_field = nullptr;
+        } ultralight_key;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* UltralightKeyEventType */ jfieldID type_field = nullptr;
+            /* int */ jfieldID modifiers_field = nullptr;
+            /* UltralightKey */ jfieldID virtual_key_code_field = nullptr;
+            /* int */ jfieldID native_key_code_field = nullptr;
+            /* String */ jfieldID key_identifier_field = nullptr;
+            /* String */ jfieldID text_field = nullptr;
+            /* String */ jfieldID unmodified_text_field = nullptr;
+            /* boolean */ jfieldID is_keypad_field = nullptr;
+            /* boolean */ jfieldID is_auto_repeat_field = nullptr;
+            /* boolean */ jfieldID is_system_key_field = nullptr;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 1> native_methods = {
+                    JNINativeMethod{
+                            const_cast<char *>("getKeyIdentifierFromVirtualKeyCode"),
+                            const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightKey;)Ljava/lang/String;"),
+                            reinterpret_cast<void *>(&UltralightKeyEventJNI::get_key_identifier_from_virtual_key_code)
+                    }
+            };
+        } ultralight_key_event;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* UltralightKeyEventType */ jfieldID down_field = nullptr;
+            /* UltralightKeyEventType */ jfieldID up_field = nullptr;
+            /* UltralightKeyEventType */ jfieldID raw_down_field = nullptr;
+            /* UltralightKeyEventType */ jfieldID char_field = nullptr;
+        } ultralight_key_event_type;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* UltralightMouseEventType */ jfieldID type_field = nullptr;
+            /* int */ jfieldID x_field = nullptr;
+            /* int */ jfieldID y_field = nullptr;
+            /* UltralightMouseButton */ jfieldID button_field = nullptr;
+        } ultralight_mouse_event;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* UltralightMouseEventButton */ jfieldID left_field = nullptr;
+            /* UltralightMouseEventButton */ jfieldID middle_field = nullptr;
+            /* UltralightMouseEventButton */ jfieldID right_field = nullptr;
+        } ultralight_mouse_event_button;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* UltralightMouseEventType */ jfieldID moved_field = nullptr;
+            /* UltralightMouseEventType */ jfieldID down_field = nullptr;
+            /* UltralightMouseEventType */ jfieldID up_field = nullptr;
+        } ultralight_mouse_event_type;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* UltralightScrollEventType */ jfieldID type_field = nullptr;
+            /* int */ jfieldID delta_x_field = nullptr;
+            /* int */ jfieldID delta_y_field = nullptr;
+        } ultralight_scroll_event;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz = nullptr;
+
+            /* UltralightScrollEventType */ jfieldID by_pixel_field = nullptr;
+            /* UltralightScrollEventType */ jfieldID by_page_field = nullptr;
+        } ultralight_scroll_event_type;
 
         struct {
             /**

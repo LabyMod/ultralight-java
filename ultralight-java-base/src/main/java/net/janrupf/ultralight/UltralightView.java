@@ -5,6 +5,9 @@ import net.janrupf.ultralight.annotation.NativeType;
 import net.janrupf.ultralight.annotation.Unsigned;
 import net.janrupf.ultralight.ffi.ObjectWithHandle;
 import net.janrupf.ultralight.ffi.RefPtr;
+import net.janrupf.ultralight.input.UltralightKeyEvent;
+import net.janrupf.ultralight.input.UltralightMouseEvent;
+import net.janrupf.ultralight.input.UltralightScrollEvent;
 import net.janrupf.ultralight.javascript.JavascriptException;
 import net.janrupf.ultralight.plugin.loading.UltralightLoadListener;
 
@@ -229,7 +232,28 @@ public class UltralightView implements ObjectWithHandle {
      */
     public native boolean hasInputFocus();
 
-    // TODO: Event API
+    /**
+     * Fire a keyboard event.
+     * Only {@link net.janrupf.ultralight.input.UltralightKeyEventType#CHAR CHAR}
+     * events actually generate text in input fields.
+     *
+     * @param event The event to fire
+     */
+    public native void fireKeyEvent(UltralightKeyEvent event);
+
+    /**
+     * Fire a mouse event.
+     *
+     * @param event The event to fire
+     */
+    public native void fireMouseEvent(UltralightMouseEvent event);
+
+    /**
+     * Fire a scroll event
+     *
+     * @param event The event to fire
+     */
+    public native void fireScrollEvent(UltralightScrollEvent event);
 
     // TODO: View listener API
 

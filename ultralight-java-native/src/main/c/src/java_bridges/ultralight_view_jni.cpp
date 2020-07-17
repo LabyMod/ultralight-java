@@ -247,6 +247,42 @@ namespace ultralight_java {
         return view->HasInputFocus();
     }
 
+    void UltralightViewJNI::fire_key_event(JNIEnv *env, jobject instance, jobject event) {
+        auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
+        if (env->ExceptionCheck()) {
+            return;
+        } else if (!event) {
+            env->ThrowNew(runtime.null_pointer_exception.clazz, "event can't be null");
+            return;
+        }
+
+        view->FireKeyEvent(Util::create_key_event_from_jobject(env, event));
+    }
+
+    void UltralightViewJNI::fire_mouse_event(JNIEnv *env, jobject instance, jobject event) {
+        auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
+        if (env->ExceptionCheck()) {
+            return;
+        } else if (!event) {
+            env->ThrowNew(runtime.null_pointer_exception.clazz, "event can't be null");
+            return;
+        }
+
+        view->FireMouseEvent(Util::create_mouse_event_from_jobject(env, event));
+    }
+
+    void UltralightViewJNI::fire_scroll_event(JNIEnv *env, jobject instance, jobject event) {
+        auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
+        if (env->ExceptionCheck()) {
+            return;
+        } else if (!event) {
+            env->ThrowNew(runtime.null_pointer_exception.clazz, "event can't be null");
+            return;
+        }
+
+        view->FireScrollEvent(Util::create_scroll_event_from_jobject(env, event));
+    }
+
     void UltralightViewJNI::set_load_listener(JNIEnv *env, jobject instance, jobject listener) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
         if (env->ExceptionCheck()) {

@@ -212,6 +212,33 @@ namespace ultralight_java {
         static jboolean has_input_focus(JNIEnv *env, jobject instance);
 
         /**
+         * Sends a key event to this view.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param instance The java instance of the view
+         * @param event The event to fire
+         */
+        static void fire_key_event(JNIEnv *env, jobject instance, jobject event);
+
+        /**
+         * Sends a mouse event to this view.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param instance The java instance of the view
+         * @param event The event to fire
+         */
+        static void fire_mouse_event(JNIEnv *env, jobject instance, jobject event);
+
+        /**
+         * Sends a scroll event to this view.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param instance The java instance of the view
+         * @param event The event to fire
+         */
+        static void fire_scroll_event(JNIEnv *env, jobject instance, jobject event);
+
+        /**
          * Sets the load listener for this view.
          *
          * @param env The JNI environment to use for accessing java
