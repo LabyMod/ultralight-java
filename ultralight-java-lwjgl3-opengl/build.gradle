@@ -35,3 +35,16 @@ dependencies {
     testImplementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     testRuntimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
 }
+
+tasks.test.enabled = false
+
+def runDir = file("run")
+if(!runDir.exists() && !runDir.mkdirs()) {
+    throw new GradleException("Failed to create run directory")
+}
+
+task runTest(type: JavaExec) {
+    classpath sourceSets.test.runtimeClasspath
+    main "net.janrupf.ultralight.lwjgl3.opengl.TestRunner"
+    workingDir file("run")
+}
