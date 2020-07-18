@@ -3,6 +3,9 @@
 #include <jni.h>
 #include <array>
 
+#include <Ultralight/Ultralight.h>
+#include <Ultralight/platform/Logger.h>
+
 #include "ultralight_java/java_bridges/ultralight_bitmap_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_bitmap_surface_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_key_event_jni.hpp"
@@ -118,9 +121,6 @@ namespace ultralight_java {
                     ultralight::kFaceWinding_Clockwise, "CLOCKWISE",
                     ultralight::kFaceWinding_CounterClockwise, "COUNTER_CLOCKWISE"
             );
-
-            /* FaceWinding */ jfieldID clockwise_field = nullptr;
-            /* FaceWinding */ jfieldID counter_clockwise_field = nullptr;
         } face_winding;
 
         struct {
@@ -129,9 +129,14 @@ namespace ultralight_java {
              */
             jclass clazz = nullptr;
 
-            /* FontHinting */ jfieldID smooth_field = nullptr;
-            /* FontHinting */ jfieldID normal_field = nullptr;
-            /* FontHinting */ jfieldID monochrome_field = nullptr;
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::FontHinting> constants = JavaEnum<ultralight::FontHinting>(
+                    ultralight::kFontHinting_Smooth, "SMOOTH",
+                    ultralight::kFontHinting_Normal, "NORMAL",
+                    ultralight::kFontHinting_Monochrome, "MONOCHROME"
+            );
         } font_hinting;
 
         struct {
@@ -152,9 +157,14 @@ namespace ultralight_java {
              */
             jclass clazz = nullptr;
 
-            /* LogLevel */ jfieldID error_field = nullptr;
-            /* LogLevel */ jfieldID warning_field = nullptr;
-            /* LogLevel */ jfieldID info_field = nullptr;
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::LogLevel> constants = JavaEnum<ultralight::LogLevel>(
+                ultralight::kLogLevel_Error, "ERROR",
+                ultralight::kLogLevel_Warning, "WARNING",
+                ultralight::kLogLevel_Info, "INFO"
+            );
         } log_level;
 
         struct {
@@ -500,8 +510,13 @@ namespace ultralight_java {
              */
             jclass clazz = nullptr;
 
-            /* UltralightBitmapFormat */ jfieldID a8_unorm_field = nullptr;
-            /* UltralightBitmapFormat */ jfieldID bgra8_unorm_srgb_field = nullptr;
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::BitmapFormat> constants = JavaEnum<ultralight::BitmapFormat>(
+                ultralight::kBitmapFormat_A8_UNORM, "A8_UNORM",
+                ultralight::kBitmapFormat_BGRA8_UNORM_SRGB, "BGRA8_UNORM_SRGB"
+            );
         } ultralight_bitmap_format;
 
         struct {
@@ -717,10 +732,15 @@ namespace ultralight_java {
              */
             jclass clazz = nullptr;
 
-            /* UltralightKeyEventType */ jfieldID down_field = nullptr;
-            /* UltralightKeyEventType */ jfieldID up_field = nullptr;
-            /* UltralightKeyEventType */ jfieldID raw_down_field = nullptr;
-            /* UltralightKeyEventType */ jfieldID char_field = nullptr;
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::KeyEvent::Type> constants = JavaEnum<ultralight::KeyEvent::Type>(
+                ultralight::KeyEvent::kType_KeyDown, "DOWN",
+                ultralight::KeyEvent::kType_KeyUp, "UP",
+                ultralight::KeyEvent::kType_RawKeyDown, "RAW_DOWN",
+                ultralight::KeyEvent::kType_Char, "CHAR"
+            );
         } ultralight_key_event_type;
 
         struct {
@@ -741,9 +761,14 @@ namespace ultralight_java {
              */
             jclass clazz = nullptr;
 
-            /* UltralightMouseEventButton */ jfieldID left_field = nullptr;
-            /* UltralightMouseEventButton */ jfieldID middle_field = nullptr;
-            /* UltralightMouseEventButton */ jfieldID right_field = nullptr;
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::MouseEvent::Button> constants = JavaEnum<ultralight::MouseEvent::Button>(
+                ultralight::MouseEvent::kButton_Left, "LEFT",
+                ultralight::MouseEvent::kButton_Middle, "MIDDLE",
+                ultralight::MouseEvent::kButton_Right, "RIGHT"
+            );
         } ultralight_mouse_event_button;
 
         struct {
@@ -752,9 +777,14 @@ namespace ultralight_java {
              */
             jclass clazz = nullptr;
 
-            /* UltralightMouseEventType */ jfieldID moved_field = nullptr;
-            /* UltralightMouseEventType */ jfieldID down_field = nullptr;
-            /* UltralightMouseEventType */ jfieldID up_field = nullptr;
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::MouseEvent::Type> constants = JavaEnum<ultralight::MouseEvent::Type>(
+                ultralight::MouseEvent::kType_MouseMoved, "MOVED",
+                ultralight::MouseEvent::kType_MouseDown, "DOWN",
+                ultralight::MouseEvent::kType_MouseUp, "UP"
+            );
         } ultralight_mouse_event_type;
 
         struct {
@@ -774,8 +804,13 @@ namespace ultralight_java {
              */
             jclass clazz = nullptr;
 
-            /* UltralightScrollEventType */ jfieldID by_pixel_field = nullptr;
-            /* UltralightScrollEventType */ jfieldID by_page_field = nullptr;
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::ScrollEvent::Type> constants = JavaEnum<ultralight::ScrollEvent::Type>(
+                ultralight::ScrollEvent::kType_ScrollByPixel, "BY_PIXEL",
+                ultralight::ScrollEvent::kType_ScrollByPage, "BY_PAGE"
+            );
         } ultralight_scroll_event_type;
 
         struct {

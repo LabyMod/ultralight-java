@@ -19,7 +19,11 @@ namespace ultralight_java {
             return nullptr;
         }
 
-        auto real_format = Util::create_bitmap_format_from_jobject(env, format);
+        ultralight::BitmapFormat real_format;
+        if(!runtime.ultralight_bitmap_format.constants.from_java(env, format, &real_format)) {
+            return nullptr;
+        }
+
         auto ptr = UltralightRefPtrJNI::create<ultralight::Bitmap>(env, std::move(
                 ultralight::RefPtr<ultralight::Bitmap>(
                         std::move(ultralight::Bitmap::Create(width, height, real_format)))));
@@ -37,7 +41,10 @@ namespace ultralight_java {
             return nullptr;
         }
 
-        auto real_format = Util::create_bitmap_format_from_jobject(env, format);
+        ultralight::BitmapFormat real_format;
+        if(!runtime.ultralight_bitmap_format.constants.from_java(env, format, &real_format)) {
+            return nullptr;
+        }
 
         void *data = env->GetDirectBufferAddress(pixel_buffer);
         if (!data) {
@@ -102,7 +109,7 @@ namespace ultralight_java {
             return nullptr;
         }
 
-        return Util::create_jobject_from_bitmap_format(env, bitmap->format());
+        return runtime.ultralight_bitmap_format.constants.to_java(env, bitmap->format());
     }
 
     jlong UltralightBitmapJNI::bpp(JNIEnv *env, jobject instance) {

@@ -1,6 +1,5 @@
 package net.janrupf.ultralight.lwjgl3.opengl;
 
-import net.janrupf.ultralight.plugin.view.MessageLevel;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;

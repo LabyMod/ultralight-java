@@ -11,21 +11,8 @@ namespace ultralight_java {
     void BridgedLogger::LogMessage(ultralight::LogLevel log_level, const ultralight::String16 &message) {
         TemporaryJNI env;
 
-        jobject java_log_level;
-        // Translate the log level from the native to a java one
-        switch (log_level) {
-            case ultralight::kLogLevel_Error:
-                java_log_level = env->GetStaticObjectField(runtime.log_level.clazz, runtime.log_level.error_field);
-                break;
-
-            case ultralight::kLogLevel_Warning:
-                java_log_level = env->GetStaticObjectField(runtime.log_level.clazz, runtime.log_level.warning_field);
-                break;
-
-            case ultralight::kLogLevel_Info:
-                java_log_level = env->GetStaticObjectField(runtime.log_level.clazz, runtime.log_level.info_field);
-                break;
-        }
+        // Convert the level
+        jobject java_log_level = runtime.log_level.constants.to_java(env, log_level);
 
         // Convert the message
         jstring java_message = Util::create_jstring_from_utf16(env, message);

@@ -54,9 +54,7 @@ namespace ultralight_java {
         ASSIGN_CONFIG_STRING(cache_path, "cachePath can't be null");
         ASSIGN_CONFIG(Boolean, use_gpu_renderer);
         ASSIGN_CONFIG(Double, device_scale);
-        // <editor-fold> ASSIGN_CONFIG(FaceWinding, face_winding);
         // Retrieve the face winding field
-        // TODO: This is messy, possible extract that into a C++ template
         jobject java_face_winding = env->GetObjectField(java_config, config_type.face_winding_field);
         if (!java_face_winding) {
             // User has set it to null
@@ -64,15 +62,14 @@ namespace ultralight_java {
             return;
         }
 
-        if(runtime.face_winding.constants.from_java(env, java_face_winding, &config.face_winding)) {
+        if(!runtime.face_winding.constants.from_java(env, java_face_winding, &config.face_winding)) {
+            // The value was invalid (shouldn't happen) and an exception has been trigerred
+            // by the function
             return;
         }
-        // </editor-fold>
         ASSIGN_CONFIG(Boolean, enable_images);
         ASSIGN_CONFIG(Boolean, enable_javascript);
-        // <editor-fold> ASSIGN_CONFIG(FontHinting, font_hinting);
         // Retrieve the font hinting field
-        // TODO: This is messy, possible extract that into a C++ template
         jobject java_font_hinting = env->GetObjectField(java_config, config_type.font_hinting_field);
         if (!java_font_hinting) {
             // User has set it to null
@@ -80,27 +77,11 @@ namespace ultralight_java {
             return;
         }
 
-        if (env->IsSameObject(
-                java_font_hinting,
-                env->GetStaticObjectField(runtime.font_hinting.clazz, runtime.font_hinting.smooth_field)
-        )) {
-            config.font_hinting = ultralight::kFontHinting_Smooth;
-        } else if (env->IsSameObject(
-                java_font_hinting,
-                env->GetStaticObjectField(runtime.font_hinting.clazz, runtime.font_hinting.normal_field)
-        )) {
-            config.font_hinting = ultralight::kFontHinting_Normal;
-        } else if (env->IsSameObject(
-                java_font_hinting,
-                env->GetStaticObjectField(runtime.font_hinting.clazz, runtime.font_hinting.monochrome_field)
-        )) {
-            config.font_hinting = ultralight::kFontHinting_Monochrome;
-        } else {
-            env->ThrowNew(runtime.illegal_state_exception.clazz,
-                          "Unknown FontHinting type encountered while translating configuration to native");
+        if(!runtime.font_hinting.constants.from_java(env, java_font_hinting, &config.font_hinting)) {
+            // The value was invalid (shouldn't happen) and an exception has been trigerred
+            // by the function
             return;
         }
-        // </editor-fold>
         ASSIGN_CONFIG(Double, font_gamma);
         ASSIGN_CONFIG_STRING(font_family_standard, "fontFamilyStandard can't be null");
         ASSIGN_CONFIG_STRING(font_family_fixed, "fonFamilyFixed can't be null");

@@ -17,7 +17,7 @@ extern "C" [[maybe_unused]] JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void
 }
 
 namespace ultralight_java {
-    UltralightJavaRuntime runtime{};
+    UltralightJavaRuntime runtime;
 
     int setup(JavaVM *vm) {
         // Initialize the runtime struct
@@ -110,28 +110,15 @@ namespace ultralight_java {
         runtime.face_winding.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/config/FaceWinding")));
         if(!runtime.face_winding.constants.init(env, "net/janrupf/ultralight/config/FaceWinding")) {
-            return JNI_EVERSION;
+            return JNI_EINVAL;
         }
-
-        runtime.face_winding.clockwise_field =
-                env->GetStaticFieldID(runtime.face_winding.clazz,
-                                      "CLOCKWISE", "Lnet/janrupf/ultralight/config/FaceWinding;");
-        runtime.face_winding.counter_clockwise_field =
-                env->GetStaticFieldID(runtime.face_winding.clazz,
-                                      "COUNTER_CLOCKWISE", "Lnet/janrupf/ultralight/config/FaceWinding;");
 
         // Retrieve information about the FontHinting enum
         runtime.font_hinting.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/config/FontHinting")));
-        runtime.font_hinting.smooth_field =
-                env->GetStaticFieldID(runtime.font_hinting.clazz,
-                                      "SMOOTH", "Lnet/janrupf/ultralight/config/FontHinting;");
-        runtime.font_hinting.normal_field =
-                env->GetStaticFieldID(runtime.font_hinting.clazz,
-                                      "NORMAL", "Lnet/janrupf/ultralight/config/FontHinting;");
-        runtime.font_hinting.monochrome_field =
-                env->GetStaticFieldID(runtime.font_hinting.clazz,
-                                      "MONOCHROME", "Lnet/janrupf/ultralight/config/FontHinting;");
+        if(!runtime.font_hinting.constants.init(env, "net/janrupf/ultralight/config/FontHinting")) {
+            return JNI_EINVAL;
+        }
 
         // Retrieve information about the UltralightLogger interface
         runtime.logger.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
@@ -145,15 +132,9 @@ namespace ultralight_java {
         // Retrieve information about the UltralightLogLevel enum
         runtime.log_level.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/plugin/logging/UltralightLogLevel")));
-        runtime.log_level.error_field =
-                env->GetStaticFieldID(runtime.log_level.clazz,
-                                      "ERROR", "Lnet/janrupf/ultralight/plugin/logging/UltralightLogLevel;");
-        runtime.log_level.warning_field =
-                env->GetStaticFieldID(runtime.log_level.clazz,
-                                      "WARNING", "Lnet/janrupf/ultralight/plugin/logging/UltralightLogLevel;");
-        runtime.log_level.info_field =
-                env->GetStaticFieldID(runtime.log_level.clazz,
-                                      "INFO", "Lnet/janrupf/ultralight/plugin/logging/UltralightLogLevel;");
+        if(!runtime.log_level.constants.init(env, "net/janrupf/ultralight/plugin/logging/UltralightLogLevel")) {
+            return JNI_EINVAL;
+        }
 
         // Retrieve information about the RefPtr class
         runtime.ref_ptr.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
@@ -238,12 +219,9 @@ namespace ultralight_java {
         // Retrieve information about the UltralightBitmapFormat enum
         runtime.ultralight_bitmap_format.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/bitmap/UltralightBitmapFormat")));
-        runtime.ultralight_bitmap_format.a8_unorm_field =
-                env->GetStaticFieldID(runtime.ultralight_bitmap_format.clazz, "A8_UNORM",
-                                      "Lnet/janrupf/ultralight/bitmap/UltralightBitmapFormat;");
-        runtime.ultralight_bitmap_format.bgra8_unorm_srgb_field =
-                env->GetStaticFieldID(runtime.ultralight_bitmap_format.clazz, "BGRA8_UNORM_SRGB",
-                                      "Lnet/janrupf/ultralight/bitmap/UltralightBitmapFormat;");
+        if(!runtime.ultralight_bitmap_format.constants.init(env, "net/janrupf/ultralight/bitmap/UltralightBitmapFormat")) {
+            return JNI_EINVAL;
+        }
 
         // Retrieve information about the UltralightBitmap class
         runtime.ultralight_bitmap.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
@@ -318,18 +296,9 @@ namespace ultralight_java {
         // Retrieve information about the UltralightKeyEventType enum
         runtime.ultralight_key_event_type.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/input/UltralightKeyEventType")));
-        runtime.ultralight_key_event_type.down_field =
-                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "DOWN",
-                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
-        runtime.ultralight_key_event_type.up_field =
-                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "UP",
-                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
-        runtime.ultralight_key_event_type.raw_down_field =
-                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "RAW_DOWN",
-                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
-        runtime.ultralight_key_event_type.char_field =
-                env->GetStaticFieldID(runtime.ultralight_key_event_type.clazz, "CHAR",
-                                      "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
+        if(!runtime.ultralight_key_event_type.constants.init(env, "net/janrupf/ultralight/input/UltralightKeyEventType")) {
+            return JNI_EINVAL;
+        }
 
         // Retrieve information about the UltralightMouseEvent class
         runtime.ultralight_mouse_event.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
@@ -348,28 +317,16 @@ namespace ultralight_java {
         // Retrieve information about the UltralightMouseEventButton enum
         runtime.ultralight_mouse_event_button.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/input/UltralightMouseEventButton")));
-        runtime.ultralight_mouse_event_button.left_field =
-                env->GetStaticFieldID(runtime.ultralight_mouse_event_button.clazz, "LEFT",
-                        "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
-        runtime.ultralight_mouse_event_button.middle_field =
-                env->GetStaticFieldID(runtime.ultralight_mouse_event_button.clazz, "MIDDLE",
-                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
-        runtime.ultralight_mouse_event_button.right_field =
-                env->GetStaticFieldID(runtime.ultralight_mouse_event_button.clazz, "RIGHT",
-                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
+        if(!runtime.ultralight_mouse_event_button.constants.init(env, "net/janrupf/ultralight/input/UltralightMouseEventButton")) {
+            return JNI_EINVAL;
+        }
 
         // Retrieve information about the UltralightMouseEventType enum
         runtime.ultralight_mouse_event_type.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/input/UltralightMouseEventType")));
-        runtime.ultralight_mouse_event_type.moved_field =
-                env->GetStaticFieldID(runtime.ultralight_mouse_event_type.clazz, "MOVED",
-                        "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
-        runtime.ultralight_mouse_event_type.down_field =
-                env->GetStaticFieldID(runtime.ultralight_mouse_event_type.clazz, "DOWN",
-                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
-        runtime.ultralight_mouse_event_type.up_field =
-                env->GetStaticFieldID(runtime.ultralight_mouse_event_type.clazz, "UP",
-                                      "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
+        if(!runtime.ultralight_mouse_event_type.constants.init(env, "net/janrupf/ultralight/input/UltralightMouseEventType")) {
+            return JNI_EINVAL;
+        }
 
         // Retrieve information about the UltralightScrollEvent class
         runtime.ultralight_scroll_event.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
@@ -385,12 +342,9 @@ namespace ultralight_java {
         // Retrieve information about the UltralightScrollEventType enum
         runtime.ultralight_scroll_event_type.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/input/UltralightScrollEventType")));
-        runtime.ultralight_scroll_event_type.by_pixel_field =
-                env->GetStaticFieldID(runtime.ultralight_scroll_event_type.clazz, "BY_PIXEL",
-                        "Lnet/janrupf/ultralight/input/UltralightScrollEventType;");
-        runtime.ultralight_scroll_event_type.by_page_field =
-                env->GetStaticFieldID(runtime.ultralight_scroll_event_type.clazz, "BY_PAGE",
-                                      "Lnet/janrupf/ultralight/input/UltralightScrollEventType;");
+        if(!runtime.ultralight_scroll_event_type.constants.init(env, "net/janrupf/ultralight/input/UltralightScrollEventType")) {
+            return JNI_EINVAL;
+        }
 
         // Retrieve information about the JavascriptException class
         runtime.javascript_exception.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
@@ -424,11 +378,15 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.illegal_state_exception.clazz);
         env->DeleteGlobalRef(runtime.null_pointer_exception.clazz);
         env->DeleteGlobalRef(runtime.javascript_exception.clazz);
+        runtime.ultralight_scroll_event_type.constants.clear(env);
         env->DeleteGlobalRef(runtime.ultralight_scroll_event_type.clazz);
         env->DeleteGlobalRef(runtime.ultralight_scroll_event.clazz);
+        runtime.ultralight_mouse_event_type.constants.clear(env);
         env->DeleteGlobalRef(runtime.ultralight_mouse_event_type.clazz);
+        runtime.ultralight_mouse_event_button.constants.clear(env);
         env->DeleteGlobalRef(runtime.ultralight_mouse_event_button.clazz);
         env->DeleteGlobalRef(runtime.ultralight_mouse_event.clazz);
+        runtime.ultralight_key_event_type.constants.clear(env);
         env->DeleteGlobalRef(runtime.ultralight_key_event_type.clazz);
         env->UnregisterNatives(runtime.ultralight_key_event.clazz);
         env->DeleteGlobalRef(runtime.ultralight_key_event.clazz);
@@ -436,6 +394,7 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.ultralight_load_listener.clazz);
         env->UnregisterNatives(runtime.ultralight_bitmap.clazz);
         env->DeleteGlobalRef(runtime.ultralight_bitmap.clazz);
+        runtime.ultralight_bitmap_format.constants.clear(env);
         env->DeleteGlobalRef(runtime.ultralight_bitmap_format.clazz);
         env->DeleteGlobalRef(runtime.ultralight_bitmap_surface.clazz);
         env->UnregisterNatives(runtime.ultralight_surface.clazz);
@@ -445,8 +404,10 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.ultralight_renderer.clazz);
         env->UnregisterNatives(runtime.ref_ptr.clazz);
         env->DeleteGlobalRef(runtime.ref_ptr.clazz);
+        runtime.log_level.constants.clear(env);
         env->DeleteGlobalRef(runtime.log_level.clazz);
         env->DeleteGlobalRef(runtime.logger.clazz);
+        runtime.font_hinting.constants.clear(env);
         env->DeleteGlobalRef(runtime.font_hinting.clazz);
         runtime.face_winding.constants.clear(env);
         env->DeleteGlobalRef(runtime.face_winding.clazz);

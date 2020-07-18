@@ -48,72 +48,6 @@ namespace ultralight_java {
         );
     }
 
-    ultralight::BitmapFormat Util::create_bitmap_format_from_jobject(JNIEnv *env, jobject format) {
-        if (env->IsSameObject(
-                format,
-                env->GetStaticObjectField(runtime.ultralight_bitmap_format.clazz,
-                                          runtime.ultralight_bitmap_format.a8_unorm_field)
-        )) {
-            return ultralight::kBitmapFormat_A8_UNORM;
-        } else if (env->IsSameObject(
-                format,
-                env->GetStaticObjectField(runtime.ultralight_bitmap_format.clazz,
-                                          runtime.ultralight_bitmap_format.bgra8_unorm_srgb_field)
-        )) {
-            return ultralight::kBitmapFormat_BGRA8_UNORM_SRGB;
-        } else {
-            env->ThrowNew(runtime.illegal_argument_exception.clazz, "Invalid UltralightBitmapFormat passed");
-            return ultralight::kBitmapFormat_BGRA8_UNORM_SRGB;
-        }
-    }
-
-    jobject Util::create_jobject_from_bitmap_format(JNIEnv *env, const ultralight::BitmapFormat &format) {
-        switch (format) {
-            case ultralight::kBitmapFormat_A8_UNORM:
-                return env->GetStaticObjectField(runtime.ultralight_bitmap_format.clazz,
-                                                 runtime.ultralight_bitmap_format.a8_unorm_field);
-
-            case ultralight::kBitmapFormat_BGRA8_UNORM_SRGB:
-                return env->GetStaticObjectField(runtime.ultralight_bitmap_format.clazz,
-                                                 runtime.ultralight_bitmap_format.bgra8_unorm_srgb_field);
-
-            default:
-                env->ThrowNew(runtime.illegal_state_exception.clazz, "Native sent invalid enum constant");
-                return nullptr;
-        }
-    }
-
-    ultralight::KeyEvent::Type Util::create_key_event_type_from_jobject(JNIEnv *env, jobject type) {
-        if (env->IsSameObject(
-                type,
-                env->GetStaticObjectField(runtime.ultralight_key_event_type.clazz,
-                                          runtime.ultralight_key_event_type.down_field)
-        )) {
-            return ultralight::KeyEvent::kType_KeyDown;
-        } else if (env->IsSameObject(
-                type,
-                env->GetStaticObjectField(runtime.ultralight_key_event_type.clazz,
-                                          runtime.ultralight_key_event_type.up_field)
-        )) {
-            return ultralight::KeyEvent::kType_KeyUp;
-        } else if (env->IsSameObject(
-                type,
-                env->GetStaticObjectField(runtime.ultralight_key_event_type.clazz,
-                                          runtime.ultralight_key_event_type.raw_down_field)
-        )) {
-            return ultralight::KeyEvent::kType_RawKeyDown;
-        } else if (env->IsSameObject(
-                type,
-                env->GetStaticObjectField(runtime.ultralight_key_event_type.clazz,
-                                          runtime.ultralight_key_event_type.char_field)
-        )) {
-            return ultralight::KeyEvent::kType_Char;
-        } else {
-            env->ThrowNew(runtime.illegal_argument_exception.clazz, "Invalid UltralightKeyEventType passed");
-            return ultralight::KeyEvent::kType_Char;
-        }
-    }
-
     ultralight::KeyEvent Util::create_key_event_from_jobject(JNIEnv *env, jobject event) {
         const auto &t = runtime.ultralight_key_event;
 
@@ -123,8 +57,8 @@ namespace ultralight_java {
             return ultralight::KeyEvent{};
         }
 
-        auto event_type = create_key_event_type_from_jobject(env, java_event_type);
-        if (env->ExceptionCheck()) {
+        ultralight::KeyEvent::Type event_type;
+        if (!runtime.ultralight_key_event_type.constants.from_java(env, java_event_type, &event_type)) {
             return ultralight::KeyEvent{};
         }
 
@@ -183,56 +117,6 @@ namespace ultralight_java {
         return std::move(out);
     }
 
-    ultralight::MouseEvent::Type Util::create_mouse_event_type_from_jobject(JNIEnv *env, jobject type) {
-        if (env->IsSameObject(
-                type,
-                env->GetStaticObjectField(runtime.ultralight_mouse_event_type.clazz,
-                                          runtime.ultralight_mouse_event_type.down_field)
-        )) {
-            return ultralight::MouseEvent::kType_MouseDown;
-        } else if (env->IsSameObject(
-                type,
-                env->GetStaticObjectField(runtime.ultralight_mouse_event_type.clazz,
-                                          runtime.ultralight_mouse_event_type.up_field)
-        )) {
-            return ultralight::MouseEvent::kType_MouseUp;
-        } else if (env->IsSameObject(
-                type,
-                env->GetStaticObjectField(runtime.ultralight_mouse_event_type.clazz,
-                                          runtime.ultralight_mouse_event_type.moved_field)
-        )) {
-            return ultralight::MouseEvent::kType_MouseMoved;
-        } else {
-            env->ThrowNew(runtime.illegal_argument_exception.clazz, "Invalid UltralightMouseEventType passed");
-            return ultralight::MouseEvent::kType_MouseMoved;
-        }
-    }
-
-    ultralight::MouseEvent::Button Util::create_mouse_event_button_from_jobject(JNIEnv *env, jobject button) {
-        if (env->IsSameObject(
-                button,
-                env->GetStaticObjectField(runtime.ultralight_mouse_event_button.clazz,
-                                          runtime.ultralight_mouse_event_button.left_field)
-        )) {
-            return ultralight::MouseEvent::kButton_Left;
-        } else if (env->IsSameObject(
-                button,
-                env->GetStaticObjectField(runtime.ultralight_mouse_event_button.clazz,
-                                          runtime.ultralight_mouse_event_button.middle_field)
-        )) {
-            return ultralight::MouseEvent::kButton_Middle;
-        } else if (env->IsSameObject(
-                button,
-                env->GetStaticObjectField(runtime.ultralight_mouse_event_button.clazz,
-                                          runtime.ultralight_mouse_event_button.right_field)
-        )) {
-            return ultralight::MouseEvent::kButton_Right;
-        } else {
-            env->ThrowNew(runtime.illegal_argument_exception.clazz, "Invalid UltralightMouseEventButton passed");
-            return ultralight::MouseEvent::kButton_None;
-        }
-    }
-
     ultralight::MouseEvent Util::create_mouse_event_from_jobject(JNIEnv *env, jobject event) {
         const auto &t = runtime.ultralight_mouse_event;
 
@@ -242,8 +126,8 @@ namespace ultralight_java {
             return ultralight::MouseEvent{};
         }
 
-        auto type = create_mouse_event_type_from_jobject(env, java_type);
-        if (env->ExceptionCheck()) {
+        ultralight::MouseEvent::Type type;
+        if (!runtime.ultralight_mouse_event_type.constants.from_java(env, java_type, &type)) {
             return ultralight::MouseEvent{};
         }
 
@@ -256,32 +140,12 @@ namespace ultralight_java {
         if (!java_button) {
             button = ultralight::MouseEvent::Button::kButton_None;
         } else {
-            button = create_mouse_event_button_from_jobject(env, java_button);
-            if (env->ExceptionCheck()) {
+            if (!runtime.ultralight_mouse_event_button.constants.from_java(env, java_button, &button)) {
                 return ultralight::MouseEvent{};
             }
         }
 
         return ultralight::MouseEvent{type, x, y, button};
-    }
-
-    ultralight::ScrollEvent::Type Util::create_scroll_event_type_from_jobject(JNIEnv *env, jobject event) {
-        if (env->IsSameObject(
-                event,
-                env->GetStaticObjectField(runtime.ultralight_scroll_event_type.clazz,
-                                          runtime.ultralight_scroll_event_type.by_pixel_field)
-        )) {
-            return ultralight::ScrollEvent::kType_ScrollByPixel;
-        } else if (env->IsSameObject(
-                event,
-                env->GetStaticObjectField(runtime.ultralight_scroll_event_type.clazz,
-                                          runtime.ultralight_scroll_event_type.by_page_field)
-        )) {
-            return ultralight::ScrollEvent::kType_ScrollByPage;
-        } else {
-            env->ThrowNew(runtime.illegal_argument_exception.clazz, "Invalid UltralightScrollEventType passed");
-            return ultralight::ScrollEvent::kType_ScrollByPage;
-        }
     }
 
     ultralight::ScrollEvent Util::create_scroll_event_from_jobject(JNIEnv *env, jobject event) {
@@ -293,8 +157,8 @@ namespace ultralight_java {
             return ultralight::ScrollEvent{};
         }
 
-        auto type = create_scroll_event_type_from_jobject(env, java_type);
-        if (env->ExceptionCheck()) {
+        ultralight::ScrollEvent::Type type;
+        if (!runtime.ultralight_scroll_event_type.constants.from_java(env, java_type, &type)) {
             return ultralight::ScrollEvent{};
         }
 

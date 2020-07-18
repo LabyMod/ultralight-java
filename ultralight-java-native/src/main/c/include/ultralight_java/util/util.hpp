@@ -59,33 +59,6 @@ namespace ultralight_java {
         static jobject create_jobject_from_int_rect(JNIEnv *env, const ultralight::IntRect &int_rect);
 
         /**
-         * Creates an ultralight::BitmapFormat from a java UltralightBitmapFormat.
-         *
-         * @param env The JNI environment to use for accessing java
-         * @param format The java format to convert
-         * @return The converted bitmap format
-         */
-        static ultralight::BitmapFormat create_bitmap_format_from_jobject(JNIEnv *env, jobject format);
-
-        /**
-         * Creates a jobject from a ultralight::BitmapFormat.
-         *
-         * @param env The JNI environment to use for accessing java
-         * @param format The native format to convert
-         * @return The converted jobject
-         */
-        static jobject create_jobject_from_bitmap_format(JNIEnv *env, const ultralight::BitmapFormat &format);
-
-        /**
-         * Creates an ultralight::KeyEvent::Type from a java UltralightKeyEventType.
-         *
-         * @param env The JNI environment to use for accessing java
-         * @param type The java type to convert
-         * @return The converted type
-         */
-        static ultralight::KeyEvent::Type create_key_event_type_from_jobject(JNIEnv *env, jobject type);
-
-        /**
          * Converts a java object to a native ultralight::KeyEvent.
          *
          * @param env The JNI environment to use for accessing java
@@ -95,24 +68,6 @@ namespace ultralight_java {
         static ultralight::KeyEvent create_key_event_from_jobject(JNIEnv *env, jobject event);
 
         /**
-         * Creates an ultralight::MouseEvent::Type from a java UltralightMouseEventType.
-         *
-         * @param env The JNI environment to use for accessing java
-         * @param type The java type to convert
-         * @return The converted type
-         */
-        static ultralight::MouseEvent::Type create_mouse_event_type_from_jobject(JNIEnv *env, jobject type);
-
-        /**
-         * Creates an ultralight::MouseEvent::Button from a java UltralightMouseEventButton.
-         *
-         * @param env The JNI environment to use for accessing java
-         * @param button The java button to convert
-         * @return The converted button
-         */
-        static ultralight::MouseEvent::Button create_mouse_event_button_from_jobject(JNIEnv *env, jobject button);
-
-        /**
          * Converts a java object to a native ultralight::MouseEvent.
          *
          * @param env The JNI environment to use for accessing java
@@ -120,15 +75,6 @@ namespace ultralight_java {
          * @return The converted event
          */
         static ultralight::MouseEvent create_mouse_event_from_jobject(JNIEnv *env, jobject event);
-
-        /**
-         * Creates an ultralight::ScrollEvent::Type from a java UltralightScrollEventType.
-         *
-         * @param env The JNI environment to use for accessing java
-         * @param button The java type to convert
-         * @return The converted type
-         */
-        static ultralight::ScrollEvent::Type create_scroll_event_type_from_jobject(JNIEnv *env, jobject event);
 
         /**
          * Converts a java object to a native ultralight::ScrollEvent.

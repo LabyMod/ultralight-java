@@ -7,7 +7,7 @@ namespace ultralight_java {
     std::unordered_map<ultralight::View *, BridgedLoadListener *> UltralightViewJNI::existing_listeners{};
 
     void UltralightViewJNI::clean_up() {
-        printf("CLEANING UP!\n");
+        // TODO: This leaks memory
         existing_listeners.clear();
     }
 
