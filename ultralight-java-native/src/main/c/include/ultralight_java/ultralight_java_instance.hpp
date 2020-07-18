@@ -12,6 +12,8 @@
 #include "ultralight_java/java_bridges/ultralight_surface_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_view_jni.hpp"
 
+#include "ultralight_java/util/java_enum.hpp"
+
 namespace ultralight_java {
     class BridgedLogger;
 
@@ -108,6 +110,14 @@ namespace ultralight_java {
              * The java class itself
              */
             jclass clazz = nullptr;
+
+            /**
+             * The enum constants
+             */
+            JavaEnum<ultralight::FaceWinding> constants = JavaEnum<ultralight::FaceWinding>(
+                    ultralight::kFaceWinding_Clockwise, "CLOCKWISE",
+                    ultralight::kFaceWinding_CounterClockwise, "COUNTER_CLOCKWISE"
+            );
 
             /* FaceWinding */ jfieldID clockwise_field = nullptr;
             /* FaceWinding */ jfieldID counter_clockwise_field = nullptr;

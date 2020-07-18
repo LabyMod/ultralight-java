@@ -64,19 +64,7 @@ namespace ultralight_java {
             return;
         }
 
-        if (env->IsSameObject(
-                java_face_winding,
-                env->GetStaticObjectField(runtime.face_winding.clazz, runtime.face_winding.clockwise_field)
-        )) {
-            config.face_winding = ultralight::kFaceWinding_Clockwise;
-        } else if (env->IsSameObject(
-                java_face_winding,
-                env->GetStaticObjectField(runtime.face_winding.clazz, runtime.face_winding.counter_clockwise_field)
-        )) {
-            config.face_winding = ultralight::kFaceWinding_CounterClockwise;
-        } else {
-            env->ThrowNew(runtime.illegal_state_exception.clazz,
-                          "Unknown FaceWinding type encountered while translating configuration to native");
+        if(runtime.face_winding.constants.from_java(env, java_face_winding, &config.face_winding)) {
             return;
         }
         // </editor-fold>

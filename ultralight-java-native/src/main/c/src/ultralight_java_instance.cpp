@@ -109,6 +109,10 @@ namespace ultralight_java {
         // Retrieve information about the FaceWinding enum
         runtime.face_winding.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass(
                 "net/janrupf/ultralight/config/FaceWinding")));
+        if(!runtime.face_winding.constants.init(env, "net/janrupf/ultralight/config/FaceWinding")) {
+            return JNI_EVERSION;
+        }
+
         runtime.face_winding.clockwise_field =
                 env->GetStaticFieldID(runtime.face_winding.clazz,
                                       "CLOCKWISE", "Lnet/janrupf/ultralight/config/FaceWinding;");
@@ -444,6 +448,7 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.log_level.clazz);
         env->DeleteGlobalRef(runtime.logger.clazz);
         env->DeleteGlobalRef(runtime.font_hinting.clazz);
+        runtime.face_winding.constants.clear(env);
         env->DeleteGlobalRef(runtime.face_winding.clazz);
         env->DeleteGlobalRef(runtime.ultralight_config.clazz);
         env->UnregisterNatives(runtime.ultralight_platform.clazz);
