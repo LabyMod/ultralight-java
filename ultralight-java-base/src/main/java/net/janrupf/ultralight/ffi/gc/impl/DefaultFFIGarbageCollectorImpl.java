@@ -3,9 +3,7 @@ package net.janrupf.ultralight.ffi.gc.impl;
 import net.janrupf.ultralight.ffi.gc.BoundDeleter;
 import net.janrupf.ultralight.ffi.gc.DeletableObject;
 import net.janrupf.ultralight.ffi.gc.FFIGarbageCollector;
-import net.janrupf.ultralight.ffi.gc.ObjectDeleter;
 import net.janrupf.ultralight.util.Util;
-
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;

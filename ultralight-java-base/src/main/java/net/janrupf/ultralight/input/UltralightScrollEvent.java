@@ -1,5 +1,7 @@
 package net.janrupf.ultralight.input;
 
+import java.lang.annotation.Native;
+
 import net.janrupf.ultralight.annotation.NativeType;
 
 /**
@@ -10,16 +12,19 @@ public class UltralightScrollEvent {
     /**
      * Scroll granularity type
      */
+    @Native
     private UltralightScrollEventType type;
 
     /**
      * Horizontal scroll amount
      */
+    @Native
     private int deltaX;
 
     /**
      * Vertical scroll amount
      */
+    @Native
     private int deltaY;
 
     /**

@@ -4,6 +4,8 @@ package net.janrupf.ultralight;
  * Exception that can occur while trying to load the native library.
  */
 public class UltralightLoadException extends Exception {
+    private static final long serialVersionUID = 5174097344028286712L;
+
     /**
      * Constructs a new {@link UltralightLoadException} with just a message.
      *

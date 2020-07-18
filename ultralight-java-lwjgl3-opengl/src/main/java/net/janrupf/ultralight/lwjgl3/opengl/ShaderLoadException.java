@@ -6,6 +6,8 @@ import java.io.IOException;
  * Exception which may occur during loading of shaders.
  */
 public class ShaderLoadException extends IOException {
+    private static final long serialVersionUID = -1695228181707402338L;
+
     /**
      * Constructs a new {@link ShaderLoadException} with just a message.
      *

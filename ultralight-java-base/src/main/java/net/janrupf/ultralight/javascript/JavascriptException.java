@@ -4,6 +4,8 @@ package net.janrupf.ultralight.javascript;
  * Exceptions which can be thrown during the evaluation of javascript.
  */
 public class JavascriptException extends Exception {
+    private static final long serialVersionUID = 250417540756557840L;
+
     /**
      * Constructs a new {@link JavascriptException} with just a message.
      *

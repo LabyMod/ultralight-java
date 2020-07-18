@@ -2,20 +2,13 @@ package net.janrupf.ultralight.lwjgl3.opengl;
 
 import net.janrupf.ultralight.UltralightPlatform;
 import net.janrupf.ultralight.UltralightRenderer;
-import net.janrupf.ultralight.UltralightSurface;
 import net.janrupf.ultralight.UltralightView;
 import net.janrupf.ultralight.bitmap.UltralightBitmap;
 import net.janrupf.ultralight.bitmap.UltralightBitmapSurface;
 import net.janrupf.ultralight.config.FontHinting;
 import net.janrupf.ultralight.config.UltralightConfig;
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayOutputStream;
 import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
 import static org.lwjgl.opengl.GL20.*;
 
 /**
