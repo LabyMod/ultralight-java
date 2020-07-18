@@ -4,3 +4,8 @@ out/
 .idea/
 cmake-build-*/
 run/
+bin/
+.vscode/
+.settings/
+.project
+.classpath
