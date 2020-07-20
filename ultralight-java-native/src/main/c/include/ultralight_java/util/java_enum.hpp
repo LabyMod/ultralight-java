@@ -19,6 +19,8 @@ namespace ultralight_java {
         std::unordered_map<t_Native, jobject> native_to_java_values;
         std::unordered_map<t_Native, std::string> native_to_name_values;
 
+        UltralightJavaRuntime *_runtime();
+
         /**
          * Indexes a value and adds it to the map for deferred initialization.
          *
@@ -127,7 +129,7 @@ namespace ultralight_java {
          */
         bool from_java(JNIEnv *env, jobject instance, t_Native *out) {
             if(!instance) {
-                env->ThrowNew(runtime.null_pointer_exception.clazz, "Can't convert null constant to native enum");
+                env->ThrowNew(_runtime()->null_pointer_exception.clazz, "Can't convert null constant to native enum");
                 return false;
             }
 
@@ -138,7 +140,7 @@ namespace ultralight_java {
                 }
             }
 
-            env->ThrowNew(runtime.illegal_argument_exception.clazz, "Invalid java enum constant passed in");
+            env->ThrowNew(_runtime()->illegal_argument_exception.clazz, "Invalid java enum constant passed in");
             return false;
         }
 
@@ -154,8 +156,13 @@ namespace ultralight_java {
                 return env->NewLocalRef(it->second);
             }
 
-            env->ThrowNew(runtime.illegal_argument_exception.clazz, "Invalid native enum constant passed in");
+            env->ThrowNew(_runtime()->illegal_argument_exception.clazz, "Invalid native enum constant passed in");
             return nullptr;
         }
     };
+
+    template <typename t_Native>
+    UltralightJavaRuntime *JavaEnum<t_Native>::_runtime() {
+        return &runtime;
+    }
 }

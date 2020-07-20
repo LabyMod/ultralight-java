@@ -5,9 +5,9 @@
 #include <jni.h>
 #include <Ultralight/Ultralight.h>
 
-namespace ultralight_java {
-    struct UltralightJavaRuntime;
+#include "ultralight_java/ultralight_java_instance.hpp"
 
+namespace ultralight_java {
     /**
      * Wrapper for ultralight::RefPtr to erase their type signature
      * so they can be passed to java.

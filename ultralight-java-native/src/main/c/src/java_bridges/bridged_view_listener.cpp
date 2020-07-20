@@ -1,6 +1,7 @@
 #include "ultralight_java/java_bridges/bridged_view_listener.hpp"
 
 #include "ultralight_java/java_bridges/proxied_java_exception.hpp"
+#include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/temporary_jni.hpp"
 #include "ultralight_java/util/util.hpp"

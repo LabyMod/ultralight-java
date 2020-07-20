@@ -1,6 +1,8 @@
 #include "ultralight_java/ultralight_java_instance.hpp"
 
 #include "ultralight_java/java_bridges/bridged_logger.hpp"
+#include "ultralight_java/java_bridges/ultralight_view_jni.hpp"
+#include "ultralight_java/ultralight_initializer.hpp"
 
 /**
  * Called by the JavaVM when the library is being loaded.
@@ -17,9 +19,11 @@ extern "C" [[maybe_unused]] JNIEXPORT void JNICALL JNI_OnUnload(JavaVM *vm, void
 }
 
 namespace ultralight_java {
-    UltralightJavaRuntime runtime{};
+    UltralightJavaRuntime runtime;
 
     int setup(JavaVM *vm) {
+        init_runtime_struct();
+
         // Initialize the runtime struct
         runtime.vm = vm;
 

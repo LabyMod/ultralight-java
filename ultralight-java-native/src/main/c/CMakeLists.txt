@@ -47,6 +47,7 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/util/temporary_jni.cpp
         src/util/util.cpp
 
+        src/ultralight_initializer.cpp
         src/ultralight_java_instance.cpp)
 
 if(WIN32)

@@ -1,5 +1,6 @@
-#include <ultralight_java/ultralight_java_instance.hpp>
+#include "ultralight_java/java_bridges/ultralight_view_jni.hpp"
 
+#include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {
