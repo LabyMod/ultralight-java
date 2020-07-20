@@ -43,8 +43,23 @@ if(!runDir.exists() && !runDir.mkdirs()) {
     throw new GradleException("Failed to create run directory")
 }
 
+def ultralightOsIdentifier = {
+    def bitName = (System.getProperty("os.arch", "?").contains("64") ||
+            System.getProperty("sun.arch.data.model", "?").contains("64")) ? "64" : "32"
+
+    if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return "win-x" + bitName
+    } else if(Os.isFamily(Os.FAMILY_MAC)) {
+        return "mac-x" + bitName
+    } else if(Os.isFamily(Os.FAMILY_UNIX)) {
+        return "linux-x" + bitName
+    } else {
+        throw new UnsupportedOperationException("This OS is not supported")
+    }
+}
+
 task copyTestResources(type: Copy) {
-    from "../ultralight-java-native/src/main/c/3rdparty/ultralight/bin"
+    from "../ultralight-java-native/src/main/c/3rdparty/ultralight-${ultralightOsIdentifier()}/bin"
     include "**/*.dll", "resources/cacert.pem"
     into runDir
 }
