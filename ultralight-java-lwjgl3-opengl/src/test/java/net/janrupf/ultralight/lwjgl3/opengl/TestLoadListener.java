@@ -6,20 +6,25 @@ import net.janrupf.ultralight.plugin.loading.UltralightLoadListener;
  * Test load listener for the main view.
  */
 public class TestLoadListener implements UltralightLoadListener {
-    @Override
-    public void onBeginLoading() {
-        System.out.println("The view is about to load");
+    private String frameName(long frameId, boolean isMainFrame, String url) {
+        return "[" + (isMainFrame ? "MainFrame" : "Frame") + " " + frameId + " (" + url + ")]: ";
     }
 
     @Override
-    public void onFinishLoading() {
-        System.out.println("The view finished loading");
+    public void onBeginLoading(long frameId, boolean isMainFrame, String url) {
+        System.out.println(frameName(frameId, isMainFrame, url) + "The view is about to load");
     }
 
     @Override
-    public void onFailLoading(String url, String description, String errorDomain, int errorCode) {
-        System.err.println("The view failed to load " + url + " on " + errorDomain + ": " + description + " (" +
-                errorCode + ")");
+    public void onFinishLoading(long frameId, boolean isMainFrame, String url) {
+        System.out.println(frameName(frameId, isMainFrame, url) + "The view finished loading");
+    }
+
+    @Override
+    public void onFailLoading(
+            long frameId, boolean isMainFrame, String url, String description, String errorDomain, int errorCode) {
+        System.err.println(frameName(frameId, isMainFrame, url) +
+                "Failed to load " + errorDomain + ", " + errorCode + "(" + description + ")");
     }
 
     @Override
@@ -28,12 +33,12 @@ public class TestLoadListener implements UltralightLoadListener {
     }
 
     @Override
-    public void onWindowObjectReady() {
-        System.out.println("The window object is ready");
+    public void onWindowObjectReady(long frameId, boolean isMainFrame, String url) {
+        System.out.println(frameName(frameId, isMainFrame, url) + "The window object is ready");
     }
 
     @Override
-    public void onDOMReady() {
-        System.out.println("The DOM is ready");
+    public void onDOMReady(long frameId, boolean isMainFrame, String url) {
+        System.out.println(frameName(frameId, isMainFrame, url) + "The DOM is ready");
     }
 }

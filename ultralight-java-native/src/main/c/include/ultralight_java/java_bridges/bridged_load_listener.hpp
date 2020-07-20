@@ -23,14 +23,16 @@ namespace ultralight_java {
          *
          * @param caller The view that has begun loading
          */
-        void OnBeginLoading(ultralight::View *caller) final;
+        void OnBeginLoading(
+            ultralight::View *caller, uint64_t frame_id, bool is_main_frame, const ultralight::String &url) final;
 
         /**
          * Called when the view has finished loading.
          *
          * @param caller The view that has finished loading
          */
-        void OnFinishLoading(ultralight::View *caller) final;
+        void OnFinishLoading(
+            ultralight::View *caller, uint64_t frame_id, bool is_main_frame, const ultralight::String &url) final;
 
         /**
          * Called when the view has failed to load.
@@ -42,12 +44,13 @@ namespace ultralight_java {
          * @param error_code The error code of the loading status
          */
         void OnFailLoading(
-                ultralight::View *caller,
-                const ultralight::String &url,
-                const ultralight::String &description,
-                const ultralight::String &error_domain,
-                int error_code
-        ) final;
+            ultralight::View *caller,
+            uint64_t frame_id,
+            bool is_main_frame,
+            const ultralight::String &url,
+            const ultralight::String &description,
+            const ultralight::String &error_domain,
+            int error_code) final;
 
         /**
          * Called when the view has updated the history.
@@ -61,13 +64,15 @@ namespace ultralight_java {
          *
          * @param caller The view the window object has been recreated for
          */
-        void OnWindowObjectReady(ultralight::View *caller) final;
+        void OnWindowObjectReady(
+            ultralight::View *caller, uint64_t frame_id, bool is_main_frame, const ultralight::String &url) final;
 
         /**
          * Called when the DOM has been loaded for the view.
          *
          * @param caller The view the DOM has been loaded for
          */
-        void OnDOMReady(ultralight::View *caller) final;
+        void OnDOMReady(
+            ultralight::View *caller, uint64_t frame_id, bool is_main_frame, const ultralight::String &url) final;
     };
-}
+} // namespace ultralight_java

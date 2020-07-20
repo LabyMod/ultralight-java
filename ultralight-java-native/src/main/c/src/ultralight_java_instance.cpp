@@ -210,19 +210,19 @@ namespace ultralight_java {
         runtime.ultralight_load_listener.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/loading/UltralightLoadListener")));
         runtime.ultralight_load_listener.on_begin_loading_method =
-            env->GetMethodID(runtime.ultralight_load_listener.clazz, "onBeginLoading", "()V");
+            env->GetMethodID(runtime.ultralight_load_listener.clazz, "onBeginLoading", "(JZLjava/lang/String;)V");
         runtime.ultralight_load_listener.on_finish_loading_method =
-            env->GetMethodID(runtime.ultralight_load_listener.clazz, "onFinishLoading", "()V");
+            env->GetMethodID(runtime.ultralight_load_listener.clazz, "onFinishLoading", "(JZLjava/lang/String;)V");
         runtime.ultralight_load_listener.on_fail_loading_method = env->GetMethodID(
             runtime.ultralight_load_listener.clazz,
             "onFailLoading",
-            "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
+            "(JZLjava/lang/String;Ljava/lang/String;Ljava/lang/String;I)V");
         runtime.ultralight_load_listener.on_update_history_method =
             env->GetMethodID(runtime.ultralight_load_listener.clazz, "onUpdateHistory", "()V");
         runtime.ultralight_load_listener.on_window_object_ready_method =
-            env->GetMethodID(runtime.ultralight_load_listener.clazz, "onWindowObjectReady", "()V");
-        runtime.ultralight_load_listener
-            .on_dom_ready_method = env->GetMethodID(runtime.ultralight_load_listener.clazz, "onDOMReady", "()V");
+            env->GetMethodID(runtime.ultralight_load_listener.clazz, "onWindowObjectReady", "(JZLjava/lang/String;)V");
+        runtime.ultralight_load_listener.on_dom_ready_method =
+            env->GetMethodID(runtime.ultralight_load_listener.clazz, "onDOMReady", "(JZLjava/lang/String;)V");
 
         // Retrieve information about the UltralightKey class
         runtime.ultralight_key.clazz = reinterpret_cast<jclass>(
