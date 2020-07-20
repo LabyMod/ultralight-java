@@ -2,23 +2,6 @@
 # Set up 3rdparty dependencies #
 ################################
 
-# Ultralight
-set(ULTRALIGHT_DIR "${CMAKE_CURRENT_LIST_DIR}/ultralight")
-set(ULTRALIGHT_VERSION "latest") # TODO
-
-# Check the version of ultralight
-set(ULTRALIGHT_VERSION_FILE "${ULTRALIGHT_DIR}/.version")
-if (EXISTS "${ULTRALIGHT_VERSION_FILE}")
-    # The version file exists, read it
-    file(READ "${ULTRALIGHT_VERSION_FILE}" ULTRALIGHT_INSTALLED_VERSION)
-endif ()
-
-# Check if the installed version matches the target version
-if (NOT "${ULTRALIGHT_VERSION}" STREQUAL "${ULTRALIGHT_INSTALLED_VERSION}")
-    # Versions do not match, erase the installed version
-    file(REMOVE_RECURSE "${ULTRALIGHT_DIR}")
-endif ()
-
 # Set the architecture information for ultralight
 if (CMAKE_SIZEOF_VOID_P EQUAL 8)
     set(ULTRALIGHT_ARCH "x64")
@@ -37,6 +20,23 @@ elseif (UNIX)
     set(ULTRALIGHT_OS_NAME "linux")
 else ()
     message(FATAL_ERROR "Unsupported operating system")
+endif ()
+
+# Ultralight
+set(ULTRALIGHT_DIR "${CMAKE_CURRENT_LIST_DIR}/ultralight-${ULTRALIGHT_OS_NAME}-${ULTRALIGHT_ARCH}")
+set(ULTRALIGHT_VERSION "latest") # TODO
+
+# Check the version of ultralight
+set(ULTRALIGHT_VERSION_FILE "${ULTRALIGHT_DIR}/.version")
+if (EXISTS "${ULTRALIGHT_VERSION_FILE}")
+    # The version file exists, read it
+    file(READ "${ULTRALIGHT_VERSION_FILE}" ULTRALIGHT_INSTALLED_VERSION)
+endif ()
+
+# Check if the installed version matches the target version
+if (NOT "${ULTRALIGHT_VERSION}" STREQUAL "${ULTRALIGHT_INSTALLED_VERSION}")
+    # Versions do not match, erase the installed version
+    file(REMOVE_RECURSE "${ULTRALIGHT_DIR}")
 endif ()
 
 # Check if the ultralight directory exists

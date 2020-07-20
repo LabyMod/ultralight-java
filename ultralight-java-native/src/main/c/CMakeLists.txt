@@ -24,14 +24,6 @@ add_subdirectory(3rdparty)
 #####################
 find_package(JNI REQUIRED)
 
-#####################
-# Configure project #
-#####################
-if (NOT DEFINED GENERATED_JNI_HEADERS_DIR)
-    message(FATAL_ERROR "Please run cmake with -DGENERATED_JNI_HEADERS_DIR=/path/to/generated/headers or simply use "
-            "the gradle build task")
-endif ()
-
 ##########
 # Source #
 ##########
