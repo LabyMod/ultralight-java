@@ -69,3 +69,9 @@ task runTest(type: JavaExec, dependsOn: [copyTestResources]) {
     main "net.janrupf.ultralight.lwjgl3.opengl.TestRunner"
     workingDir file("run")
 }
+
+task exportTestCommandLine {
+    doLast {
+        println tasks.runTest.commandLine.join(" ")
+    }
+}
