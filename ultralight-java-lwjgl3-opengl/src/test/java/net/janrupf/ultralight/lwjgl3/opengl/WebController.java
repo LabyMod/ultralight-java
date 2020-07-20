@@ -18,6 +18,7 @@ public class WebController {
     private final UltralightPlatform platform;
     private final UltralightRenderer renderer;
     private final UltralightView view;
+    private final TestViewListener viewListener;
     private final TestLoadListener loadListener;
     private final TestInputAdapter inputAdapter;
 
@@ -31,8 +32,7 @@ public class WebController {
 
         this.platform.setConfig(
                 new UltralightConfig()
-                        .resourcePath("resources")
-                        .cachePath("cache")
+                        .resourcePath("./resources/")
                         .fontHinting(FontHinting.NORMAL)
                         .deviceScale(1.0)
         );
@@ -44,6 +44,8 @@ public class WebController {
         this.renderer.logMemoryUsage();
 
         this.view = renderer.createView(300, 300, false);
+        this.viewListener = new TestViewListener();
+        this.view.setViewListener(viewListener);
         this.loadListener = new TestLoadListener();
         this.view.setLoadListener(loadListener);
         this.glTexture = -1;

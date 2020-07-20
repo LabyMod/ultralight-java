@@ -13,6 +13,17 @@ namespace ultralight_java {
 
     public:
         /**
+         * Runs the runnable given on thread which is safe to use ultralight on.
+         * The JVM seems to set up the stack in an unusual way, which then causes the
+         * JavaScript engine from WebCore to fail.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param caller_class The java class calling the method, should always be UltralightPlatform
+         * @param runnable The runnable to run on the safe thread
+         */
+        static void run_on_safe_thread(JNIEnv *env, jclass caller_class, jobject runnable);
+
+        /**
          * Retrieves the java object matching the platform instance object.
          * If the instance does not exist yet, it is created.
          *

@@ -140,7 +140,7 @@ public class TestApplication {
         // Set opaque black as the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        webController.loadURL("https://google.com");
+        webController.loadURL("http://google.com");
 
         double lastTime = glfwGetTime();
         int frameCount = 0;

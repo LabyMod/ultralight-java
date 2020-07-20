@@ -40,6 +40,7 @@ set(ULTRALIGHT_JAVA_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include")
 set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/bridged_logger.cpp
         src/java_bridges/bridged_load_listener.cpp
+        src/java_bridges/bridged_view_listener.cpp
         src/java_bridges/proxied_java_exception.cpp
         src/java_bridges/ultralight_bitmap_jni.cpp
         src/java_bridges/ultralight_bitmap_surface_jni.cpp
@@ -55,6 +56,11 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/util/util.cpp
 
         src/ultralight_java_instance.cpp)
+
+if(WIN32)
+    set(ULTRALIGHT_JAVA_SOURCE ${ULTRALIGHT_JAVA_SOURCE}
+            src/platform/windows_impl.cpp)
+endif()
 
 ##############
 # Add target #

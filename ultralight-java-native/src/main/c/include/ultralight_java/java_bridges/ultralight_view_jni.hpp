@@ -5,6 +5,7 @@
 
 #include <unordered_map>
 
+#include "ultralight_java/java_bridges/bridged_view_listener.hpp"
 #include "ultralight_java/java_bridges/bridged_load_listener.hpp"
 
 namespace ultralight_java {
@@ -13,7 +14,8 @@ namespace ultralight_java {
      */
     class UltralightViewJNI {
     private:
-        static std::unordered_map<ultralight::View *, BridgedLoadListener *> existing_listeners;
+        static std::unordered_map<ultralight::View *, BridgedViewListener *> existing_view_listeners;
+        static std::unordered_map<ultralight::View *, BridgedLoadListener *> existing_load_listeners;
 
     public:
         /**
@@ -237,6 +239,15 @@ namespace ultralight_java {
          * @param event The event to fire
          */
         static void fire_scroll_event(JNIEnv *env, jobject instance, jobject event);
+
+        /**
+         * Sets the view listener for this view.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param instance The java instance of the view
+         * @param listener The listener to set on this view
+         */
+        static void set_view_listener(JNIEnv *env, jobject instance, jobject listener);
 
         /**
          * Sets the load listener for this view.

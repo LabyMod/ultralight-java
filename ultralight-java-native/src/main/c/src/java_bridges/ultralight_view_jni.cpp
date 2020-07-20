@@ -1,19 +1,24 @@
 #include <ultralight_java/ultralight_java_instance.hpp>
 
-
 #include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {
-    std::unordered_map<ultralight::View *, BridgedLoadListener *> UltralightViewJNI::existing_listeners{};
+    std::unordered_map<ultralight::View *, BridgedViewListener *> UltralightViewJNI::existing_view_listeners;
+    std::unordered_map<ultralight::View *, BridgedLoadListener *> UltralightViewJNI::existing_load_listeners;
 
     void UltralightViewJNI::clean_up() {
-        // TODO: This leaks memory
-        existing_listeners.clear();
+        for(const auto [_, listener] : existing_view_listeners) {
+            delete listener;
+        }
+
+        for(const auto [_, listener] : existing_load_listeners) {
+            delete listener;
+        }
     }
 
     jstring UltralightViewJNI::url(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
@@ -22,7 +27,7 @@ namespace ultralight_java {
 
     jstring UltralightViewJNI::title(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
@@ -31,7 +36,7 @@ namespace ultralight_java {
 
     jlong UltralightViewJNI::width(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return 0;
         }
 
@@ -40,7 +45,7 @@ namespace ultralight_java {
 
     jlong UltralightViewJNI::height(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return 0;
         }
 
@@ -49,7 +54,7 @@ namespace ultralight_java {
 
     jboolean UltralightViewJNI::is_loading(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return 0;
         }
 
@@ -58,39 +63,37 @@ namespace ultralight_java {
 
     jobject UltralightViewJNI::surface(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
         auto *surface = view->surface();
-        if (!surface) {
+        if(!surface) {
             return nullptr;
         }
 
         // Special cases: Detect if bitmap surface
-        if (auto *bitmap_surface = dynamic_cast<ultralight::BitmapSurface *>(surface); bitmap_surface) {
+        if(auto *bitmap_surface = dynamic_cast<ultralight::BitmapSurface *>(surface); bitmap_surface) {
             return env->NewObject(
-                    runtime.ultralight_bitmap_surface.clazz,
-                    runtime.ultralight_bitmap_surface.constructor,
-                    instance,
-                    reinterpret_cast<jlong>(bitmap_surface)
-            );
+                runtime.ultralight_bitmap_surface.clazz,
+                runtime.ultralight_bitmap_surface.constructor,
+                instance,
+                reinterpret_cast<jlong>(bitmap_surface));
         }
 
         return env->NewObject(
-                runtime.ultralight_surface.clazz,
-                runtime.ultralight_surface.constructor,
-                instance,
-                reinterpret_cast<jlong>(surface)
-        );
+            runtime.ultralight_surface.clazz,
+            runtime.ultralight_surface.constructor,
+            instance,
+            reinterpret_cast<jlong>(surface));
     }
 
-    void
-    UltralightViewJNI::load_html(JNIEnv *env, jobject instance, jstring html, jstring url, jboolean add_to_history) {
+    void UltralightViewJNI::load_html(
+        JNIEnv *env, jobject instance, jstring html, jstring url, jboolean add_to_history) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
-        } else if (!html) {
+        } else if(!html) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "html can't be null");
             return;
         }
@@ -104,9 +107,9 @@ namespace ultralight_java {
 
     void UltralightViewJNI::load_url(JNIEnv *env, jobject instance, jstring url) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
-        } else if (!url) {
+        } else if(!url) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "url can't be null");
             return;
         }
@@ -117,7 +120,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::resize(JNIEnv *env, jobject instance, jlong width, jlong height) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -126,9 +129,9 @@ namespace ultralight_java {
 
     jstring UltralightViewJNI::evaluate_script(JNIEnv *env, jobject instance, jstring script) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return nullptr;
-        } else if (!script) {
+        } else if(!script) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "script can't be null");
             return nullptr;
         }
@@ -139,7 +142,7 @@ namespace ultralight_java {
         ultralight::String exception;
         ultralight::String return_value = view->EvaluateScript(real_script, &exception);
 
-        if (!exception.empty()) {
+        if(!exception.empty()) {
             // A javascript exception occurred
             env->ThrowNew(runtime.javascript_exception.clazz, exception.utf8().data());
             return nullptr;
@@ -150,7 +153,7 @@ namespace ultralight_java {
 
     jboolean UltralightViewJNI::can_go_back(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return false;
         }
 
@@ -159,7 +162,7 @@ namespace ultralight_java {
 
     jboolean UltralightViewJNI::can_go_forward(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return false;
         }
 
@@ -168,7 +171,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::go_back(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -177,7 +180,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::go_forward(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -186,7 +189,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::go_to_history_offset(JNIEnv *env, jobject instance, jint offset) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -195,7 +198,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::reload(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -204,7 +207,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::stop(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -213,7 +216,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::focus(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -222,7 +225,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::unfocus(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -231,7 +234,7 @@ namespace ultralight_java {
 
     jboolean UltralightViewJNI::has_focus(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return false;
         }
 
@@ -240,7 +243,7 @@ namespace ultralight_java {
 
     jboolean UltralightViewJNI::has_input_focus(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return false;
         }
 
@@ -249,9 +252,9 @@ namespace ultralight_java {
 
     void UltralightViewJNI::fire_key_event(JNIEnv *env, jobject instance, jobject event) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
-        } else if (!event) {
+        } else if(!event) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "event can't be null");
             return;
         }
@@ -261,9 +264,9 @@ namespace ultralight_java {
 
     void UltralightViewJNI::fire_mouse_event(JNIEnv *env, jobject instance, jobject event) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
-        } else if (!event) {
+        } else if(!event) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "event can't be null");
             return;
         }
@@ -273,9 +276,9 @@ namespace ultralight_java {
 
     void UltralightViewJNI::fire_scroll_event(JNIEnv *env, jobject instance, jobject event) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
-        } else if (!event) {
+        } else if(!event) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "event can't be null");
             return;
         }
@@ -283,23 +286,46 @@ namespace ultralight_java {
         view->FireScrollEvent(Util::create_scroll_event_from_jobject(env, event));
     }
 
-    void UltralightViewJNI::set_load_listener(JNIEnv *env, jobject instance, jobject listener) {
+    void UltralightViewJNI::set_view_listener(JNIEnv *env, jobject instance, jobject listener) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
         auto *view_key = view.get();
 
-        if (auto it = existing_listeners.find(view_key); it != existing_listeners.end()) {
+        if(auto it = existing_view_listeners.find(view_key); it != existing_view_listeners.end()) {
             view->set_load_listener(nullptr);
             delete it->second;
-            existing_listeners.erase(it);
+            existing_view_listeners.erase(it);
         }
 
-        if (listener) {
-            auto [it, _] = existing_listeners.insert(
-                    std::make_pair(view_key, new BridgedLoadListener(env, listener)));
+        if(listener) {
+            auto [it, _] = existing_view_listeners.insert(
+                std::make_pair(view_key, new BridgedViewListener(env, listener)));
+            view->set_view_listener(it->second);
+        } else {
+            view->set_view_listener(nullptr);
+        }
+    }
+
+    void UltralightViewJNI::set_load_listener(JNIEnv *env, jobject instance, jobject listener) {
+        auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
+        if(env->ExceptionCheck()) {
+            return;
+        }
+
+        auto *view_key = view.get();
+
+        if(auto it = existing_load_listeners.find(view_key); it != existing_load_listeners.end()) {
+            view->set_load_listener(nullptr);
+            delete it->second;
+            existing_load_listeners.erase(it);
+        }
+
+        if(listener) {
+            auto [it, _] = existing_load_listeners.insert(
+                std::make_pair(view_key, new BridgedLoadListener(env, listener)));
             view->set_load_listener(it->second);
         } else {
             view->set_load_listener(nullptr);
@@ -308,7 +334,7 @@ namespace ultralight_java {
 
     void UltralightViewJNI::set_needs_paint(JNIEnv *env, jobject instance, jboolean needs_paint) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -317,7 +343,7 @@ namespace ultralight_java {
 
     jboolean UltralightViewJNI::needs_paint(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return false;
         }
 
@@ -326,11 +352,11 @@ namespace ultralight_java {
 
     jobject UltralightViewJNI::inspector(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
         auto inspector = view->inspector();
         return UltralightRefPtrJNI::create(env, std::move(ultralight::RefPtr<ultralight::View>(std::move(inspector))));
     }
-}
+} // namespace ultralight_java

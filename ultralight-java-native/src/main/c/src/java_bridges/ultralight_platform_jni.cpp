@@ -1,35 +1,73 @@
 #include "ultralight_java/java_bridges/ultralight_platform_jni.hpp"
 
-#include <Ultralight/Ultralight.h>
 #include <AppCore/Platform.h>
+#include <Ultralight/Ultralight.h>
 
 #include "ultralight_java/java_bridges/bridged_logger.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
 
-#define ASSIGN_CONFIG_STRING(name, msg) \
-    if(!JNI_STRING16_OR_NPE( \
-            config.name, env, env->GetObjectField(java_config, runtime.ultralight_config.name##_field), msg)) { \
-        return; \
-    } void()
+#ifdef WIN32
+#    include "ultralight_java/java_bridges/proxied_java_exception.hpp"
+#    include "ultralight_java/platform/windows_impl.hpp"
+#endif
 
-#define ASSIGN_CONFIG(type, name) \
-    config.name = env->Get##type##Field(java_config, runtime.ultralight_config.name##_field); \
-    if(env->ExceptionCheck()) { \
-        return; \
-    } void()
+#define ASSIGN_CONFIG_STRING(name, msg)                                                                                \
+    if(!JNI_STRING16_OR_NPE(                                                                                           \
+           config.name, env, env->GetObjectField(java_config, runtime.ultralight_config.name##_field), msg)) {         \
+        return;                                                                                                        \
+    }                                                                                                                  \
+    void()
+
+#define ASSIGN_CONFIG(type, name)                                                                                      \
+    config.name = env->Get##type##Field(java_config, runtime.ultralight_config.name##_field);                          \
+    if(env->ExceptionCheck()) {                                                                                        \
+        return;                                                                                                        \
+    }                                                                                                                  \
+    void()
 
 namespace ultralight_java {
     jobject UltralightPlatformJNI::global_instance = nullptr;
 
-    jobject UltralightPlatformJNI::instance(JNIEnv *env, jclass caller_class) {
-        if (!global_instance) {
+    void UltralightPlatformJNI::run_on_safe_thread(JNIEnv *env, jclass caller_class, jobject runnable) {
+#ifndef WIN32
+        env->CallVoidMethod(runnable, runtime.runnable.run_method);
+        return;
+#else
+        // Move the runnable to a global reference
+        jobject global_runnable = env->NewGlobalRef(runnable);
+
+        WindowsImpl::create_thread([global_runnable] {
+            // Prepare arguments for attaching the thread
+            JavaVMAttachArgs args = {JNI_VERSION_1_8, const_cast<char *>("Ultralight safe thread"), nullptr};
+
+            // Attach the thread to the JVM
+            JNIEnv *threaded_env;
+            runtime.vm->AttachCurrentThread(reinterpret_cast<void **>(&threaded_env), &args);
+
+            // Move the runnable from the global to the local variable space
+            jobject local_runnable = threaded_env->NewLocalRef(global_runnable);
+            threaded_env->DeleteGlobalRef(global_runnable);
+
+            // Invoke the runnable
+            threaded_env->CallVoidMethod(local_runnable, runtime.runnable.run_method);
+
+            // Throw java exceptions, will probably crash the process, as it reached the top
+            // of the stack
+            // TODO: Throw to thread group instead of crashing the process
+            ProxiedJavaException::throw_if_any(threaded_env);
+        });
+#endif
+    }
+
+    jobject UltralightPlatformJNI::instance(JNIEnv *env, jclass) {
+        if(!global_instance) {
             // Obtain an instance of the Ultralight platform
             auto platform_pointer = reinterpret_cast<jlong>(&ultralight::Platform::instance());
 
             // Create the corresponding java object
-            global_instance = env->NewObject(runtime.ultralight_platform.clazz, runtime.ultralight_platform.constructor,
-                                             platform_pointer);
+            global_instance = env->NewObject(
+                runtime.ultralight_platform.clazz, runtime.ultralight_platform.constructor, platform_pointer);
         }
 
         return global_instance;
@@ -38,10 +76,10 @@ namespace ultralight_java {
     void UltralightPlatformJNI::set_config(JNIEnv *env, jobject java_instance, jobject java_config) {
         // Retrieve the native pointer from the java object
         auto *platform = reinterpret_cast<ultralight::Platform *>(
-                env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
         // Check if an exception occurred while doing so
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -51,19 +89,31 @@ namespace ultralight_java {
         ultralight::Config config;
 
         ASSIGN_CONFIG_STRING(resource_path, "resourcePath can't be null");
-        ASSIGN_CONFIG_STRING(cache_path, "cachePath can't be null");
+
+        auto java_cache_path = reinterpret_cast<jstring>(
+            env->GetObjectField(java_instance, runtime.ultralight_config.cache_path_field));
+        if(!java_cache_path) {
+            // User has not set the cache path, set it to an empty string
+            config.cache_path = "";
+        } else {
+            config.cache_path = Util::create_utf16_from_jstring(env, java_cache_path);
+            if(env->ExceptionCheck()) {
+                return;
+            }
+        }
+
         ASSIGN_CONFIG(Boolean, use_gpu_renderer);
         ASSIGN_CONFIG(Double, device_scale);
         // Retrieve the face winding field
         jobject java_face_winding = env->GetObjectField(java_config, config_type.face_winding_field);
-        if (!java_face_winding) {
+        if(!java_face_winding) {
             // User has set it to null
             env->ThrowNew(runtime.null_pointer_exception.clazz, "faceWinding can't be null");
             return;
         }
 
         if(!runtime.face_winding.constants.from_java(env, java_face_winding, &config.face_winding)) {
-            // The value was invalid (shouldn't happen) and an exception has been trigerred
+            // The value was invalid (shouldn't happen) and an exception has been triggered
             // by the function
             return;
         }
@@ -71,14 +121,14 @@ namespace ultralight_java {
         ASSIGN_CONFIG(Boolean, enable_javascript);
         // Retrieve the font hinting field
         jobject java_font_hinting = env->GetObjectField(java_config, config_type.font_hinting_field);
-        if (!java_font_hinting) {
+        if(!java_font_hinting) {
             // User has set it to null
             env->ThrowNew(runtime.null_pointer_exception.clazz, "fontHinting can't be null");
             return;
         }
 
         if(!runtime.font_hinting.constants.from_java(env, java_font_hinting, &config.font_hinting)) {
-            // The value was invalid (shouldn't happen) and an exception has been trigerred
+            // The value was invalid (shouldn't happen) and an exception has been triggered
             // by the function
             return;
         }
@@ -106,10 +156,10 @@ namespace ultralight_java {
     void UltralightPlatformJNI::use_platform_font_loader(JNIEnv *env, jobject java_instance) {
         // Retrieve the native pointer from the java object
         auto *platform = reinterpret_cast<ultralight::Platform *>(
-                env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
         // Check if an exception occurred while doing so
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -120,14 +170,14 @@ namespace ultralight_java {
     void UltralightPlatformJNI::use_platform_file_system(JNIEnv *env, jobject java_instance, jstring java_base_path) {
         // Retrieve the native pointer from the java object
         auto *platform = reinterpret_cast<ultralight::Platform *>(
-                env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
         // Check if an exception occurred while doing so
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
-        if (!java_base_path) {
+        if(!java_base_path) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "basePath can't be null");
             return;
         }
@@ -140,10 +190,10 @@ namespace ultralight_java {
     void UltralightPlatformJNI::set_logger(JNIEnv *env, jobject java_instance, jobject java_logger) {
         // Retrieve the native pointer from the java object
         auto *platform = reinterpret_cast<ultralight::Platform *>(
-                env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
         // Check if an exception occurred while doing so
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
         // Get rid of the existing logger
@@ -158,4 +208,4 @@ namespace ultralight_java {
             runtime.bridged_logger = nullptr;
         }
     }
-}
+} // namespace ultralight_java

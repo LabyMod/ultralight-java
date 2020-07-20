@@ -10,6 +10,7 @@ import net.janrupf.ultralight.input.UltralightMouseEvent;
 import net.janrupf.ultralight.input.UltralightScrollEvent;
 import net.janrupf.ultralight.javascript.JavascriptException;
 import net.janrupf.ultralight.plugin.loading.UltralightLoadListener;
+import net.janrupf.ultralight.plugin.view.UltralightViewListener;
 
 import java.util.Objects;
 
@@ -255,10 +256,15 @@ public class UltralightView implements ObjectWithHandle {
      */
     public native void fireScrollEvent(UltralightScrollEvent event);
 
-    // TODO: View listener API
+    /**
+     * Set a {@link UltralightViewListener} to receive callbacks for View-related events.
+     *
+     * @param listener The listener to set
+     */
+    public native void setViewListener(UltralightViewListener listener);
 
     /**
-     * Set a LoadListener to receive callbacks for Load-related events.
+     * Set a {@link UltralightLoadListener} to receive callbacks for Load-related events.
      *
      * @param listener The listener to set
      */

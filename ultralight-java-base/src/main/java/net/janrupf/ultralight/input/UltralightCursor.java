@@ -47,5 +47,5 @@ public enum UltralightCursor {
     ZOOM_OUT,
     GRAB,
     GRABBING,
-    CUSTOM;
+    CUSTOM
 }
