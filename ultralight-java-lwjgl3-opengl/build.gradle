@@ -43,7 +43,13 @@ if(!runDir.exists() && !runDir.mkdirs()) {
     throw new GradleException("Failed to create run directory")
 }
 
-task runTest(type: JavaExec) {
+task copyTestResources(type: Copy) {
+    from "../ultralight-java-native/src/main/c/3rdparty/ultralight/bin"
+    include "**/*.dll", "resources/cacert.pem"
+    into runDir
+}
+
+task runTest(type: JavaExec, dependsOn: [copyTestResources]) {
     classpath sourceSets.test.runtimeClasspath
     main "net.janrupf.ultralight.lwjgl3.opengl.TestRunner"
     workingDir file("run")
