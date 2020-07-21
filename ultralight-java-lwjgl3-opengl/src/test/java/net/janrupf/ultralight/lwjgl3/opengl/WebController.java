@@ -7,8 +7,10 @@ import net.janrupf.ultralight.bitmap.UltralightBitmap;
 import net.janrupf.ultralight.bitmap.UltralightBitmapSurface;
 import net.janrupf.ultralight.config.FontHinting;
 import net.janrupf.ultralight.config.UltralightConfig;
+import net.janrupf.ultralight.math.IntRect;
 
 import java.nio.ByteBuffer;
+
 import static org.lwjgl.opengl.GL20.*;
 
 /**
@@ -93,7 +95,7 @@ public class WebController {
      * Render the current image using OpenGL
      */
     public void render() {
-        if (glTexture == -1) {
+        if(glTexture == -1) {
             createGLTexture();
         }
 
@@ -106,11 +108,33 @@ public class WebController {
         // Prepare OpenGL for 2D textures and bind our texture
         glEnable(GL_TEXTURE_2D);
 
-        if(surface.dirtyBounds().isValid()) {
+        IntRect dirtyBounds = surface.dirtyBounds();
+
+        if(dirtyBounds.isValid()) {
             ByteBuffer imageData = bitmap.lockPixels();
 
             glBindTexture(GL_TEXTURE_2D, this.glTexture);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, imageData);
+
+            if(dirtyBounds.width() == width && dirtyBounds.height() == height) {
+                // Update full image
+                glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, imageData);
+            } else {
+                // Update partial image
+                int x = dirtyBounds.x();
+                int y = dirtyBounds.y();
+                int dirtyWidth = dirtyBounds.width();
+                int dirtyHeight = dirtyBounds.height();
+                int startOffset = (y * width * 4) + x * 4;
+
+                glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
+                glTexSubImage2D(
+                        GL_TEXTURE_2D,
+                        0,
+                        x, y, dirtyWidth, dirtyHeight,
+                        GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
+                        (ByteBuffer) imageData.position(startOffset));
+                glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
+            }
 
             bitmap.unlockPixels();
             surface.clearDirtyBounds();
