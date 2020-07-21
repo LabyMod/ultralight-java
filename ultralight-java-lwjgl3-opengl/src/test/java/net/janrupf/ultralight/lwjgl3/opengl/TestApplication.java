@@ -123,8 +123,14 @@ public class TestApplication {
             glfwDestroyWindow(window);
         }
 
+        // Clean up native resources
+        cursorManager.cleanup();
+
         // Shut down GLFW
         glfwTerminate();
+
+        // Terminate now, will prevent warnings on shutdown
+        System.exit(0);
     }
 
     /**
@@ -179,10 +185,7 @@ public class TestApplication {
             glfwSwapBuffers(window);
         }
 
-        cursorManager.cleanup();
-        glfwTerminate();
-
-        System.exit(0);
+        stop();
     }
 
     /**
