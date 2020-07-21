@@ -19,6 +19,8 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class TestApplication {
     private final long window;
+    private final TestInputAdapter inputAdapter;
+    private final TestCursorManager cursorManager;
     private final WebController webController;
 
     public TestApplication() {
@@ -43,9 +45,10 @@ public class TestApplication {
         // Make sure to update the framebuffer size when resizing
         setCallback(GLFW::glfwSetFramebufferSizeCallback, this::updateSize);
 
-        this.webController = new WebController();
+        this.cursorManager = new TestCursorManager(window);
+        this.webController = new WebController(cursorManager);
 
-        TestInputAdapter inputAdapter = webController.getInputAdapter();
+        this.inputAdapter = webController.getInputAdapter();
 
         setCallback(GLFW::glfwSetKeyCallback, inputAdapter::keyCallback);
         setCallback(GLFW::glfwSetCharCallback, inputAdapter::charCallback);
@@ -132,6 +135,9 @@ public class TestApplication {
         glfwMakeContextCurrent(window);
         glfwSwapInterval(0);
 
+        // Manually update focus for the first time
+        inputAdapter.focusCallback(window, glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0);
+
         // Initialize OpenGL capabilities
         GL.createCapabilities();
 
@@ -172,6 +178,9 @@ public class TestApplication {
             // Redraw the window
             glfwSwapBuffers(window);
         }
+
+        cursorManager.cleanup();
+        glfwTerminate();
 
         System.exit(0);
     }

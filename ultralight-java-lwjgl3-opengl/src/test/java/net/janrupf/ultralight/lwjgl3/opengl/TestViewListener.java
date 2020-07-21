@@ -11,6 +11,12 @@ import net.janrupf.ultralight.plugin.view.UltralightViewListener;
  * Test view listener for the main view
  */
 public class TestViewListener implements UltralightViewListener {
+    private final TestCursorManager cursorManager;
+
+    public TestViewListener(TestCursorManager cursorManager) {
+        this.cursorManager = cursorManager;
+    }
+
     @Override
     public void onChangeTitle(String title) {
         System.out.println("View title has changed: " + title);
@@ -28,7 +34,7 @@ public class TestViewListener implements UltralightViewListener {
 
     @Override
     public void onChangeCursor(UltralightCursor cursor) {
-        // System.out.println("View cursor has changed: " + cursor.name());
+        this.cursorManager.notifyCursorUpdated(cursor);
     }
 
     @Override

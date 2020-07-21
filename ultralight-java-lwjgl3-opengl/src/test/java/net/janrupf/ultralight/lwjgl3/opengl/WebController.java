@@ -28,8 +28,10 @@ public class WebController {
 
     /**
      * Constructs a new {@link WebController} and retrieves the platform.
+     *
+     * @param cursorManager Cursor manager for callbacks on cursor changes
      */
-    public WebController() {
+    public WebController(TestCursorManager cursorManager) {
         this.platform = UltralightPlatform.instance();
 
         this.platform.setConfig(
@@ -46,7 +48,7 @@ public class WebController {
         this.renderer.logMemoryUsage();
 
         this.view = renderer.createView(300, 300, false);
-        this.viewListener = new TestViewListener();
+        this.viewListener = new TestViewListener(cursorManager);
         this.view.setViewListener(viewListener);
         this.loadListener = new TestLoadListener();
         this.view.setLoadListener(loadListener);
