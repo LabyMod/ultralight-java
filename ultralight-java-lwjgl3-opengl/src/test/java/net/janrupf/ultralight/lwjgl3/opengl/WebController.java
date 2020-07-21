@@ -47,7 +47,7 @@ public class WebController {
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
 
-        this.view = renderer.createView(300, 300, false);
+        this.view = renderer.createView(300, 300, true);
         this.viewListener = new TestViewListener(cursorManager);
         this.view.setViewListener(viewListener);
         this.loadListener = new TestLoadListener();
@@ -109,13 +109,12 @@ public class WebController {
 
         // Prepare OpenGL for 2D textures and bind our texture
         glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, this.glTexture);
 
         IntRect dirtyBounds = surface.dirtyBounds();
 
         if(dirtyBounds.isValid()) {
             ByteBuffer imageData = bitmap.lockPixels();
-
-            glBindTexture(GL_TEXTURE_2D, this.glTexture);
 
             if(dirtyBounds.width() == width && dirtyBounds.height() == height) {
                 // Update full image
@@ -161,7 +160,7 @@ public class WebController {
 
         // Make sure we draw with a neutral color
         // (so we don't mess with the color channels of the image)
-        glColor3f(1, 1, 1);
+        glColor4f(1, 1, 1, 1f);
 
         glBegin(GL_QUADS);
 
@@ -182,6 +181,8 @@ public class WebController {
         glVertex2i(width, 0);
 
         glEnd();
+
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         // Restore OpenGL state
         glPopMatrix();
