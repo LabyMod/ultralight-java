@@ -376,6 +376,22 @@ namespace ultralight_java {
         runtime.runnable.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("java/lang/Runnable")));
         runtime.runnable.run_method = env->GetMethodID(runtime.runnable.clazz, "run", "()V");
 
+        // Retrieve information about the UltralightFileSystem class
+        runtime.ultralight_file_system.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/filesystem/UltralightFileSystem")));
+        runtime.ultralight_file_system.file_exists_method =
+            env->GetMethodID(runtime.ultralight_file_system.clazz, "fileExists", "(Ljava/lang/String;)Z");
+        runtime.ultralight_file_system
+            .get_file_size_method = env->GetMethodID(runtime.ultralight_file_system.clazz, "getFileSize", "(J)J");
+        runtime.ultralight_file_system.get_file_mime_type_method = env->GetMethodID(
+            runtime.ultralight_file_system.clazz, "getFileMimeType", "(Ljava/lang/String;)Ljava/lang/String;");
+        runtime.ultralight_file_system.open_file_method =
+            env->GetMethodID(runtime.ultralight_file_system.clazz, "openFile", "(Ljava/lang/String;Z)J");
+        runtime.ultralight_file_system
+            .close_file_method = env->GetMethodID(runtime.ultralight_file_system.clazz, "closeFile", "(J)V");
+        runtime.ultralight_file_system.read_from_file_method =
+            env->GetMethodID(runtime.ultralight_file_system.clazz, "readFromFile", "(JLjava/nio/ByteBuffer;J)J");
+
         // Retrieve information about the JavascriptException class
         runtime.javascript_exception.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptException")));
@@ -408,6 +424,7 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.illegal_state_exception.clazz);
         env->DeleteGlobalRef(runtime.null_pointer_exception.clazz);
         env->DeleteGlobalRef(runtime.javascript_exception.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_file_system.clazz);
         env->DeleteGlobalRef(runtime.runnable.clazz);
         env->DeleteGlobalRef(runtime.ultralight_view_listener.clazz);
         runtime.message_source.constants.clear(env);

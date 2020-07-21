@@ -34,6 +34,11 @@ namespace ultralight_java {
                  const_cast<char *>("(Ljava/lang/String;)V"),
                  reinterpret_cast<void *>(&UltralightPlatformJNI::use_platform_file_system)},
              JNINativeMethod{
+                 const_cast<char *>("setFileSystem"),
+                 const_cast<char *>("(Lnet/janrupf/ultralight/plugin/filesystem/UltralightFileSystem;)V"),
+                 reinterpret_cast<void *>(&UltralightPlatformJNI::set_file_system)
+             },
+             JNINativeMethod{
                  const_cast<char *>("setLogger"),
                  const_cast<char *>("(Lnet/janrupf/ultralight/plugin/logging/UltralightLogger;)V"),
                  reinterpret_cast<void *>(&UltralightPlatformJNI::set_logger)}};
@@ -536,5 +541,8 @@ namespace ultralight_java {
             "CONTENT_BLOCKER",
             ultralight::kMessageSource_Other,
             "OTHER");
+
+        runtime.bridged_logger = nullptr;
+        runtime.bridged_file_system = nullptr;
     }
 } // namespace ultralight_java

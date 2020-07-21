@@ -5,6 +5,7 @@ import net.janrupf.ultralight.annotation.NativeType;
 import net.janrupf.ultralight.annotation.Unsigned;
 import net.janrupf.ultralight.config.UltralightConfig;
 import net.janrupf.ultralight.ffi.ObjectWithHandle;
+import net.janrupf.ultralight.plugin.filesystem.UltralightFileSystem;
 import net.janrupf.ultralight.plugin.logging.UltralightLogger;
 
 /**
@@ -62,6 +63,21 @@ public class UltralightPlatform implements ObjectWithHandle {
      * @param basePath The path to resolve `file:///` URL's relative to
      */
     public native void usePlatformFileSystem(String basePath);
+
+    /**
+     *  Set the File System (will be used for all file system operations).
+     *
+     * @param fileSystem The file system to use
+     */
+    public native void setFileSystem(UltralightFileSystem fileSystem);
+
+    // TODO: Clipboard support
+
+    // TODO: Font loader support
+
+    // TODO: GPU driver support
+
+    // TODO: Surface factory support
 
     /**
      * Sets the internal logger implementation to the provided one.

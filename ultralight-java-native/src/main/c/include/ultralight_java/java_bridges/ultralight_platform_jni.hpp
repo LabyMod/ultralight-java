@@ -60,11 +60,20 @@ namespace ultralight_java {
         static void use_platform_file_system(JNIEnv *env, jobject java_instance, jstring java_base_path);
 
         /**
+         * Sets the internal file system to the provided java one.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The instance of the platform as a java object
+         * @param java_file_system The java file system object
+         */
+        static void set_file_system(JNIEnv *env, jobject java_instance, jobject java_file_system);
+
+        /**
          * Sets the internal logger to the provided java one.
          *
          * @param env The JNI environment to use for accessing java
          * @param java_instance The instance of the platform as a java object
-         * @param java_logger
+         * @param java_logger The java logger object
          */
         static void set_logger(JNIEnv *env, jobject java_instance, jobject java_logger);
     };

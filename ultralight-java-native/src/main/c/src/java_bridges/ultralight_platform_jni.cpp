@@ -4,6 +4,7 @@
 #include <Ultralight/Ultralight.h>
 
 #include "ultralight_java/java_bridges/bridged_logger.hpp"
+#include "ultralight_java/java_bridges/bridged_file_system.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
 
@@ -187,8 +188,8 @@ namespace ultralight_java {
         platform->set_file_system(ultralight::GetPlatformFileSystem(base_path));
     }
 
-    void UltralightPlatformJNI::set_logger(JNIEnv *env, jobject java_instance, jobject java_logger) {
-        // Retrieve the native pointer from the java object
+    void UltralightPlatformJNI::set_file_system(JNIEnv *env, jobject java_instance, jobject java_file_system) {
+        // Retrieve the native platform pointer from the java object
         auto *platform = reinterpret_cast<ultralight::Platform *>(
             env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
@@ -196,6 +197,36 @@ namespace ultralight_java {
         if(env->ExceptionCheck()) {
             return;
         }
+
+        // Remove the existing file system
+        platform->set_file_system(nullptr);
+
+        // Get rid of the existing file system
+        delete runtime.bridged_file_system;
+
+        if(java_file_system) {
+            // Create and set the new file system
+            runtime.bridged_file_system = new BridgedFileSystem(env, java_file_system);
+            platform->set_file_system(runtime.bridged_file_system);
+        } else {
+            // Null out the file system
+            runtime.bridged_file_system = nullptr;
+        }
+    }
+
+    void UltralightPlatformJNI::set_logger(JNIEnv *env, jobject java_instance, jobject java_logger) {
+        // Retrieve the native platform pointer from the java object
+        auto *platform = reinterpret_cast<ultralight::Platform *>(
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+
+        // Check if an exception occurred while doing so
+        if(env->ExceptionCheck()) {
+            return;
+        }
+
+        // Remove the existing logger
+        platform->set_logger(nullptr);
+
         // Get rid of the existing logger
         delete runtime.bridged_logger;
 

@@ -37,7 +37,7 @@ public class WebController {
                         .deviceScale(1.0)
         );
         this.platform.usePlatformFontLoader();
-        this.platform.usePlatformFileSystem(".");
+        this.platform.setFileSystem(new TestFileSystem());
         this.platform.setLogger(new TestLogger());
 
         this.renderer = UltralightRenderer.create();

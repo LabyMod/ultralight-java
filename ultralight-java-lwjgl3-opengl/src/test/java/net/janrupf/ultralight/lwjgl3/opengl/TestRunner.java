@@ -2,13 +2,11 @@ package net.janrupf.ultralight.lwjgl3.opengl;
 
 import net.janrupf.ultralight.UltralightJava;
 import net.janrupf.ultralight.UltralightLoadException;
-import net.janrupf.ultralight.UltralightPlatform;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Entry pointer and controller for the test application.
@@ -37,17 +35,15 @@ public class TestRunner {
 
         CountDownLatch shutdownLatch = new CountDownLatch(1);
 
-        UltralightPlatform.runOnSafeThread(() -> {
-            // Create and run a simple test application
-            TestApplication application = new TestApplication();
-            application.centerWindow();
-            application.run();
+        // Create and run a simple test application
+        TestApplication application = new TestApplication();
+        application.centerWindow();
+        application.run();
 
-            // The user has requested the application to stop
-            application.stop();
+        // The user has requested the application to stop
+        application.stop();
 
-            shutdownLatch.countDown();
-        });
+        shutdownLatch.countDown();
 
         shutdownLatch.await();
     }
