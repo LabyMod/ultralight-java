@@ -69,6 +69,15 @@ namespace ultralight_java {
         static void set_file_system(JNIEnv *env, jobject java_instance, jobject java_file_system);
 
         /**
+         * Sets the internal clipboard to the provided java one
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The instance of the platform as a java object
+         * @param java_clipboard The java clipboard object
+         */
+        static void set_clipboard(JNIEnv *env, jobject java_instance, jobject java_clipboard);
+
+        /**
          * Sets the internal logger to the provided java one.
          *
          * @param env The JNI environment to use for accessing java

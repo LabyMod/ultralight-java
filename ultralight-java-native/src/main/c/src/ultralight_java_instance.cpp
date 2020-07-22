@@ -392,6 +392,15 @@ namespace ultralight_java {
         runtime.ultralight_file_system.read_from_file_method =
             env->GetMethodID(runtime.ultralight_file_system.clazz, "readFromFile", "(JLjava/nio/ByteBuffer;J)J");
 
+        runtime.ultralight_clipboard.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/clipboard/UltralightClipboard")));
+        runtime.ultralight_clipboard
+            .clear_method = env->GetMethodID(runtime.ultralight_clipboard.clazz, "clear", "()V");
+        runtime.ultralight_clipboard.read_plain_text_method =
+            env->GetMethodID(runtime.ultralight_clipboard.clazz, "readPlainText", "()Ljava/lang/String;");
+        runtime.ultralight_clipboard.write_plain_text_method =
+            env->GetMethodID(runtime.ultralight_clipboard.clazz, "writePlainText", "(Ljava/lang/String;)V");
+
         // Retrieve information about the JavascriptException class
         runtime.javascript_exception.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptException")));
@@ -424,6 +433,7 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.illegal_state_exception.clazz);
         env->DeleteGlobalRef(runtime.null_pointer_exception.clazz);
         env->DeleteGlobalRef(runtime.javascript_exception.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_clipboard.clazz);
         env->DeleteGlobalRef(runtime.ultralight_file_system.clazz);
         env->DeleteGlobalRef(runtime.runnable.clazz);
         env->DeleteGlobalRef(runtime.ultralight_view_listener.clazz);

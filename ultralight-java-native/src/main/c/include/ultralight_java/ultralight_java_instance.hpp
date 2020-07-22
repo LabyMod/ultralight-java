@@ -10,6 +10,7 @@
 namespace ultralight_java {
     class BridgedLogger;
     class BridgedFileSystem;
+    class BridgedClipboard;
 
     struct UltralightJavaRuntime {
         struct {
@@ -38,7 +39,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 7> native_methods;
+            std::array<JNINativeMethod, 8> native_methods;
         } ultralight_platform;
 
         struct {
@@ -447,6 +448,17 @@ namespace ultralight_java {
              * The java class itself
              */
             jclass clazz;
+
+            jmethodID clear_method;
+            jmethodID read_plain_text_method;
+            jmethodID write_plain_text_method;
+        } ultralight_clipboard;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
         } javascript_exception;
 
         struct {
@@ -484,6 +496,11 @@ namespace ultralight_java {
          * Current global file system instance, or nullptr, if none
          */
         BridgedFileSystem *bridged_file_system;
+
+        /**
+         * Current global clipboard instance, or nullptr, if none
+         */
+        BridgedClipboard *bridged_clipboard;
     };
 
     /**

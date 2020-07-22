@@ -5,15 +5,14 @@ import net.janrupf.ultralight.annotation.NativeType;
 import net.janrupf.ultralight.annotation.Unsigned;
 import net.janrupf.ultralight.config.UltralightConfig;
 import net.janrupf.ultralight.ffi.ObjectWithHandle;
+import net.janrupf.ultralight.plugin.clipboard.UltralightClipboard;
 import net.janrupf.ultralight.plugin.filesystem.UltralightFileSystem;
 import net.janrupf.ultralight.plugin.logging.UltralightLogger;
 
 /**
- * Platform singleton to configure Ultralight and provide user-defined
- * implementations for various platform operations.
+ * Platform singleton to configure Ultralight and provide user-defined implementations for various platform operations.
  * <p>
- * All of these settings and user-defined interfaces should be set
- * BEFORE creating the Renderer.
+ * All of these settings and user-defined interfaces should be set BEFORE creating the Renderer.
  */
 @NativeType("ultralight::Platform")
 public class UltralightPlatform implements ObjectWithHandle {
@@ -30,9 +29,8 @@ public class UltralightPlatform implements ObjectWithHandle {
     }
 
     /**
-     * Runs the runnable on a thread from which it is safe to interact with Ultralight.
-     * This is required as the JVM sets up the stack in an unusual way on some platforms,
-     * causing the JavaScript engine from WebCore to fail.
+     * Runs the runnable on a thread from which it is safe to interact with Ultralight. This is required as the JVM sets
+     * up the stack in an unusual way on some platforms, causing the JavaScript engine from WebCore to fail.
      *
      * @param runnable The runnable to run on the safe thread
      */
@@ -65,13 +63,18 @@ public class UltralightPlatform implements ObjectWithHandle {
     public native void usePlatformFileSystem(String basePath);
 
     /**
-     *  Set the File System (will be used for all file system operations).
+     * Set the File System (will be used for all file system operations).
      *
      * @param fileSystem The file system to use
      */
     public native void setFileSystem(UltralightFileSystem fileSystem);
 
-    // TODO: Clipboard support
+    /**
+     * Set the Clipboard (will be used for all clipboard operations).
+     *
+     * @param clipboard A user-defined Clipboard implementation
+     */
+    public native void setClipboard(UltralightClipboard clipboard);
 
     // TODO: Font loader support
 
@@ -92,7 +95,9 @@ public class UltralightPlatform implements ObjectWithHandle {
      * @return The native underlying pointer
      */
     @Override
-    public @NativeType("ultralight::Platform *") @Unsigned long getHandle() {
+    public @NativeType("ultralight::Platform *")
+    @Unsigned
+    long getHandle() {
         return handle;
     }
 }

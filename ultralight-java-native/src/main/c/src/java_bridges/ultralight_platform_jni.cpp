@@ -3,8 +3,9 @@
 #include <AppCore/Platform.h>
 #include <Ultralight/Ultralight.h>
 
-#include "ultralight_java/java_bridges/bridged_logger.hpp"
+#include "ultralight_java/java_bridges/bridegd_clipboard.hpp"
 #include "ultralight_java/java_bridges/bridged_file_system.hpp"
+#include "ultralight_java/java_bridges/bridged_logger.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
 
@@ -211,6 +212,32 @@ namespace ultralight_java {
         } else {
             // Null out the file system
             runtime.bridged_file_system = nullptr;
+        }
+    }
+
+    void UltralightPlatformJNI::set_clipboard(JNIEnv *env, jobject java_instance, jobject java_clipboard) {
+        // Retrieve the native platform pointer from the java object
+        auto *platform = reinterpret_cast<ultralight::Platform *>(
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+
+        // Check if an exception occurred while doing so
+        if(env->ExceptionCheck()) {
+            return;
+        }
+
+        // Remove the existing clipboard
+        platform->set_clipboard(nullptr);
+
+        // Get rid of the existing clipboard
+        delete runtime.bridged_clipboard;
+
+        if(java_clipboard) {
+            // Create and set the new clipboard
+            runtime.bridged_clipboard = new BridgedClipboard(env, java_clipboard);
+            platform->set_clipboard(runtime.bridged_clipboard);
+        } else {
+            // Null out the clipboard
+            runtime.bridged_clipboard = nullptr;
         }
     }
 

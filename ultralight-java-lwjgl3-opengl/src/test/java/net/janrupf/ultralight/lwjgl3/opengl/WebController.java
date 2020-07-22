@@ -43,6 +43,7 @@ public class WebController {
         this.platform.usePlatformFontLoader();
         this.platform.setFileSystem(new TestFileSystem());
         this.platform.setLogger(new TestLogger());
+        this.platform.setClipboard(new TestClipboard());
 
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
