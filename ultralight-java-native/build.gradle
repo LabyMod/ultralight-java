@@ -55,5 +55,11 @@ task build(type: CMakeBuildTask) {
                 "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
                 "GENERATED_JNI_HEADERS_DIR": java.util.Optional.of(generatedHeadersDir.absolutePath)
         ]
+
+        def javaHome = System.getProperty("java.home")
+        if(javaHome != null) {
+            javaHome = javaHome.replace('\\', '/')
+            variable "JAVA_HOME", javaHome
+        }
     }
 }
