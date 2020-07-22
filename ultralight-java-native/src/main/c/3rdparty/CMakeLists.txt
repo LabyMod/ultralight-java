@@ -26,7 +26,8 @@ else ()
 endif ()
 
 # Ultralight
-set(ULTRALIGHT_DIR "${CMAKE_CURRENT_LIST_DIR}/ultralight-${ULTRALIGHT_OS_NAME}-${ULTRALIGHT_ARCH}")
+set(ULTRALIGHT_DIR "${CMAKE_CURRENT_BINARY_DIR}/ultralight-${ULTRALIGHT_OS_NAME}-${ULTRALIGHT_ARCH}")
+set(ULTRALIGHT_ARCHIVE "${ULTRALIGHT_DIR}/ultralight.7z")
 set(ULTRALIGHT_VERSION "latest") # TODO
 
 # Check the version of ultralight
@@ -47,7 +48,7 @@ if (NOT EXISTS "${ULTRALIGHT_DIR}")
     # It does not, download ultralight and extract it
     file(DOWNLOAD
             "https://ultralight-sdk.sfo2.cdn.digitaloceanspaces.com/ultralight-sdk-${ULTRALIGHT_VERSION}-${ULTRALIGHT_OS_NAME}-${ULTRALIGHT_ARCH}.7z"
-            "ultralight.7z"
+            "${ULTRALIGHT_ARCHIVE}"
             SHOW_PROGRESS
             STATUS ULTRALIGHT_DOWNLOAD_STATUS
             LOG ULTRALIGHT_DOWNLOAD_LOG
@@ -64,13 +65,18 @@ if (NOT EXISTS "${ULTRALIGHT_DIR}")
     endif()
 
     # Extract it
-    file(ARCHIVE_EXTRACT
-            INPUT "ultralight.7z"
-            DESTINATION "${ULTRALIGHT_DIR}"
-            )
+    execute_process(
+            COMMAND "${CMAKE_COMMAND}" -E tar xvf "${ULTRALIGHT_ARCHIVE}"
+            WORKING_DIRECTORY "${ULTRALIGHT_DIR}"
+            RESULT_VARIABLE EXTRACT_ERROR
+    )
+
+    if(EXTRACT_ERROR)
+        message(FATAL_ERROR "Failed to extract the ultralight zip archive")
+    endif()
 
     # Delete the archive file
-    file(REMOVE "ultralight.7z")
+    file(REMOVE "${ULTRALIGHT_ARCHIVE}")
 
     # Write the version file
     file(WRITE "${ULTRALIGHT_VERSION_FILE}" "${ULTRALIGHT_VERSION}")

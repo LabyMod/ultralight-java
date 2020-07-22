@@ -75,3 +75,25 @@ task exportTestCommandLine {
         println tasks.runTest.commandLine.join(" ")
     }
 }
+
+task testJar(type: Jar) {
+    sourceSets.test.runtimeClasspath.each {
+        def target = file(it)
+
+        if(!target.exists()) {
+            return
+        }
+
+        if(target.isDirectory()) {
+            from(fileTree(it))
+        } else {
+            from(zipTree(it))
+        }
+    }
+
+    manifest {
+        attributes(
+                "Main-Class": "net.janrupf.ultralight.lwjgl3.opengl.TestRunner"
+        )
+    }
+}
