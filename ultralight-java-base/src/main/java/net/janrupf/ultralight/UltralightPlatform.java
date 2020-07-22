@@ -29,14 +29,6 @@ public class UltralightPlatform implements ObjectWithHandle {
     }
 
     /**
-     * Runs the runnable on a thread from which it is safe to interact with Ultralight. This is required as the JVM sets
-     * up the stack in an unusual way on some platforms, causing the JavaScript engine from WebCore to fail.
-     *
-     * @param runnable The runnable to run on the safe thread
-     */
-    public static native void runOnSafeThread(Runnable runnable);
-
-    /**
      * Get the {@link UltralightPlatform} singleton.
      *
      * @return The {@link UltralightPlatform} singleton

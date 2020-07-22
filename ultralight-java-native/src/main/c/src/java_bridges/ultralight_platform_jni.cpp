@@ -31,37 +31,6 @@
 namespace ultralight_java {
     jobject UltralightPlatformJNI::global_instance = nullptr;
 
-    void UltralightPlatformJNI::run_on_safe_thread(JNIEnv *env, jclass caller_class, jobject runnable) {
-#ifndef WIN32
-        env->CallVoidMethod(runnable, runtime.runnable.run_method);
-        return;
-#else
-        // Move the runnable to a global reference
-        jobject global_runnable = env->NewGlobalRef(runnable);
-
-        WindowsImpl::create_thread([global_runnable] {
-            // Prepare arguments for attaching the thread
-            JavaVMAttachArgs args = {JNI_VERSION_1_8, const_cast<char *>("Ultralight safe thread"), nullptr};
-
-            // Attach the thread to the JVM
-            JNIEnv *threaded_env;
-            runtime.vm->AttachCurrentThread(reinterpret_cast<void **>(&threaded_env), &args);
-
-            // Move the runnable from the global to the local variable space
-            jobject local_runnable = threaded_env->NewLocalRef(global_runnable);
-            threaded_env->DeleteGlobalRef(global_runnable);
-
-            // Invoke the runnable
-            threaded_env->CallVoidMethod(local_runnable, runtime.runnable.run_method);
-
-            // Throw java exceptions, will probably crash the process, as it reached the top
-            // of the stack
-            // TODO: Throw to thread group instead of crashing the process
-            ProxiedJavaException::throw_if_any(threaded_env);
-        });
-#endif
-    }
-
     jobject UltralightPlatformJNI::instance(JNIEnv *env, jclass) {
         if(!global_instance) {
             // Obtain an instance of the Ultralight platform

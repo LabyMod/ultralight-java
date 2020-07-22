@@ -13,10 +13,6 @@ namespace ultralight_java {
     void init_runtime_struct() {
         runtime.ultralight_platform.native_methods =
             {JNINativeMethod{
-                 const_cast<char *>("runOnSafeThread"),
-                 const_cast<char *>("(Ljava/lang/Runnable;)V"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::run_on_safe_thread)},
-             JNINativeMethod{
                  const_cast<char *>("instance"),
                  const_cast<char *>("()Lnet/janrupf/ultralight/UltralightPlatform;"),
                  reinterpret_cast<void *>(&UltralightPlatformJNI::instance)},
