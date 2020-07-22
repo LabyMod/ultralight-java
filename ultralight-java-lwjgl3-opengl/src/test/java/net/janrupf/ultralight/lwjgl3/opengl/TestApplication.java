@@ -7,6 +7,8 @@ import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
+import java.nio.DoubleBuffer;
+import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -32,8 +34,6 @@ public class TestApplication {
             throw new IllegalStateException("Failed to initialize GLFW");
         }
 
-        glfwWindowHint(GLFW_SAMPLES, 16);
-
         // Create a GLFW window
         window = glfwCreateWindow(640, 480, "Ultralight GLFW", MemoryUtil.NULL, MemoryUtil.NULL);
         if(window == MemoryUtil.NULL) {
@@ -50,6 +50,7 @@ public class TestApplication {
 
         this.inputAdapter = webController.getInputAdapter();
 
+        setCallback(GLFW::glfwSetWindowContentScaleCallback, inputAdapter::windowContentScaleCallback);
         setCallback(GLFW::glfwSetKeyCallback, inputAdapter::keyCallback);
         setCallback(GLFW::glfwSetCharCallback, inputAdapter::charCallback);
         setCallback(GLFW::glfwSetCursorPosCallback, inputAdapter::cursorPosCallback);
@@ -139,13 +140,35 @@ public class TestApplication {
     public void run() {
         // Make the window's OpenGL context the current one
         glfwMakeContextCurrent(window);
-        glfwSwapInterval(0);
+        glfwSwapInterval(1);
+
+        // Initialize OpenGL capabilities
+        GL.createCapabilities();
 
         // Manually update focus for the first time
         inputAdapter.focusCallback(window, glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0);
 
-        // Initialize OpenGL capabilities
-        GL.createCapabilities();
+        try(MemoryStack stack = MemoryStack.stackPush()) {
+            // Update window size for the first time
+            IntBuffer sizeBuffer = stack.callocInt(2);
+
+            // Retrieve the size into the int buffer
+            glfwGetWindowSize(window,
+                    (IntBuffer) sizeBuffer.slice().position(0), (IntBuffer) sizeBuffer.slice().position(1));
+
+            // Update the size
+            updateSize(window, sizeBuffer.get(0), sizeBuffer.get(1));
+
+            // Update scale for the first time
+            FloatBuffer scaleBuffer = stack.callocFloat(2);
+
+            // Retrieve the size into the float buffer
+            glfwGetWindowContentScale(window,
+                    (FloatBuffer) scaleBuffer.slice().position(0), (FloatBuffer) scaleBuffer.slice().position(1));
+
+            // Update the scale
+            inputAdapter.windowContentScaleCallback(window, scaleBuffer.get(0), scaleBuffer.get(1));
+        }
 
         glEnable(GL_MULTISAMPLE);
 
@@ -192,7 +215,7 @@ public class TestApplication {
      * Adjusts the viewport size to the given size.
      *
      * @param window The window the viewport has changed on
-     * @param width The new width of the viewport
+     * @param width  The new width of the viewport
      * @param height The new height of the viewport
      */
     private void updateSize(long window, int width, int height) {
@@ -203,7 +226,7 @@ public class TestApplication {
     /**
      * Callback notified when an error occurs in GLFW.
      *
-     * @param error The error code
+     * @param error   The error code
      * @param message A human readable error message
      */
     private void onGLFWError(int error, long message) {
@@ -214,10 +237,10 @@ public class TestApplication {
     /**
      * Sets a GLFW callback and frees the old callback if it exists.
      *
-     * @param setter The function to use for setting the new callback
+     * @param setter   The function to use for setting the new callback
      * @param newValue The new callback
-     * @param <T> The type of the new callback
-     * @param <C> The type of the old callback
+     * @param <T>      The type of the new callback
+     * @param <C>      The type of the old callback
      */
     private <T, C extends Callback> void setCallback(Function<T, C> setter, T newValue) {
         C oldValue = setter.apply(newValue);
@@ -229,10 +252,10 @@ public class TestApplication {
     /**
      * Sets a GLFW callback and frees the old callback if it exists.
      *
-     * @param setter The function to use for setting the new callback
+     * @param setter   The function to use for setting the new callback
      * @param newValue The new callback
-     * @param <T> The type of the new callback
-     * @param <C> The type of the old callback
+     * @param <T>      The type of the new callback
+     * @param <C>      The type of the old callback
      */
     private <T, C extends Callback> void setCallback(BiFunction<Long, T, C> setter, T newValue) {
         C oldValue = setter.apply(window, newValue);

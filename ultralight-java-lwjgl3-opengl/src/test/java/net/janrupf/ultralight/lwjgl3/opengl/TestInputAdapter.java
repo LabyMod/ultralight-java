@@ -14,6 +14,9 @@ import static org.lwjgl.glfw.GLFW.*;
 public class TestInputAdapter {
     private final UltralightView view;
 
+    private float xScale;
+    private float yScale;
+
     /**
      * Constructs a new {@link TestInputAdapter} for the specified view.
      *
@@ -21,6 +24,18 @@ public class TestInputAdapter {
      */
     public TestInputAdapter(UltralightView view) {
         this.view = view;
+    }
+
+    /**
+     * Called by GLFW then the content scale (DPI ratio) changes.
+     *
+     * @param window The window that caused the event
+     * @param xScale The new x scale
+     * @param yScale The new y scale
+     */
+    public void windowContentScaleCallback(long window, float xScale, float yScale) {
+        this.xScale = xScale;
+        this.yScale = yScale;
     }
 
     /**
@@ -47,7 +62,7 @@ public class TestInputAdapter {
         // Send the event
         view.fireKeyEvent(event);
 
-        if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_ENTER || key == GLFW_KEY_TAB)) {
+        if((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_ENTER || key == GLFW_KEY_TAB)) {
             // These keys need to be translated specially
             String text = key == GLFW_KEY_ENTER ? "\r" : "\t";
             UltralightKeyEvent extraEvent = new UltralightKeyEvent()
@@ -90,16 +105,16 @@ public class TestInputAdapter {
     public void cursorPosCallback(long window, double x, double y) {
         // Create the event
         UltralightMouseEvent event = new UltralightMouseEvent()
-                .x((int) x)
-                .y((int) y)
+                .x((int) (x * xScale))
+                .y((int) (y * yScale))
                 .type(UltralightMouseEventType.MOVED);
 
         // Translate the mouse state to the event
-        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             event.button(UltralightMouseEventButton.LEFT);
-        } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+        } else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
             event.button(UltralightMouseEventButton.MIDDLE);
-        } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        } else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             event.button(UltralightMouseEventButton.RIGHT);
         }
 
@@ -120,7 +135,7 @@ public class TestInputAdapter {
         double y;
 
         // Use a memory stack so we don't have to worry about freeing allocations
-        try (MemoryStack stack = MemoryStack.stackPush()) {
+        try(MemoryStack stack = MemoryStack.stackPush()) {
             DoubleBuffer buffer = stack.callocDouble(2);
 
             // Retrieve the current cursor pos
@@ -133,12 +148,12 @@ public class TestInputAdapter {
 
         // Create the event
         UltralightMouseEvent event = new UltralightMouseEvent()
-                .x((int) x)
-                .y((int) y)
+                .x((int) (x * xScale))
+                .y((int) (y * yScale))
                 .type(action == GLFW_PRESS ? UltralightMouseEventType.DOWN : UltralightMouseEventType.UP);
 
         // Sort out the button
-        switch (button) {
+        switch(button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 event.button(UltralightMouseEventButton.LEFT);
                 break;
@@ -178,7 +193,7 @@ public class TestInputAdapter {
      * Called by GLFW when the window gains or looses focus.
      *
      * @param window The window that caused the event
-     * @param focus Whether the window gained focus
+     * @param focus  Whether the window gained focus
      */
     public void focusCallback(long window, boolean focus) {
         if(focus) {
@@ -197,19 +212,19 @@ public class TestInputAdapter {
     private int glfwToUltralightModifiers(int modifiers) {
         int ultralightModifiers = 0;
 
-        if ((modifiers & GLFW_MOD_ALT) != 0) {
+        if((modifiers & GLFW_MOD_ALT) != 0) {
             ultralightModifiers |= UltralightInputModifier.ALT_KEY;
         }
 
-        if ((modifiers & GLFW_MOD_CONTROL) != 0) {
+        if((modifiers & GLFW_MOD_CONTROL) != 0) {
             ultralightModifiers |= UltralightInputModifier.CTRL_KEY;
         }
 
-        if ((modifiers & GLFW_MOD_SUPER) != 0) {
+        if((modifiers & GLFW_MOD_SUPER) != 0) {
             ultralightModifiers |= UltralightInputModifier.META_KEY;
         }
 
-        if ((modifiers & GLFW_MOD_SHIFT) != 0) {
+        if((modifiers & GLFW_MOD_SHIFT) != 0) {
             ultralightModifiers |= UltralightInputModifier.SHIFT_KEY;
         }
 
@@ -223,7 +238,7 @@ public class TestInputAdapter {
      * @return The translated Ultralight key, or {@link UltralightKey#UNKNOWN}, if the key could not be translated
      */
     private UltralightKey glfwToUltralightKey(int key) {
-        switch (key) {
+        switch(key) {
             case GLFW_KEY_SPACE:
                 return UltralightKey.SPACE;
             case GLFW_KEY_APOSTROPHE:
