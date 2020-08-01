@@ -51,7 +51,7 @@ public class WebController {
         this.view = renderer.createView(300, 300, true);
         this.viewListener = new TestViewListener(cursorManager);
         this.view.setViewListener(viewListener);
-        this.loadListener = new TestLoadListener();
+        this.loadListener = new TestLoadListener(view);
         this.view.setLoadListener(loadListener);
         this.glTexture = -1;
 

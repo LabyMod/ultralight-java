@@ -34,6 +34,7 @@ public class FFIGarbageCollectorController {
      * is created and no collector has been supplied by the user.
      *
      * @param collector The new garbage collector instance
+     * @throws IllegalStateException If the collector has been set already
      */
     public static void setCollector(FFIGarbageCollector collector) {
         if(FFIGarbageCollectorController.collector != null) {

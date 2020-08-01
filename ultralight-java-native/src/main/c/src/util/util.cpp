@@ -3,6 +3,26 @@
 #include "ultralight_java/ultralight_java_instance.hpp"
 
 namespace ultralight_java {
+    template <typename T>
+    constexpr const jchar *to_jchar_ptr(const T *value) {
+        return reinterpret_cast<const jchar *>(value);
+    }
+
+    template <>
+    constexpr const jchar *to_jchar_ptr(const jchar *value) {
+        return value;
+    }
+
+    template <typename T>
+    constexpr const JSChar *to_jschar_ptr(const T *value) {
+        return reinterpret_cast<const JSChar *>(value);
+    }
+
+    template <>
+    constexpr const JSChar *to_jschar_ptr(const JSChar *value) {
+        return value;
+    }
+
     ultralight::String16 Util::create_utf16_from_jstring(JNIEnv *env, jstring str) {
         // Acquire the UTF16 chars of the String and its length
         const jchar *chars = env->GetStringChars(str, nullptr);
@@ -39,26 +59,25 @@ namespace ultralight_java {
 
     jobject Util::create_jobject_from_int_rect(JNIEnv *env, const ultralight::IntRect &int_rect) {
         return env->NewObject(
-                runtime.int_rect.clazz,
-                runtime.int_rect.bounds_constructor,
-                int_rect.left,
-                int_rect.top,
-                int_rect.right,
-                int_rect.bottom
-        );
+            runtime.int_rect.clazz,
+            runtime.int_rect.bounds_constructor,
+            int_rect.left,
+            int_rect.top,
+            int_rect.right,
+            int_rect.bottom);
     }
 
     ultralight::KeyEvent Util::create_key_event_from_jobject(JNIEnv *env, jobject event) {
         const auto &t = runtime.ultralight_key_event;
 
         auto java_event_type = env->GetObjectField(event, t.type_field);
-        if (!java_event_type) {
+        if(!java_event_type) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "eventType can't be null");
             return ultralight::KeyEvent{};
         }
 
         ultralight::KeyEvent::Type event_type;
-        if (!runtime.ultralight_key_event_type.constants.from_java(env, java_event_type, &event_type)) {
+        if(!runtime.ultralight_key_event_type.constants.from_java(env, java_event_type, &event_type)) {
             return ultralight::KeyEvent{};
         }
 
@@ -66,7 +85,7 @@ namespace ultralight_java {
 
         auto java_virtual_key_code = env->GetObjectField(event, t.virtual_key_code_field);
         int virtual_key_code;
-        if (!java_virtual_key_code) {
+        if(!java_virtual_key_code) {
             virtual_key_code = ultralight::KeyCodes::GK_UNKNOWN;
         } else {
             virtual_key_code = env->GetIntField(java_virtual_key_code, runtime.ultralight_key.id_field);
@@ -76,7 +95,7 @@ namespace ultralight_java {
 
         auto java_key_identifier = env->GetObjectField(event, t.key_identifier_field);
         ultralight::String key_identifier;
-        if (!java_key_identifier) {
+        if(!java_key_identifier) {
             key_identifier = "";
         } else {
             key_identifier = create_utf16_from_jstring(env, reinterpret_cast<jstring>(java_key_identifier));
@@ -84,7 +103,7 @@ namespace ultralight_java {
 
         auto java_text = env->GetObjectField(event, t.text_field);
         ultralight::String text;
-        if (!java_text) {
+        if(!java_text) {
             text = "";
         } else {
             text = create_utf16_from_jstring(env, reinterpret_cast<jstring>(java_text));
@@ -92,7 +111,7 @@ namespace ultralight_java {
 
         auto java_unmodified_text = env->GetObjectField(event, t.unmodified_text_field);
         ultralight::String unmodified_text;
-        if (!java_unmodified_text) {
+        if(!java_unmodified_text) {
             unmodified_text = "";
         } else {
             unmodified_text = create_utf16_from_jstring(env, reinterpret_cast<jstring>(java_unmodified_text));
@@ -121,13 +140,13 @@ namespace ultralight_java {
         const auto &t = runtime.ultralight_mouse_event;
 
         auto java_type = env->GetObjectField(event, t.type_field);
-        if (!java_type) {
+        if(!java_type) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "type can't be null");
             return ultralight::MouseEvent{};
         }
 
         ultralight::MouseEvent::Type type;
-        if (!runtime.ultralight_mouse_event_type.constants.from_java(env, java_type, &type)) {
+        if(!runtime.ultralight_mouse_event_type.constants.from_java(env, java_type, &type)) {
             return ultralight::MouseEvent{};
         }
 
@@ -137,10 +156,10 @@ namespace ultralight_java {
         auto java_button = env->GetObjectField(event, runtime.ultralight_mouse_event.button_field);
 
         ultralight::MouseEvent::Button button;
-        if (!java_button) {
+        if(!java_button) {
             button = ultralight::MouseEvent::Button::kButton_None;
         } else {
-            if (!runtime.ultralight_mouse_event_button.constants.from_java(env, java_button, &button)) {
+            if(!runtime.ultralight_mouse_event_button.constants.from_java(env, java_button, &button)) {
                 return ultralight::MouseEvent{};
             }
         }
@@ -152,13 +171,13 @@ namespace ultralight_java {
         const auto &t = runtime.ultralight_scroll_event;
 
         auto java_type = env->GetObjectField(event, t.type_field);
-        if (!java_type) {
+        if(!java_type) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "type can't be null");
             return ultralight::ScrollEvent{};
         }
 
         ultralight::ScrollEvent::Type type;
-        if (!runtime.ultralight_scroll_event_type.constants.from_java(env, java_type, &type)) {
+        if(!runtime.ultralight_scroll_event_type.constants.from_java(env, java_type, &type)) {
             return ultralight::ScrollEvent{};
         }
 
@@ -167,4 +186,41 @@ namespace ultralight_java {
 
         return ultralight::ScrollEvent{type, delta_x, delta_y};
     }
-}
+
+    jstring Util::create_jstring_from_jsstring_ref(JNIEnv *env, JSStringRef javascript_string) {
+        const JSChar *javascript_chars = JSStringGetCharactersPtr(javascript_string);
+        size_t javascript_chars_length = JSStringGetLength(javascript_string);
+
+        return env->NewString(to_jchar_ptr(javascript_chars), javascript_chars_length);
+    }
+
+    JSStringRef Util::create_jsstring_ref_from_jstring(JNIEnv *env, jstring java_string) {
+        const jchar *java_chars = env->GetStringChars(java_string, nullptr);
+        size_t java_chars_length = env->GetStringLength(java_string);
+
+        auto javascript_string = JSStringCreateWithCharacters(to_jschar_ptr(java_chars), java_chars_length);
+        env->ReleaseStringChars(java_string, java_chars);
+
+        return javascript_string;
+    }
+
+    void Util::throw_jssvalue_ref_as_java_exception(
+        const std::string &message, JSContextRef context, JSValueRef javascript_value, JNIEnv *env, jobject lock) {
+        JSValueProtect(context, javascript_value);
+
+        jobject value = env->NewObject(
+            runtime.javascript_value.clazz,
+            runtime.javascript_value.constructor,
+            reinterpret_cast<JSValueRef>(javascript_value),
+            lock);
+        if(env->ExceptionCheck()) {
+            return;
+        }
+
+        jstring exception_message = env->NewStringUTF(message.c_str());
+        auto exception = reinterpret_cast<jthrowable>(env->NewObject(
+            runtime.javascript_exception.clazz, runtime.javascript_exception.constructor, exception_message, value));
+        env->DeleteLocalRef(exception_message);
+        env->Throw(exception);
+    }
+} // namespace ultralight_java

@@ -1,5 +1,11 @@
 #include "ultralight_java/ultralight_initializer.hpp"
 
+#include "ultralight_java/java_bridges/javascript_class_definition_jni.hpp"
+#include "ultralight_java/java_bridges/javascript_class_jni.hpp"
+#include "ultralight_java/java_bridges/javascript_context_jni.hpp"
+#include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
+#include "ultralight_java/java_bridges/javascript_global_context_jni.hpp"
+#include "ultralight_java/java_bridges/javascript_value_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_bitmap_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_bitmap_surface_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_key_event_jni.hpp"
@@ -9,37 +15,32 @@
 #include "ultralight_java/java_bridges/ultralight_surface_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_view_jni.hpp"
 
+#define NATIVE_METHOD(name, signature, method)                                                                         \
+    JNINativeMethod {                                                                                                  \
+        const_cast<char *>(name), const_cast<char *>(signature), reinterpret_cast<void *>(&method)                     \
+    }
+
 namespace ultralight_java {
     void init_runtime_struct() {
-        runtime.ultralight_platform.native_methods =
-            {JNINativeMethod{
-                 const_cast<char *>("instance"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/UltralightPlatform;"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::instance)},
-             JNINativeMethod{
-                 const_cast<char *>("setConfig"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/config/UltralightConfig;)V"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::set_config)},
-             JNINativeMethod{
-                 const_cast<char *>("usePlatformFontLoader"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::use_platform_font_loader)},
-             JNINativeMethod{
-                 const_cast<char *>("usePlatformFileSystem"),
-                 const_cast<char *>("(Ljava/lang/String;)V"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::use_platform_file_system)},
-             JNINativeMethod{
-                 const_cast<char *>("setFileSystem"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/plugin/filesystem/UltralightFileSystem;)V"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::set_file_system)},
-             JNINativeMethod{
-                 const_cast<char *>("setClipboard"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/plugin/clipboard/UltralightClipboard;)V"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::set_clipboard)},
-             JNINativeMethod{
-                 const_cast<char *>("setLogger"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/plugin/logging/UltralightLogger;)V"),
-                 reinterpret_cast<void *>(&UltralightPlatformJNI::set_logger)}};
+        runtime.ultralight_platform.native_methods = {
+            NATIVE_METHOD("instance", "()Lnet/janrupf/ultralight/UltralightPlatform;", UltralightPlatformJNI::instance),
+            NATIVE_METHOD(
+                "setConfig", "(Lnet/janrupf/ultralight/config/UltralightConfig;)V", UltralightPlatformJNI::set_config),
+            NATIVE_METHOD("usePlatformFontLoader", "()V", UltralightPlatformJNI::use_platform_font_loader),
+            NATIVE_METHOD(
+                "usePlatformFileSystem", "(Ljava/lang/String;)V", UltralightPlatformJNI::use_platform_file_system),
+            NATIVE_METHOD(
+                "setFileSystem",
+                "(Lnet/janrupf/ultralight/plugin/filesystem/UltralightFileSystem;)V",
+                UltralightPlatformJNI::set_file_system),
+            NATIVE_METHOD(
+                "setClipboard",
+                "(Lnet/janrupf/ultralight/plugin/clipboard/UltralightClipboard;)V",
+                UltralightPlatformJNI::set_clipboard),
+            NATIVE_METHOD(
+                "setLogger",
+                "(Lnet/janrupf/ultralight/plugin/logging/UltralightLogger;)V",
+                UltralightPlatformJNI::set_logger)};
 
         runtime.face_winding.constants = JavaEnum<ultralight::FaceWinding>(
             ultralight::kFaceWinding_Clockwise,
@@ -63,201 +64,83 @@ namespace ultralight_java {
             ultralight::kLogLevel_Info,
             "INFO");
 
-        runtime.ref_ptr.native_methods = {JNINativeMethod{
-            const_cast<char *>("delete"),
-            const_cast<char *>("(J)V"),
-            reinterpret_cast<void *>(&UltralightRefPtrJNI::_delete)}};
+        runtime.ref_ptr.native_methods = {NATIVE_METHOD("delete", "(J)V", UltralightRefPtrJNI::_delete)};
 
         runtime.ultralight_renderer.native_methods =
-            {JNINativeMethod{
-                 const_cast<char *>("create"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/UltralightRenderer;"),
-                 reinterpret_cast<void *>(&UltralightRendererJNI::create)},
-             JNINativeMethod{
-                 const_cast<char *>("createView"),
-                 const_cast<char *>("(JJZ)Lnet/janrupf/ultralight/UltralightView;"),
-                 reinterpret_cast<void *>(&UltralightRendererJNI::createView)},
-             JNINativeMethod{
-                 const_cast<char *>("update"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightRendererJNI::update)},
-             JNINativeMethod{
-                 const_cast<char *>("render"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightRendererJNI::render)},
-             JNINativeMethod{
-                 const_cast<char *>("purgeMemory"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightRendererJNI::purgeMemory)},
-             JNINativeMethod{
-                 const_cast<char *>("logMemoryUsage"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightRendererJNI::logMemoryUsage)}};
+            {NATIVE_METHOD("create", "()Lnet/janrupf/ultralight/UltralightRenderer;", UltralightRendererJNI::create),
+             NATIVE_METHOD(
+                 "createView", "(JJZ)Lnet/janrupf/ultralight/UltralightView;", UltralightRendererJNI::createView),
+             NATIVE_METHOD("update", "()V", UltralightRendererJNI::update),
+             NATIVE_METHOD("render", "()V", UltralightRendererJNI::render),
+             NATIVE_METHOD("purgeMemory", "()V", UltralightRendererJNI::purgeMemory),
+             NATIVE_METHOD("logMemoryUsage", "()V", UltralightRendererJNI::logMemoryUsage)};
 
         runtime.ultralight_view.native_methods =
-            {JNINativeMethod{
-                 const_cast<char *>("url"),
-                 const_cast<char *>("()Ljava/lang/String;"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::url)},
-             JNINativeMethod{
-                 const_cast<char *>("title"),
-                 const_cast<char *>("()Ljava/lang/String;"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::title)},
-             JNINativeMethod{
-                 const_cast<char *>("width"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::width)},
-             JNINativeMethod{
-                 const_cast<char *>("height"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::height)},
-             JNINativeMethod{
-                 const_cast<char *>("isLoading"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::is_loading)},
-             JNINativeMethod{
-                 const_cast<char *>("surface"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/UltralightSurface;"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::surface)},
-             JNINativeMethod{
-                 const_cast<char *>("loadHTML"),
-                 const_cast<char *>("(Ljava/lang/String;Ljava/lang/String;Z)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::load_html)},
-             JNINativeMethod{
-                 const_cast<char *>("loadURL"),
-                 const_cast<char *>("(Ljava/lang/String;)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::load_url)},
-             JNINativeMethod{
-                 const_cast<char *>("resize"),
-                 const_cast<char *>("(JJ)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::resize)},
-             JNINativeMethod{
-                 const_cast<char *>("evaluateScript"),
-                 const_cast<char *>("(Ljava/lang/String;)Ljava/lang/String;"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::evaluate_script)},
-             JNINativeMethod{
-                 const_cast<char *>("canGoBack"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::can_go_back)},
-             JNINativeMethod{
-                 const_cast<char *>("canGoForward"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::can_go_forward)},
-             JNINativeMethod{
-                 const_cast<char *>("goBack"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::go_back)},
-             JNINativeMethod{
-                 const_cast<char *>("goForward"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::go_forward)},
-             JNINativeMethod{
-                 const_cast<char *>("goToHistoryOffset"),
-                 const_cast<char *>("(I)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::go_to_history_offset)},
-             JNINativeMethod{
-                 const_cast<char *>("reload"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::reload)},
-             JNINativeMethod{
-                 const_cast<char *>("stop"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::stop)},
-             JNINativeMethod{
-                 const_cast<char *>("focus"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::focus)},
-             JNINativeMethod{
-                 const_cast<char *>("unfocus"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::unfocus)},
-             JNINativeMethod{
-                 const_cast<char *>("hasFocus"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::has_focus)},
-             JNINativeMethod{
-                 const_cast<char *>("hasInputFocus"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::has_input_focus)},
-             JNINativeMethod{
-                 const_cast<char *>("fireKeyEvent"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightKeyEvent;)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::fire_key_event)},
-             JNINativeMethod{
-                 const_cast<char *>("fireMouseEvent"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightMouseEvent;)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::fire_mouse_event)},
-             JNINativeMethod{
-                 const_cast<char *>("fireScrollEvent"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightScrollEvent;)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::fire_scroll_event)},
-             JNINativeMethod{
-                 const_cast<char *>("setViewListener"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/plugin/view/UltralightViewListener;)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::set_view_listener)},
-             JNINativeMethod{
-                 const_cast<char *>("setLoadListener"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/plugin/loading/UltralightLoadListener;)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::set_load_listener)},
-             JNINativeMethod{
-                 const_cast<char *>("setNeedsPaint"),
-                 const_cast<char *>("(Z)V"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::set_needs_paint)},
-             JNINativeMethod{
-                 const_cast<char *>("needsPaint"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::needs_paint)},
-             JNINativeMethod{
-                 const_cast<char *>("inspector"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/UltralightView;"),
-                 reinterpret_cast<void *>(&UltralightViewJNI::inspector)}};
+            {NATIVE_METHOD("url", "()Ljava/lang/String;", UltralightViewJNI::url),
+             NATIVE_METHOD("title", "()Ljava/lang/String;", UltralightViewJNI::title),
+             NATIVE_METHOD("width", "()J", UltralightViewJNI::width),
+             NATIVE_METHOD("height", "()J", UltralightViewJNI::height),
+             NATIVE_METHOD("isLoading", "()Z", UltralightViewJNI::is_loading),
+             NATIVE_METHOD("surface", "()Lnet/janrupf/ultralight/UltralightSurface;", UltralightViewJNI::surface),
+             NATIVE_METHOD("loadHTML", "(Ljava/lang/String;Ljava/lang/String;Z)V", UltralightViewJNI::load_html),
+             NATIVE_METHOD("loadURL", "(Ljava/lang/String;)V", UltralightViewJNI::load_url),
+             NATIVE_METHOD("resize", "(JJ)V", UltralightViewJNI::resize),
+             NATIVE_METHOD(
+                 "lockJavascriptContext",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptContextLock;",
+                 UltralightViewJNI::lock_javascript_context),
+             NATIVE_METHOD(
+                 "evaluateScript", "(Ljava/lang/String;)Ljava/lang/String;", UltralightViewJNI::evaluate_script),
+             NATIVE_METHOD("canGoBack", "()Z", UltralightViewJNI::can_go_back),
+             NATIVE_METHOD("canGoForward", "()Z", UltralightViewJNI::can_go_forward),
+             NATIVE_METHOD("goBack", "()V", UltralightViewJNI::go_back),
+             NATIVE_METHOD("goForward", "()V", UltralightViewJNI::go_forward),
+             NATIVE_METHOD("goToHistoryOffset", "(I)V", UltralightViewJNI::go_to_history_offset),
+             NATIVE_METHOD("reload", "()V", UltralightViewJNI::reload),
+             NATIVE_METHOD("stop", "()V", UltralightViewJNI::stop),
+             NATIVE_METHOD("focus", "()V", UltralightViewJNI::focus),
+             NATIVE_METHOD("unfocus", "()V", UltralightViewJNI::unfocus),
+             NATIVE_METHOD("hasFocus", "()Z", UltralightViewJNI::has_focus),
+             NATIVE_METHOD("hasInputFocus", "()Z", UltralightViewJNI::has_input_focus),
+             NATIVE_METHOD(
+                 "fireKeyEvent",
+                 "(Lnet/janrupf/ultralight/input/UltralightKeyEvent;)V",
+                 UltralightViewJNI::fire_key_event),
+             NATIVE_METHOD(
+                 "fireMouseEvent",
+                 "(Lnet/janrupf/ultralight/input/UltralightMouseEvent;)V",
+                 UltralightViewJNI::fire_mouse_event),
+             NATIVE_METHOD(
+                 "fireScrollEvent",
+                 "(Lnet/janrupf/ultralight/input/UltralightScrollEvent;)V",
+                 UltralightViewJNI::fire_scroll_event),
+             NATIVE_METHOD(
+                 "setViewListener",
+                 "(Lnet/janrupf/ultralight/plugin/view/UltralightViewListener;)V",
+                 UltralightViewJNI::set_view_listener),
+             NATIVE_METHOD(
+                 "setLoadListener",
+                 "(Lnet/janrupf/ultralight/plugin/loading/UltralightLoadListener;)V",
+                 UltralightViewJNI::set_load_listener),
+             NATIVE_METHOD("setNeedsPaint", "(Z)V", UltralightViewJNI::set_needs_paint),
+             NATIVE_METHOD("needsPaint", "()Z", UltralightViewJNI::needs_paint),
+             NATIVE_METHOD("inspector", "()Lnet/janrupf/ultralight/UltralightView;", UltralightViewJNI::inspector)};
 
         runtime.ultralight_surface.native_methods =
-            {JNINativeMethod{
-                 const_cast<char *>("width"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::width)},
-             JNINativeMethod{
-                 const_cast<char *>("height"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::height)},
-             JNINativeMethod{
-                 const_cast<char *>("rowBytes"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::rowBytes)},
-             JNINativeMethod{
-                 const_cast<char *>("size"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::size)},
-             JNINativeMethod{
-                 const_cast<char *>("lockPixels"),
-                 const_cast<char *>("()Ljava/nio/ByteBuffer;"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::lockPixels)},
-             JNINativeMethod{
-                 const_cast<char *>("unlockPixels"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::unlockPixels)},
-             JNINativeMethod{
-                 const_cast<char *>("resize"),
-                 const_cast<char *>("(JJ)V"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::resize)},
-             JNINativeMethod{
-                 const_cast<char *>("setDirtyBounds"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/math/IntRect;)V"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::setDirtyBounds)},
-             JNINativeMethod{
-                 const_cast<char *>("dirtyBounds"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/math/IntRect;"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::dirtyBounds)},
-             JNINativeMethod{
-                 const_cast<char *>("clearDirtyBounds"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightSurfaceJNI::clearDirtyBounds)}};
+            {NATIVE_METHOD("width", "()J", UltralightSurfaceJNI::width),
+             NATIVE_METHOD("height", "()J", UltralightSurfaceJNI::height),
+             NATIVE_METHOD("rowBytes", "()J", UltralightSurfaceJNI::rowBytes),
+             NATIVE_METHOD("size", "()J", UltralightSurfaceJNI::size),
+             NATIVE_METHOD("lockPixels", "()Ljava/nio/ByteBuffer;", UltralightSurfaceJNI::lockPixels),
+             NATIVE_METHOD("unlockPixels", "()V", UltralightSurfaceJNI::unlockPixels),
+             NATIVE_METHOD("resize", "(JJ)V", UltralightSurfaceJNI::resize),
+             NATIVE_METHOD(
+                 "setDirtyBounds", "(Lnet/janrupf/ultralight/math/IntRect;)V", UltralightSurfaceJNI::setDirtyBounds),
+             NATIVE_METHOD("dirtyBounds", "()Lnet/janrupf/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
+             NATIVE_METHOD("clearDirtyBounds", "()V", UltralightSurfaceJNI::clearDirtyBounds)};
 
-        runtime.ultralight_bitmap_surface.native_methods = {JNINativeMethod{
-            const_cast<char *>("bitmap"),
-            const_cast<char *>("()Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"),
-            reinterpret_cast<void *>(&UltralightBitmapSurfaceJNI::bitmap)}};
+        runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
+            "bitmap", "()Lnet/janrupf/ultralight/bitmap/UltralightBitmap;", UltralightBitmapSurfaceJNI::bitmap)};
 
         runtime.ultralight_bitmap_format.constants = JavaEnum<ultralight::BitmapFormat>(
             ultralight::kBitmapFormat_A8_UNORM,
@@ -269,7 +152,7 @@ namespace ultralight_java {
             {JNINativeMethod{
                  const_cast<char *>("create"),
                  const_cast<char *>("()Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"),
-                 reinterpret_cast<void *>(static_cast<jobject (*)(JNIEnv *, jclass)>(UltralightBitmapJNI::create))},
+                 reinterpret_cast<void *>(static_cast<jobject (*)(JNIEnv *, jclass)>(&UltralightBitmapJNI::create))},
              JNINativeMethod{
                  const_cast<char *>("create"),
                  const_cast<char *>("("
@@ -299,88 +182,39 @@ namespace ultralight_java {
                                     ")Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"),
                  reinterpret_cast<void *>(
                      static_cast<jobject (*)(JNIEnv *, jclass, jobject)>(&UltralightBitmapJNI::create))},
-             JNINativeMethod{
-                 const_cast<char *>("width"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::width)},
-             JNINativeMethod{
-                 const_cast<char *>("height"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::height)},
-             JNINativeMethod{
-                 const_cast<char *>("bounds"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/math/IntRect;"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::bounds)},
-             JNINativeMethod{
-                 const_cast<char *>("format"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/bitmap/UltralightBitmapFormat;"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::format)},
-             JNINativeMethod{
-                 const_cast<char *>("bpp"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::bpp)},
-             JNINativeMethod{
-                 const_cast<char *>("rowBytes"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::row_bytes)},
-             JNINativeMethod{
-                 const_cast<char *>("size"),
-                 const_cast<char *>("()J"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::size)},
-             JNINativeMethod{
-                 const_cast<char *>("ownsPixels"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::owns_pixels)},
-             JNINativeMethod{
-                 const_cast<char *>("lockPixels"),
-                 const_cast<char *>("()Ljava/nio/ByteBuffer;"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::lock_pixels)},
-             JNINativeMethod{
-                 const_cast<char *>("unlockPixels"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::unlock_pixels)},
-             JNINativeMethod{
-                 const_cast<char *>("rawPixels"),
-                 const_cast<char *>("()Ljava/nio/ByteBuffer;"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::raw_pixels)},
-             JNINativeMethod{
-                 const_cast<char *>("isEmpty"),
-                 const_cast<char *>("()Z"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::is_emtpy)},
-             JNINativeMethod{
-                 const_cast<char *>("erase"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::erase)},
-             JNINativeMethod{
-                 const_cast<char *>("set"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/bitmap/UltralightBitmap;)V"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::set)},
-             JNINativeMethod{
-                 const_cast<char *>("drawBitmap"),
-                 const_cast<char *>("("
-                                    "Lnet/janrupf/ultralight/math/IntRect;"
-                                    "Lnet/janrupf/ultralight/math/IntRect;"
-                                    "Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"
-                                    "Z"
-                                    ")Z"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::width)},
-             JNINativeMethod{
-                 const_cast<char *>("writePNG"),
-                 const_cast<char *>("(Ljava/lang/String;)Z"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::write_png)},
-             JNINativeMethod{
-                 const_cast<char *>("resample"),
-                 const_cast<char *>("(Lnet/janrupf/ultralight/bitmap/UltralightBitmap;Z)Z"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::resample)},
-             JNINativeMethod{
-                 const_cast<char *>("swapRedBlueChannels"),
-                 const_cast<char *>("()V"),
-                 reinterpret_cast<void *>(&UltralightBitmapJNI::swap_red_blue_channels)}};
+             NATIVE_METHOD("width", "()J", UltralightBitmapJNI::width),
+             NATIVE_METHOD("height", "()J", UltralightBitmapJNI::height),
+             NATIVE_METHOD("bounds", "()Lnet/janrupf/ultralight/math/IntRect;", UltralightBitmapJNI::bounds),
+             NATIVE_METHOD(
+                 "format", "()Lnet/janrupf/ultralight/bitmap/UltralightBitmapFormat;", UltralightBitmapJNI::format),
+             NATIVE_METHOD("bpp", "()J", UltralightBitmapJNI::bpp),
+             NATIVE_METHOD("rowBytes", "()J", UltralightBitmapJNI::row_bytes),
+             NATIVE_METHOD("size", "()J", UltralightBitmapJNI::size),
+             NATIVE_METHOD("ownsPixels", "()Z", UltralightBitmapJNI::owns_pixels),
+             NATIVE_METHOD("lockPixels", "()Ljava/nio/ByteBuffer;", UltralightBitmapJNI::lock_pixels),
+             NATIVE_METHOD("unlockPixels", "()V", UltralightBitmapJNI::unlock_pixels),
+             NATIVE_METHOD("rawPixels", "()Ljava/nio/ByteBuffer;", UltralightBitmapJNI::raw_pixels),
+             NATIVE_METHOD("isEmpty", "()Z", UltralightBitmapJNI::is_emtpy),
+             NATIVE_METHOD("erase", "()V", UltralightBitmapJNI::erase),
+             NATIVE_METHOD("set", "(Lnet/janrupf/ultralight/bitmap/UltralightBitmap;)V", UltralightBitmapJNI::set),
+             NATIVE_METHOD(
+                 "drawBitmap",
+                 "("
+                 "Lnet/janrupf/ultralight/math/IntRect;"
+                 "Lnet/janrupf/ultralight/math/IntRect;"
+                 "Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"
+                 "Z"
+                 ")Z",
+                 UltralightBitmapJNI::width),
+             NATIVE_METHOD("writePNG", "(Ljava/lang/String;)Z", UltralightBitmapJNI::write_png),
+             NATIVE_METHOD(
+                 "resample", "(Lnet/janrupf/ultralight/bitmap/UltralightBitmap;Z)Z", UltralightBitmapJNI::resample),
+             NATIVE_METHOD("swapRedBlueChannels", "()V", UltralightBitmapJNI::swap_red_blue_channels)};
 
-        runtime.ultralight_key_event.native_methods = {JNINativeMethod{
-            const_cast<char *>("getKeyIdentifierFromVirtualKeyCode"),
-            const_cast<char *>("(Lnet/janrupf/ultralight/input/UltralightKey;)Ljava/lang/String;"),
-            reinterpret_cast<void *>(&UltralightKeyEventJNI::get_key_identifier_from_virtual_key_code)}};
+        runtime.ultralight_key_event.native_methods = {NATIVE_METHOD(
+            "getKeyIdentifierFromVirtualKeyCode",
+            "(Lnet/janrupf/ultralight/input/UltralightKey;)Ljava/lang/String;",
+            UltralightKeyEventJNI::get_key_identifier_from_virtual_key_code)};
 
         runtime.ultralight_key_event_type.constants = JavaEnum<ultralight::KeyEvent::Type>(
             ultralight::KeyEvent::kType_KeyDown,
@@ -539,6 +373,191 @@ namespace ultralight_java {
             "CONTENT_BLOCKER",
             ultralight::kMessageSource_Other,
             "OTHER");
+
+        runtime.javascript_context.native_methods = {NATIVE_METHOD(
+            "getGlobalContext",
+            "()Lnet/janrupf/ultralight/javascript/JavascriptGlobalContext;",
+            JavascriptContextJNI::get_global_context)};
+
+        runtime.javascript_context_lock.native_methods =
+            {NATIVE_METHOD(
+                 "getContext",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptContext;",
+                 JavascriptContextLockJNI::get_context),
+             NATIVE_METHOD("release", "()V", JavascriptContextLockJNI::release)};
+
+        runtime.javascript_global_context.native_methods =
+            {NATIVE_METHOD("contextUnlocking", "()V", JavascriptGlobalContextJNI::context_unlocking),
+             NATIVE_METHOD("getName", "()Ljava/lang/String;", JavascriptGlobalContextJNI::get_name),
+             NATIVE_METHOD("setName", "(Ljava/lang/String;)V", JavascriptGlobalContextJNI::set_name)};
+
+        runtime.javascript_value.native_methods =
+            {NATIVE_METHOD(
+                 "protect",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptProtectedValue;",
+                 JavascriptValueJNI::protect),
+             NATIVE_METHOD("contextUnlocking", "()V", JavascriptValueJNI::context_unlocking),
+             NATIVE_METHOD(
+                 "getType", "()Lnet/janrupf/ultralight/javascript/JavascriptType;", JavascriptValueJNI::get_type),
+             NATIVE_METHOD("isUndefined", "()Z", JavascriptValueJNI::is_undefined),
+             NATIVE_METHOD("isNull", "()Z", JavascriptValueJNI::is_null),
+             NATIVE_METHOD("isBoolean", "()Z", JavascriptValueJNI::is_boolean),
+             NATIVE_METHOD("isNumber", "()Z", JavascriptValueJNI::is_number),
+             NATIVE_METHOD("isString", "()Z", JavascriptValueJNI::is_string),
+             NATIVE_METHOD("isObject", "()Z", JavascriptValueJNI::is_object),
+             NATIVE_METHOD("isArray", "()Z", JavascriptValueJNI::is_array),
+             NATIVE_METHOD("isDate", "()Z", JavascriptValueJNI::is_date),
+             NATIVE_METHOD(
+                 "getTypedArrayType",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptTypedArrayType;",
+                 JavascriptValueJNI::get_typed_array_type),
+             NATIVE_METHOD(
+                 "isEqual", "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z", JavascriptValueJNI::is_equal),
+             NATIVE_METHOD(
+                 "isStrictEqual",
+                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z",
+                 JavascriptValueJNI::is_strict_equal),
+             NATIVE_METHOD("toJson", "(S)Ljava/lang/String;", JavascriptValueJNI::to_json),
+             NATIVE_METHOD("toBoolean", "()Z", JavascriptValueJNI::to_boolean),
+             NATIVE_METHOD("toNumber", "()D", JavascriptValueJNI::to_number),
+             NATIVE_METHOD("toStringCopy", "()Ljava/lang/String;", JavascriptValueJNI::to_string_copy)};
+
+        runtime.javascript_type.constants = JavaEnum<JSType>(
+            kJSTypeUndefined,
+            "UNDEFINED",
+            kJSTypeNull,
+            "NULL",
+            kJSTypeBoolean,
+            "BOOLEAN",
+            kJSTypeNumber,
+            "NUMBER",
+            kJSTypeString,
+            "STRING",
+            kJSTypeObject,
+            "OBJECT",
+            kJSTypeSymbol,
+            "SYMBOL");
+
+        runtime.javascript_typed_array_type.constants = JavaEnum<JSTypedArrayType>(
+            kJSTypedArrayTypeInt8Array,
+            "INT8",
+            kJSTypedArrayTypeInt16Array,
+            "INT16",
+            kJSTypedArrayTypeInt32Array,
+            "INT32",
+            kJSTypedArrayTypeUint8Array,
+            "UINT8",
+            kJSTypedArrayTypeUint8ClampedArray,
+            "UINT8_CLAMPED",
+            kJSTypedArrayTypeUint16Array,
+            "UINT16",
+            kJSTypedArrayTypeUint32Array,
+            "UINT32",
+            kJSTypedArrayTypeFloat32Array,
+            "FLOAT32",
+            kJSTypedArrayTypeFloat64Array,
+            "FLOAT64",
+            kJSTypedArrayTypeArrayBuffer,
+            "BUFFER",
+            kJSTypedArrayTypeNone,
+            "NONE");
+
+        runtime.javascript_class.native_methods = {NATIVE_METHOD("release", "(J)V", JavascriptClassJNI::release)};
+
+        runtime.javascript_class_definition.native_methods =
+            {NATIVE_METHOD(
+                 "name",
+                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::name),
+             NATIVE_METHOD(
+                 "attributes",
+                 "(I)Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::attributes),
+             NATIVE_METHOD(
+                 "parentClass",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/JavascriptClass;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::parent_class),
+             NATIVE_METHOD(
+                 "staticValue",
+                 "("
+                 "Ljava/lang/String;"
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyGetter;"
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertySetter;"
+                 "I"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::static_value),
+             NATIVE_METHOD(
+                 "staticFunction",
+                 "("
+                 "Ljava/lang/String;"
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectFunction;"
+                 "I"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::static_function),
+             NATIVE_METHOD(
+                 "onInitialize",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectInitializer;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_initialize),
+             NATIVE_METHOD(
+                 "onFinalize",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectFinalizer;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_finalize),
+             NATIVE_METHOD(
+                 "onGetProperty",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyGetter;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_get_property),
+             NATIVE_METHOD(
+                 "onSetProperty",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertySetter;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_set_property),
+             NATIVE_METHOD(
+                 "onDeleteProperty",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyDeleter;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_delete_property),
+             NATIVE_METHOD(
+                 "onGetPropertyNames",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyNamesCollector;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_get_property_names),
+             NATIVE_METHOD(
+                 "onCallAsFunction",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectFunction;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_call_as_function),
+             NATIVE_METHOD(
+                 "onCallAsConstructor",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectConstructor;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_call_as_constructor),
+             NATIVE_METHOD(
+                 "onHasInstance",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectHasInstanceTester;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_has_instance),
+             NATIVE_METHOD(
+                 "onConvertToType",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectToTypeConverter;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_convert_to_type),
+             NATIVE_METHOD("createEmpty", "()J", JavascriptClassDefinitionJNI::create_empty),
+             NATIVE_METHOD("free", "(J)V", JavascriptClassDefinitionJNI::free)};
 
         runtime.bridged_logger = nullptr;
         runtime.bridged_file_system = nullptr;

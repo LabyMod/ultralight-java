@@ -35,6 +35,12 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/bridged_logger.cpp
         src/java_bridges/bridged_load_listener.cpp
         src/java_bridges/bridged_view_listener.cpp
+        src/java_bridges/javascript_class_definition_jni.cpp
+        src/java_bridges/javascript_class_jni.cpp
+        src/java_bridges/javascript_context_jni.cpp
+        src/java_bridges/javascript_context_lock_jni.cpp
+        src/java_bridges/javascript_global_context_jni.cpp
+        src/java_bridges/javascript_value_jni.cpp
         src/java_bridges/proxied_java_exception.cpp
         src/java_bridges/ultralight_bitmap_jni.cpp
         src/java_bridges/ultralight_bitmap_surface_jni.cpp
@@ -45,17 +51,14 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/ultralight_surface_jni.cpp
         src/java_bridges/ultralight_view_jni.cpp
 
+        src/platform/managed_javascript_class.cpp
+
         src/util/jni_reference_wrapper.cpp
         src/util/temporary_jni.cpp
         src/util/util.cpp
 
         src/ultralight_initializer.cpp
         src/ultralight_java_instance.cpp)
-
-if(WIN32)
-    set(ULTRALIGHT_JAVA_SOURCE ${ULTRALIGHT_JAVA_SOURCE}
-            src/platform/windows_impl.cpp)
-endif()
 
 ##############
 # Add target #

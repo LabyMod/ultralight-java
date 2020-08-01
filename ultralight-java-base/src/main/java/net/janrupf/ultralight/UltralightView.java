@@ -8,7 +8,8 @@ import net.janrupf.ultralight.ffi.RefPtr;
 import net.janrupf.ultralight.input.UltralightKeyEvent;
 import net.janrupf.ultralight.input.UltralightMouseEvent;
 import net.janrupf.ultralight.input.UltralightScrollEvent;
-import net.janrupf.ultralight.javascript.JavascriptException;
+import net.janrupf.ultralight.javascript.JavascriptContextLock;
+import net.janrupf.ultralight.javascript.JavascriptEvaluationException;
 import net.janrupf.ultralight.plugin.loading.UltralightLoadListener;
 import net.janrupf.ultralight.plugin.view.UltralightViewListener;
 
@@ -138,7 +139,18 @@ public class UltralightView implements ObjectWithHandle {
      */
     public native void resize(@NativeType("uint32_t") @Unsigned long width, @NativeType("uint32_t") @Unsigned long height);
 
-    // TODO: Lock javascript context
+    /**
+     * Acquire the page's JSContext for use with the JavaScriptCore API.
+     * <p>
+     * While the lock is being hold no script will be executed by the web engine.
+     * <p>
+     * The context gets reset every time the view navigates, to populate it with
+     * custom values the {@link UltralightLoadListener#onWindowObjectReady(long, boolean, String)}
+     * and {@link UltralightLoadListener#onDOMReady(long, boolean, String)} methods are recommended.
+     *
+     * @return The script context of the view
+     */
+    public native JavascriptContextLock lockJavascriptContext();
 
     /**
      * Helper function to evaluate a raw string of JavaScript and return the
@@ -154,9 +166,9 @@ public class UltralightView implements ObjectWithHandle {
      *
      * @param script A string of JavaScript to evaluate in the main frame.
      * @return The JavaScript result typecast to a String.
-     * @throws JavascriptException If the evaluated script throws an exception
+     * @throws JavascriptEvaluationException If the evaluated script throws an exception
      */
-    public native String evaluateScript(String script) throws JavascriptException;
+    public native String evaluateScript(String script) throws JavascriptEvaluationException;
 
     /**
      * Whether or not we can navigate backwards in history.

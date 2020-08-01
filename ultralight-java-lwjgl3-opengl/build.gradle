@@ -67,6 +67,7 @@ task copyTestResources(type: Copy) {
 task runTest(type: JavaExec, dependsOn: [copyTestResources]) {
     classpath sourceSets.test.runtimeClasspath
     main "net.janrupf.ultralight.lwjgl3.opengl.TestRunner"
+    jvmArgs "-Xmx3M"
     workingDir file("run")
 }
 

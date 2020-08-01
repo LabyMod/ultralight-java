@@ -401,9 +401,248 @@ namespace ultralight_java {
         runtime.ultralight_clipboard.write_plain_text_method =
             env->GetMethodID(runtime.ultralight_clipboard.clazz, "writePlainText", "(Ljava/lang/String;)V");
 
+        // Retrieve information about the JavascriptContext class
+        runtime.javascript_context.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptContext")));
+        runtime.javascript_context.constructor = env->GetMethodID(
+            runtime.javascript_context.clazz,
+            "<init>",
+            "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
+
+        // Register native methods for the JavascriptContext class
+        env->RegisterNatives(
+            runtime.javascript_context.clazz,
+            runtime.javascript_context.native_methods.data(),
+            runtime.javascript_context.native_methods.size());
+
+        // Retrieve information about the JavascriptContextLock
+        runtime.javascript_context_lock.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptContextLock")));
+        runtime.javascript_context_lock
+            .constructor = env->GetMethodID(runtime.javascript_context_lock.clazz, "<init>", "(J)V");
+
+        // Register native methods for the JavascriptContextLock class
+        env->RegisterNatives(
+            runtime.javascript_context_lock.clazz,
+            runtime.javascript_context_lock.native_methods.data(),
+            runtime.javascript_context_lock.native_methods.size());
+
+        // Retrieve information about the JavascriptGlobalContext class
+        runtime.javascript_global_context.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptGlobalContext")));
+        runtime.javascript_global_context.constructor = env->GetMethodID(
+            runtime.javascript_global_context.clazz,
+            "<init>",
+            "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
+
+        // Register native methods for the JavascriptGlobalContext class
+        env->RegisterNatives(
+            runtime.javascript_global_context.clazz,
+            runtime.javascript_global_context.native_methods.data(),
+            runtime.javascript_global_context.native_methods.size());
+
+        // Retrieve information about the JavascriptLockedObject interface
+        runtime.javascript_locked_object.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptLockedObject")));
+        runtime.javascript_locked_object.get_lock_method = env->GetMethodID(
+            runtime.javascript_locked_object.clazz,
+            "getLock",
+            "()Lnet/janrupf/ultralight/javascript/JavascriptContextLock;");
+        runtime.javascript_locked_object.get_context_handle_method =
+            env->GetMethodID(runtime.javascript_locked_object.clazz, "getContextHandle", "()J");
+
+        // Retrieve information about the JavascriptProtectedValue class
+        runtime.javascript_protected_value.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptProtectedValue")));
+        runtime.javascript_protected_value
+            .constructor = env->GetMethodID(runtime.javascript_protected_value.clazz, "<init>", "(J)V");
+
+        // Retrieve information about the JavascriptValue class
+        runtime.javascript_value.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptValue")));
+        runtime.javascript_value.constructor = env->GetMethodID(
+            runtime.javascript_value.clazz, "<init>", "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
+
+        // Register native methods for the JavascriptValue class
+        env->RegisterNatives(
+            runtime.javascript_value.clazz,
+            runtime.javascript_value.native_methods.data(),
+            runtime.javascript_value.native_methods.size());
+
+        // Retrieve information about the JavascriptType enum
+        runtime.javascript_type.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptType")));
+        if(!runtime.javascript_type.constants.init(env, "net/janrupf/ultralight/javascript/JavascriptType")) {
+            return JNI_EINVAL;
+        }
+
+        // Retrieve information about the JavascriptTypedArrayType enum
+        runtime.javascript_typed_array_type.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptTypedArrayType")));
+        if(!runtime.javascript_typed_array_type.constants
+                .init(env, "net/janrupf/ultralight/javascript/JavascriptTypedArrayType")) {
+            return JNI_EINVAL;
+        }
+
+        // Retrieve information about the JavascriptClass class
+        runtime.javascript_class.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptClass")));
+
+        // Register native methods for the JavascriptClass class
+        env->RegisterNatives(
+            runtime.javascript_class.clazz,
+            runtime.javascript_class.native_methods.data(),
+            runtime.javascript_class.native_methods.size());
+
+        // Retrieve information about the JavascriptClassDefinition class
+        runtime.javascript_class_definition.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptClassDefinition")));
+
+        // Register native methods for the JavascriptClassDefinition class
+        env->RegisterNatives(
+            runtime.javascript_class_definition.clazz,
+            runtime.javascript_class_definition.native_methods.data(),
+            runtime.javascript_class_definition.native_methods.size());
+
+        // Retrieve information about the JavascriptObjectConstructor interface
+        runtime.javascript_object_constructor.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectConstructor")));
+        runtime.javascript_object_constructor.call_as_javascript_constructor_method = env->GetMethodID(
+            runtime.javascript_object_constructor.clazz,
+            "callAsJavascriptConstructor",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+            ")Lnet/janrupf/ultralight/javascript/JavascriptObject;");
+
+        // Retrieve information about the JavascriptObjectFinalizer interface
+        runtime.javascript_object_finalizer.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectFinalizer")));
+        runtime.javascript_object_finalizer.finalize_javascript_object = env->GetMethodID(
+            runtime.javascript_object_finalizer.clazz,
+            "finalizeJavascriptObject",
+            "(Lnet/janrupf/ultralight/javascript/JavascriptObject;)V");
+
+        // Retrieve information about the JavascriptObjectFunction interface
+        runtime.javascript_object_function.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectFunction")));
+        runtime.javascript_object_function.call_as_javascript_function = env->GetMethodID(
+            runtime.javascript_object_function.clazz,
+            "callAsJavascriptFunction",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+            ")Lnet/janrupf/ultralight/javascript/JavascriptValue;");
+
+        // Retrieve information about the JavascriptObjectHasInstanceTester interface
+        runtime.javascript_object_has_instance_tester.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectHasInstanceTester")));
+        runtime.javascript_object_has_instance_tester.has_javascript_instance_method = env->GetMethodID(
+            runtime.javascript_object_has_instance_tester.clazz,
+            "hasJavascriptInstance",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+            ")Z");
+
+        // Retrieve information about the JavascriptObjectHasPropertyTester interface
+        runtime.javascript_object_has_property_tester.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectHasPropertyTester")));
+        runtime.javascript_object_has_property_tester.has_javascript_property_method = env->GetMethodID(
+            runtime.javascript_object_has_property_tester.clazz,
+            "hasJavascriptProperty",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Ljava/lang/String;"
+            ")Z");
+
+        // Retrieve information about the JavascriptObjectInitializer interface
+        runtime.javascript_object_initializer.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectInitializer")));
+        runtime.javascript_object_initializer.initialize_javascript_object_method = env->GetMethodID(
+            runtime.javascript_object_initializer.clazz,
+            "initializeJavascriptObject",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            ")V");
+
+        // Retrieve information about the JavascriptObjectPropertyDeleter interface
+        runtime.javascript_object_property_deleter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyDeleter")));
+        runtime.javascript_object_property_deleter.delete_javascript_property_method = env->GetMethodID(
+            runtime.javascript_object_property_deleter.clazz,
+            "deleteJavascriptProperty",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Ljava/lang/String;"
+            ")Z");
+
+        // Retrieve information about the JavascriptObjectPropertyGetter interface
+        runtime.javascript_object_property_getter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyGetter")));
+        runtime.javascript_object_property_getter.get_javascript_property_method = env->GetMethodID(
+            runtime.javascript_object_property_getter.clazz,
+            "getJavascriptProperty",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Ljava/lang/String;"
+            ")Lnet/janrupf/ultralight/javascript/JavascriptValue;");
+
+        // Retrieve information about the JavascriptObjectPropertyNamesCollector interface
+        runtime.javascript_object_property_names_collector.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyNamesCollector")));
+        runtime.javascript_object_property_names_collector.collect_javascript_property_names_method = env->GetMethodID(
+            runtime.javascript_object_property_names_collector.clazz,
+            "collectJavascriptPropertyNames",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            ")[Ljava/lang/String;");
+
+        // Retrieve information about the JavascriptObjectPropertySetter interface
+        runtime.javascript_object_property_setter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertySetter")));
+        runtime.javascript_object_property_setter.set_javascript_property_method = env->GetMethodID(
+            runtime.javascript_object_property_setter.clazz,
+            "setJavascriptProperty",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Ljava/lang/String;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+            ")Z");
+
+        // Retrieve information about the JavascriptObjectToTypeConverter interface
+        runtime.javascript_object_to_type_converter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectToTypeConverter")));
+        runtime.javascript_object_to_type_converter.convert_to_javascript_type_method = env->GetMethodID(
+            runtime.javascript_object_to_type_converter.clazz,
+            "convertToJavascriptType",
+            "("
+            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/janrupf/ultralight/javascript/JavascriptType;"
+            ")Lnet/janrupf/ultralight/javascript/JavascriptValue;");
+
         // Retrieve information about the JavascriptException class
         runtime.javascript_exception.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptException")));
+        runtime.javascript_exception.constructor = env->GetMethodID(
+            runtime.javascript_exception.clazz,
+            "<init>",
+            "(Ljava/lang/String;Lnet/janrupf/ultralight/javascript/JavascriptValue;)V");
+
+        // Retrieve information about the JavascriptEvaluationException class
+        runtime.javascript_evaluation_exception.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptEvaluationException")));
 
         // Retrieve information about the NullPointerException class
         runtime.null_pointer_exception.clazz = reinterpret_cast<jclass>(
@@ -432,7 +671,37 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.illegal_argument_exception.clazz);
         env->DeleteGlobalRef(runtime.illegal_state_exception.clazz);
         env->DeleteGlobalRef(runtime.null_pointer_exception.clazz);
+        env->DeleteGlobalRef(runtime.javascript_evaluation_exception.clazz);
         env->DeleteGlobalRef(runtime.javascript_exception.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_to_type_converter.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_property_setter.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_property_names_collector.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_property_getter.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_property_deleter.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_initializer.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_has_property_tester.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_has_instance_tester.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_function.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_finalizer.clazz);
+        env->DeleteGlobalRef(runtime.javascript_object_constructor.clazz);
+        env->UnregisterNatives(runtime.javascript_class_definition.clazz);
+        env->DeleteGlobalRef(runtime.javascript_class_definition.clazz);
+        env->UnregisterNatives(runtime.javascript_class.clazz);
+        env->DeleteGlobalRef(runtime.javascript_class.clazz);
+        runtime.javascript_typed_array_type.constants.clear(env);
+        env->DeleteGlobalRef(runtime.javascript_typed_array_type.clazz);
+        runtime.javascript_type.constants.clear(env);
+        env->DeleteGlobalRef(runtime.javascript_type.clazz);
+        env->UnregisterNatives(runtime.javascript_value.clazz);
+        env->DeleteGlobalRef(runtime.javascript_value.clazz);
+        env->DeleteGlobalRef(runtime.javascript_protected_value.clazz);
+        env->DeleteGlobalRef(runtime.javascript_locked_object.clazz);
+        env->UnregisterNatives(runtime.javascript_global_context.clazz);
+        env->DeleteGlobalRef(runtime.javascript_global_context.clazz);
+        env->UnregisterNatives(runtime.javascript_context_lock.clazz);
+        env->DeleteGlobalRef(runtime.javascript_context_lock.clazz);
+        env->UnregisterNatives(runtime.javascript_context.clazz);
+        env->DeleteGlobalRef(runtime.javascript_context.clazz);
         env->DeleteGlobalRef(runtime.ultralight_clipboard.clazz);
         env->DeleteGlobalRef(runtime.ultralight_file_system.clazz);
         env->DeleteGlobalRef(runtime.runnable.clazz);

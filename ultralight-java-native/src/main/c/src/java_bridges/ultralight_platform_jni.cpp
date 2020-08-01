@@ -9,11 +9,6 @@
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
 
-#ifdef WIN32
-#    include "ultralight_java/java_bridges/proxied_java_exception.hpp"
-#    include "ultralight_java/platform/windows_impl.hpp"
-#endif
-
 #define ASSIGN_CONFIG_STRING(name, msg)                                                                                \
     if(!JNI_STRING16_OR_NPE(                                                                                           \
            config.name, env, env->GetObjectField(java_config, runtime.ultralight_config.name##_field), msg)) {         \

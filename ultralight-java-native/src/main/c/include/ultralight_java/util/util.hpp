@@ -1,16 +1,17 @@
 #pragma once
 
-#include <jni.h>
 #include <Ultralight/Ultralight.h>
+#include <jni.h>
+#include <string>
 
-#define JNI_STRING16_OR_NPE(x, env, str, msg) \
-    ([&]() -> bool { \
-        if(!str) { \
-            env->ThrowNew(::ultralight_java::runtime.null_pointer_exception.clazz, msg); \
-            return false; \
-        } \
-        (x) = ::ultralight_java::Util::create_utf16_from_jstring(env, reinterpret_cast<jstring>(str)); \
-        return true; \
+#define JNI_STRING16_OR_NPE(x, env, str, msg)                                                                          \
+    ([&]() -> bool {                                                                                                   \
+        if(!str) {                                                                                                     \
+            env->ThrowNew(::ultralight_java::runtime.null_pointer_exception.clazz, msg);                               \
+            return false;                                                                                              \
+        }                                                                                                              \
+        (x) = ::ultralight_java::Util::create_utf16_from_jstring(env, reinterpret_cast<jstring>(str));                 \
+        return true;                                                                                                   \
     })()
 
 namespace ultralight_java {
@@ -84,5 +85,36 @@ namespace ultralight_java {
          * @return The converted event
          */
         static ultralight::ScrollEvent create_scroll_event_from_jobject(JNIEnv *env, jobject event);
+
+        /**
+         * Converts a javascript string to a java string.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param javascript_string The javascript string to convert
+         * @return The converted string as a java string
+         */
+        static jstring create_jstring_from_jsstring_ref(JNIEnv *env, JSStringRef javascript_string);
+
+        /**
+         * Converts a java string to a javascript string.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_string The java string to convert
+         * @return The converted string as a javascript string
+         */
+        static JSStringRef create_jsstring_ref_from_jstring(JNIEnv *env, jstring java_string);
+
+        /**
+         * Throws a javascript value as a java exception. This is meant to be used to translate javascript exceptions
+         * to java exceptions.
+         *
+         * @param message The message to pass to the java exception
+         * @param context The javascript context to use for accessing javascript
+         * @param javascript_value The javascript value to throw
+         * @param env The JNI environment to use for accessing java
+         * @param lock The java representation of the context lock
+         */
+        static void throw_jssvalue_ref_as_java_exception(
+            const std::string& message, JSContextRef context, JSValueRef javascript_value, JNIEnv *env, jobject lock);
     };
-}
+} // namespace ultralight_java

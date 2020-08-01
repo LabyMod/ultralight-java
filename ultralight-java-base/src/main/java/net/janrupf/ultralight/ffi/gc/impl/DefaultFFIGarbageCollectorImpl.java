@@ -57,7 +57,6 @@ public class DefaultFFIGarbageCollectorImpl implements FFIGarbageCollector {
                             "Object in reference queue which does not have a deleter associated");
                 }
 
-                // Execute the deleter
                 deleter.delete();
             } catch (InterruptedException ignored) {
             }

@@ -170,7 +170,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 29> native_methods;
+            std::array<JNINativeMethod, 30> native_methods;
         } ultralight_view;
 
         struct {
@@ -459,7 +459,264 @@ namespace ultralight_java {
              * The java class itself
              */
             jclass clazz;
+
+            /**
+             * Constructor taking a long as handle and a lock
+             */
+            jmethodID constructor;
+
+            /**
+             * Natives method that should be bound
+             */
+            std::array<JNINativeMethod, 1> native_methods;
+        } javascript_context;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor taking a long as handle
+             */
+            jmethodID constructor;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 2> native_methods;
+        } javascript_context_lock;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor taking a long as handle and a lock
+             */
+            jmethodID constructor;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 3> native_methods;
+        } javascript_global_context;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Method returning a java object representing the lock
+             */
+            jmethodID get_lock_method;
+
+            /**
+             * Method returning a C++ pointer to the underlying context object
+             */
+            jmethodID get_context_handle_method;
+        } javascript_locked_object;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor taking a long as handle
+             */
+            jmethodID constructor;
+        } javascript_protected_value;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor taking a long as handle and a lock
+             */
+            jmethodID constructor;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 18> native_methods;
+        } javascript_value;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * The java enum constants
+             */
+            JavaEnum<JSType> constants;
+        } javascript_type;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * The java enum constants
+             */
+            JavaEnum<JSTypedArrayType> constants;
+        } javascript_typed_array_type;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 1> native_methods;
+        } javascript_class;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 17> native_methods;
+        } javascript_class_definition;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID call_as_javascript_constructor_method;
+        } javascript_object_constructor;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID finalize_javascript_object;
+        } javascript_object_finalizer;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID call_as_javascript_function;
+        } javascript_object_function;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID has_javascript_instance_method;
+        } javascript_object_has_instance_tester;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID has_javascript_property_method;
+        } javascript_object_has_property_tester;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID initialize_javascript_object_method;
+        } javascript_object_initializer;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID delete_javascript_property_method;
+        } javascript_object_property_deleter;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID get_javascript_property_method;
+        } javascript_object_property_getter;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID collect_javascript_property_names_method;
+        } javascript_object_property_names_collector;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID set_javascript_property_method;
+        } javascript_object_property_setter;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID convert_to_javascript_type_method;
+        } javascript_object_to_type_converter;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor taking a string as a message and a Javascript value as
+             * the original exception
+             */
+            jmethodID constructor;
         } javascript_exception;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+        } javascript_evaluation_exception;
 
         struct {
             /**

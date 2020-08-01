@@ -1,5 +1,6 @@
 #include "ultralight_java/java_bridges/ultralight_view_jni.hpp"
 
+#include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/util/util.hpp"
 
@@ -128,6 +129,15 @@ namespace ultralight_java {
         view->Resize(width, height);
     }
 
+    jobject UltralightViewJNI::lock_javascript_context(JNIEnv *env, jobject instance) {
+        auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
+        if(env->ExceptionCheck()) {
+            return nullptr;
+        }
+
+        return JavascriptContextLockJNI::create(env, std::move(view->LockJSContext()));
+    }
+
     jstring UltralightViewJNI::evaluate_script(JNIEnv *env, jobject instance, jstring script) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
         if(env->ExceptionCheck()) {
@@ -145,7 +155,7 @@ namespace ultralight_java {
 
         if(!exception.empty()) {
             // A javascript exception occurred
-            env->ThrowNew(runtime.javascript_exception.clazz, exception.utf8().data());
+            env->ThrowNew(runtime.javascript_evaluation_exception.clazz, exception.utf8().data());
             return nullptr;
         } else {
             return Util::create_jstring_from_utf16(env, return_value.utf16());

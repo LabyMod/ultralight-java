@@ -110,6 +110,15 @@ namespace ultralight_java {
         static void resize(JNIEnv *env, jobject instance, jlong width, jlong height);
 
         /**
+         * Locks the javascript context of this view.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param instance The java instance of the view
+         * @return The javascript context as a java object
+         */
+        static jobject lock_javascript_context(JNIEnv *env, jobject instance);
+
+        /**
          * Retrieves whether this view is loading.
          *
          * @param env The JNI environment to use for accessing java
