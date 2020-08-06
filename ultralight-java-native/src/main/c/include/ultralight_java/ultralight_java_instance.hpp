@@ -482,6 +482,8 @@ namespace ultralight_java {
              */
             jmethodID constructor;
 
+            jmethodID unlock_method;
+
             /**
              * Native methods that should be bound
              */
@@ -558,6 +560,18 @@ namespace ultralight_java {
             jclass clazz;
 
             /**
+             * Constructor taking a long as handle and a lock
+             */
+            jmethodID constructor;
+        } javascript_object;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
              * The java enum constants
              */
             JavaEnum<JSType> constants;
@@ -580,6 +594,11 @@ namespace ultralight_java {
              * The java class itself
              */
             jclass clazz;
+
+            /**
+             * Constructor taking long as a handle
+             */
+            jmethodID constructor;
 
             /**
              * Native methods that should be bound
@@ -697,6 +716,15 @@ namespace ultralight_java {
 
             jmethodID convert_to_javascript_type_method;
         } javascript_object_to_type_converter;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID get_message_method;
+        } throwable;
 
         struct {
             /**

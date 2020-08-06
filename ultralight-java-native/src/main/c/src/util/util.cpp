@@ -214,6 +214,7 @@ namespace ultralight_java {
             reinterpret_cast<JSValueRef>(javascript_value),
             lock);
         if(env->ExceptionCheck()) {
+            JSValueUnprotect(context, javascript_value);
             return;
         }
 
@@ -222,5 +223,41 @@ namespace ultralight_java {
             runtime.javascript_exception.clazz, runtime.javascript_exception.constructor, exception_message, value));
         env->DeleteLocalRef(exception_message);
         env->Throw(exception);
+    }
+
+    JSValueRef Util::create_jssvalue_from_jthrowable(JNIEnv *env, jthrowable java_throwable, JSContextRef context) {
+        auto java_exception_message = reinterpret_cast<jstring>(
+            env->CallObjectMethod(java_throwable, runtime.throwable.get_message_method));
+        JSStringRef javascript_exception_message = Util::create_jsstring_ref_from_jstring(env, java_exception_message);
+        JSValueRef arguments[] = {JSValueMakeString(context, javascript_exception_message)};
+
+        JSValueRef javascript_exception_exception = nullptr;
+        JSObjectRef javascript_exception = JSObjectMakeError(context, 1, arguments, &javascript_exception_exception);
+
+        JSValueUnprotect(context, arguments[0]);
+
+        if(javascript_exception_exception) {
+            return javascript_exception_exception;
+        }
+
+        JSStringRelease(javascript_exception_message);
+        return javascript_exception;
+    }
+
+    JSValueRef Util::create_jserror(JSContextRef context, const std::string &message) {
+        JSStringRef javascript_exception_message = JSStringCreateWithUTF8CString(message.c_str());
+        JSValueRef arguments[] = {JSValueMakeString(context, javascript_exception_message)};
+
+        JSValueRef javascript_exception_exception = nullptr;
+        JSObjectRef javascript_exception = JSObjectMakeError(context, 1, arguments, &javascript_exception_exception);
+
+        JSValueUnprotect(context, arguments[0]);
+
+        if(javascript_exception_exception) {
+            return javascript_exception_exception;
+        }
+
+        JSStringRelease(javascript_exception_message);
+        return javascript_exception;
     }
 } // namespace ultralight_java

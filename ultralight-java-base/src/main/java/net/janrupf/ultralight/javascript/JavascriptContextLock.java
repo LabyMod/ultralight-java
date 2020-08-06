@@ -48,11 +48,15 @@ public class JavascriptContextLock implements AutoCloseable, ObjectWithHandle {
         this.lockedObjects.add(object);
     }
 
+    @Override
+    public void close() {
+        unlock();
+    }
+
     /**
      * Releases the lock if it has not been released already.
      */
-    @Override
-    public void close() {
+    public void unlock() {
         if(isLocked) {
             // Notify all objects that the lock is being closed
             for(JavascriptLockedObject object : lockedObjects) {

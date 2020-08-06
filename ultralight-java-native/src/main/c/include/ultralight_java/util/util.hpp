@@ -116,5 +116,24 @@ namespace ultralight_java {
          */
         static void throw_jssvalue_ref_as_java_exception(
             const std::string& message, JSContextRef context, JSValueRef javascript_value, JNIEnv *env, jobject lock);
+
+        /**
+         * Creates a javascript value from a java exception.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_throwable The throwable to convert
+         * @param context The javascript context to use for accessing javascript
+         * @return The converted throwable
+         */
+        static JSValueRef create_jssvalue_from_jthrowable(JNIEnv *env, jthrowable java_throwable, JSContextRef context);
+
+        /**
+         * Creates a javascript exception with the specified message.
+         *
+         * @param context The javascript context to use for accessing javascript
+         * @param message The message of the exception
+         * @return The created exception
+         */
+        static JSValueRef create_jserror(JSContextRef context, const std::string& message);
     };
 } // namespace ultralight_java

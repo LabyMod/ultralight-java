@@ -4,6 +4,7 @@
 #include <jni.h>
 #include <string>
 #include <unordered_map>
+#include <vector>
 
 namespace ultralight_java {
     /**
@@ -49,8 +50,8 @@ namespace ultralight_java {
     /**
      * Struct used as private data for Javascript objects with classes from java
      */
-    struct ManagedJavascriptPrivateData {
-        explicit ManagedJavascriptPrivateData();
+    struct ManagedJavascriptClassData {
+        explicit ManagedJavascriptClassData();
 
         /**
          * The callbacks used for this object
@@ -66,11 +67,6 @@ namespace ultralight_java {
          * Bridged static functions
          */
         std::unordered_map<std::string, ManagedJavascriptStaticFunction> static_functions;
-
-        /**
-         * The real private data
-         */
-        jobject real_data;
     };
 
     /**
@@ -83,47 +79,52 @@ namespace ultralight_java {
          * to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param object The object to initialize
          */
-        static void initialize(JSContextRef ctx, JSObjectRef object);
+        static void initialize(JSContextRef ctx, JSClassRef clazz, JSObjectRef object);
 
         /**
          * Finalizes a Javascript object bridged from Java. The private data of the object needs to point
          * to a ManagedJavascriptPrivateData struct.
          *
+         * @param clazz The class the callback is being invoked for
          * @param object The object to finalize
          */
-        static void finalize(JSObjectRef object);
+        static void finalize(JSClassRef clazz, JSObjectRef object);
 
         /**
          * Tests whether a Javascript object bridged from Java has a certain property. The private data of the object
          * needs to point to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param object The object to search for the property
          * @param property_name The name of the property to search for
          * @return true if the object has the requested property, false otherwise
          */
-        static bool has_property(JSContextRef ctx, JSObjectRef object, JSStringRef property_name);
+        static bool has_property(JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSStringRef property_name);
 
         /**
          * Retrieves a property from a Javascript object bridged from Java. The private data of the object needs to
          * point to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param object The object to retrieve the property from
          * @param property_name The name of the property to retrieve
          * @param exception Pointer to store an exception into if one occurs
          * @return THe found property, or null, if the request shall be forwarded
          */
         static JSValueRef get_property(
-            JSContextRef ctx, JSObjectRef object, JSStringRef property_name, JSValueRef *exception);
+            JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSStringRef property_name, JSValueRef *exception);
 
         /**
          * Sets a property on a Javascript object bridged from Java. The private data of the object needs to point
          * to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param object The object to set the property on
          * @param property_name The name of the property to set
          * @param value The value to set the property to
@@ -132,13 +133,19 @@ namespace ultralight_java {
          *         delegated
          */
         static bool set_property(
-            JSContextRef ctx, JSObjectRef object, JSStringRef property_name, JSValueRef value, JSValueRef *exception);
+            JSContextRef ctx,
+            JSClassRef clazz,
+            JSObjectRef object,
+            JSStringRef property_name,
+            JSValueRef value,
+            JSValueRef *exception);
 
         /**
          * Deletes a property from a Javascript object bridged from Java. The private data of the object needs to point
          * to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param object The object to delete the property from
          * @param property_name The name of the property to delete
          * @param exception Pointer to store an exception into if one occurs
@@ -146,24 +153,26 @@ namespace ultralight_java {
          *         be delegated
          */
         static bool delete_property(
-            JSContextRef ctx, JSObjectRef object, JSStringRef property_name, JSValueRef *exception);
+            JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSStringRef property_name, JSValueRef *exception);
 
         /**
          * Collects the names of a Javascript object bridged from Java. The private data of the object needs to point
          * to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param object The object to collect the property names from
          * @param property_names The accumulator to store the names into
          */
         static void get_property_names(
-            JSContextRef ctx, JSObjectRef object, JSPropertyNameAccumulatorRef property_names);
+            JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSPropertyNameAccumulatorRef property_names);
 
         /**
          * Call a Javascript object bridged from Java as a function. The private data of the object needs to point
          * to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param function The function being called
          * @param this_object The this context to use while calling the function
          * @param argument_count The amount of arguments in the arguments array
@@ -173,6 +182,7 @@ namespace ultralight_java {
          */
         static JSValueRef call_as_function(
             JSContextRef ctx,
+            JSClassRef clazz,
             JSObjectRef function,
             JSObjectRef this_object,
             size_t argument_count,
@@ -184,6 +194,7 @@ namespace ultralight_java {
          * to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param constructor The constructor being called
          * @param argument_count The amount of arguments in the arguments array
          * @param arguments The arguments the constructor is being called with
@@ -192,6 +203,7 @@ namespace ultralight_java {
          */
         static JSObjectRef call_as_constructor(
             JSContextRef ctx,
+            JSClassRef clazz,
             JSObjectRef constructor,
             size_t argument_count,
             const JSValueRef arguments[],
@@ -202,24 +214,31 @@ namespace ultralight_java {
          * object needs to point to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param constructor The constructor to use as the base
          * @param possible_instance The object which possibly is an instance of the constructor
          * @param exception Pointer to store an exception into if one occurs
          * @return true if the object is an instance of the constructor, false otherwise
          */
         static bool has_instance(
-            JSContextRef ctx, JSObjectRef constructor, JSValueRef possible_instance, JSValueRef *exception);
+            JSContextRef ctx,
+            JSClassRef clazz,
+            JSObjectRef constructor,
+            JSValueRef possible_instance,
+            JSValueRef *exception);
 
         /**
          * Converts a Javascript object bridged from Java to another type. The private data of the object
          * needs to point to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
          * @param object The object to convert
          * @param type The type to convert the object into
          * @param exception Pointer to store an exception into if one occurs
          * @return The converted object
          */
-        static JSValueRef convert_to_type(JSContextRef ctx, JSObjectRef object, JSType type, JSValueRef *exception);
+        static JSValueRef convert_to_type(
+            JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSType type, JSValueRef *exception);
     };
 } // namespace ultralight_java

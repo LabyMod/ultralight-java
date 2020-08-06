@@ -1,5 +1,6 @@
 package net.janrupf.ultralight.javascript;
 
+import jdk.nashorn.api.scripting.JSObject;
 import net.janrupf.ultralight.annotation.NativeType;
 import net.janrupf.ultralight.ffi.ObjectWithHandle;
 import net.janrupf.ultralight.ffi.gc.DeletableObject;
@@ -150,6 +151,16 @@ public class JavascriptClassDefinition implements ObjectWithHandle {
      * @return this
      */
     public native JavascriptClassDefinition onConvertToType(JavascriptObjectToTypeConverter converter);
+
+    /**
+     * Creates the class and freezes its attributes. This {@link JavascriptClassDefinition} can be altered after calling
+     * this method without altering the baked class. In return this also means that this method can be called multiple
+     * times instead of using multiple definition objects to safe a tiny amount of memory.
+     *
+     * @return The created class
+     * @throws IllegalStateException If a required property has not been set
+     */
+    public native JavascriptClass bake();
 
     /**
      * Allocates an empty class definition.

@@ -4,6 +4,6 @@
 
 namespace ultralight_java {
     void JavascriptClassJNI::release(JNIEnv *, jclass, jlong handle) {
-        JSClassRelease(reinterpret_cast<JSClassRef>(handle));
+        // TODO: Actually release when callback is implemented in Javascript engine
     }
 }

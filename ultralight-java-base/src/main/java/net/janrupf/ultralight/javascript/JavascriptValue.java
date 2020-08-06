@@ -19,13 +19,16 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
      * Constructs a new {@link JavascriptValue} wrapping an existing value reference in a locked context.
      *
      * @param handle The native value reference
-     * @param lock   The context the value exists in
+     * @param lock   The context the value exists in, or {@code null}, if the object is not locked
      */
     @NativeCall
     JavascriptValue(@NativeType("JSValueRef") long handle, JavascriptContextLock lock) {
         this.handle = handle;
         this.lock = lock;
-        this.lock.addDependency(this);
+
+        if(this.lock != null) {
+            this.lock.addDependency(this);
+        }
     }
 
     /**
@@ -200,7 +203,7 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
 
     @Override
     public String toString() {
-        if(lock.isLocked()) {
+        if(lock != null && lock.isLocked()) {
             try {
                 return toStringCopy();
             } catch(JavascriptException ignored) {
@@ -218,7 +221,9 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
 
     @Override
     public long getHandle() {
-        if(!lock.isLocked()) {
+        if(lock == null) {
+            throw new IllegalStateException("This value has never been locked");
+        } if(!lock.isLocked()) {
             throw new IllegalStateException("JavascriptContext is not locked anymore");
         }
 
@@ -227,7 +232,9 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
 
     @Override
     public long getContextHandle() {
-        if(!lock.isLocked()) {
+        if(lock == null) {
+            throw new IllegalStateException("This value has never been locked");
+        }if(!lock.isLocked()) {
             throw new IllegalStateException("JavascriptContext is not locked anymore");
         }
 
@@ -242,6 +249,6 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
 
     @Override
     public JavascriptContextLock getLock() {
-        return null;
+        return lock;
     }
 }

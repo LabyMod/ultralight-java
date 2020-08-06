@@ -172,6 +172,15 @@ namespace ultralight_java {
         static jobject on_convert_to_type(JNIEnv *env, jobject java_instance, jobject java_converter);
 
         /**
+         * Bakes the class and freezes all attributes on the generated class.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The java instance of this JSClassDefinition
+         * @return The backed Javascript class as a java object
+         */
+        static jobject bake(JNIEnv *env, jobject java_instance);
+
+        /**
          * Allocates an empty definition.
          *
          * @param env The JNI environment to use for accessing java
