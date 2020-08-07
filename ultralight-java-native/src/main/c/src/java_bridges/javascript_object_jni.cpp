@@ -301,6 +301,7 @@ namespace ultralight_java {
 
         return JSObjectIsFunction(context, object);
     }
+
     jobject JavascriptObjectJNI::call_as_function(
         JNIEnv *env, jobject java_instance, jobject java_this_object, jobjectArray java_arguments) {
         auto [ok, context, object, lock] = extract_with_lock(env, java_instance);
