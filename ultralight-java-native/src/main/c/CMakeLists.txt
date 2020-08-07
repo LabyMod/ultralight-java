@@ -55,6 +55,7 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/javascript_context_jni.cpp
         src/java_bridges/javascript_context_lock_jni.cpp
         src/java_bridges/javascript_global_context_jni.cpp
+        src/java_bridges/javascript_object_jni.cpp
         src/java_bridges/javascript_value_jni.cpp
         src/java_bridges/proxied_java_exception.cpp
         src/java_bridges/ultralight_bitmap_jni.cpp

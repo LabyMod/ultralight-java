@@ -18,6 +18,13 @@ namespace ultralight_java {
              * The java class itself
              */
             jclass clazz;
+        } string;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
 
             /**
              * Method returning the native pointer of the underlying C(++) object
@@ -563,6 +570,11 @@ namespace ultralight_java {
              * Constructor taking a long as handle and a lock
              */
             jmethodID constructor;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 19> native_methods;
         } javascript_object;
 
         struct {

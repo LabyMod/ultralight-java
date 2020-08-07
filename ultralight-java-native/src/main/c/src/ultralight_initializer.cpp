@@ -5,6 +5,7 @@
 #include "ultralight_java/java_bridges/javascript_context_jni.hpp"
 #include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
 #include "ultralight_java/java_bridges/javascript_global_context_jni.hpp"
+#include "ultralight_java/java_bridges/javascript_object_jni.hpp"
 #include "ultralight_java/java_bridges/javascript_value_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_bitmap_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_bitmap_surface_jni.hpp"
@@ -421,6 +422,74 @@ namespace ultralight_java {
              NATIVE_METHOD("toBoolean", "()Z", JavascriptValueJNI::to_boolean),
              NATIVE_METHOD("toNumber", "()D", JavascriptValueJNI::to_number),
              NATIVE_METHOD("toStringCopy", "()Ljava/lang/String;", JavascriptValueJNI::to_string_copy)};
+
+        runtime.javascript_object.native_methods =
+            {NATIVE_METHOD(
+                 "getPrototype",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptObjectJNI::get_prototype),
+             NATIVE_METHOD(
+                 "setPrototype",
+                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)V",
+                 JavascriptObjectJNI::set_prototype),
+             NATIVE_METHOD("hasProperty", "(Ljava/lang/String;)Z", JavascriptObjectJNI::has_property),
+             NATIVE_METHOD(
+                 "getProperty",
+                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptObjectJNI::get_property),
+             NATIVE_METHOD(
+                 "setProperty",
+                 "(Ljava/lang/String;Lnet/janrupf/ultralight/javascript/JavascriptValue;I)V",
+                 JavascriptObjectJNI::set_property),
+             NATIVE_METHOD("deleteProperty", "(Ljava/lang/String;)Z", JavascriptObjectJNI::delete_property),
+             NATIVE_METHOD(
+                 "hasPropertyForKey",
+                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z",
+                 JavascriptObjectJNI::has_property_for_key),
+             NATIVE_METHOD(
+                 "getPropertyForKey",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptObjectJNI::get_property_for_key),
+             NATIVE_METHOD(
+                 "setPropertyForKey",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 "I"
+                 ")V",
+                 JavascriptObjectJNI::set_property_for_key),
+             NATIVE_METHOD(
+                 "deletePropertyForKey",
+                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z",
+                 JavascriptObjectJNI::delete_property_for_key),
+             NATIVE_METHOD(
+                 "getPropertyAtIndex",
+                 "(J)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptObjectJNI::get_property_at_index),
+             NATIVE_METHOD(
+                 "setPropertyAtIndex",
+                 "(JLnet/janrupf/ultralight/javascript/JavascriptValue;)V",
+                 JavascriptObjectJNI::set_property_at_index),
+             NATIVE_METHOD("getPrivate", "()Ljava/lang/Object;", JavascriptObjectJNI::get_private),
+             NATIVE_METHOD("setPrivate", "(Ljava/lang/Object;)V", JavascriptObjectJNI::set_private),
+             NATIVE_METHOD("isFunction", "()Z", JavascriptObjectJNI::is_function),
+             NATIVE_METHOD(
+                 "callAsFunction",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptObjectJNI::call_as_function),
+             NATIVE_METHOD("isConstructor", "()Z", JavascriptObjectJNI::is_constructor),
+             NATIVE_METHOD(
+                 "callAsConstructor",
+                 "("
+                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptObjectJNI::call_as_constructor),
+             NATIVE_METHOD("copyPropertyNames", "()[Ljava/lang/String;", JavascriptObjectJNI::copy_property_names)};
 
         runtime.javascript_type.constants = JavaEnum<JSType>(
             kJSTypeUndefined,

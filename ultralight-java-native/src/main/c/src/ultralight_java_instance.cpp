@@ -36,6 +36,9 @@ namespace ultralight_java {
             return error;
         }
 
+        // Retrieve information about the String class
+        runtime.string.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("java/lang/String")));
+
         // Retrieve information about the ObjectWithHandle interface
         runtime.object_with_handle.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/ffi/ObjectWithHandle")));
@@ -477,6 +480,12 @@ namespace ultralight_java {
         runtime.javascript_object.constructor = env->GetMethodID(
             runtime.javascript_object.clazz, "<init>", "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
 
+        // Register native methods for the JavascriptObject class
+        env->RegisterNatives(
+            runtime.javascript_object.clazz,
+            runtime.javascript_object.native_methods.data(),
+            runtime.javascript_object.native_methods.size());
+
         // Retrieve information about the JavascriptType enum
         runtime.javascript_type.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptType")));
@@ -765,5 +774,6 @@ namespace ultralight_java {
         env->UnregisterNatives(runtime.ultralight_platform.clazz);
         env->DeleteGlobalRef(runtime.ultralight_platform.clazz);
         env->DeleteGlobalRef(runtime.object_with_handle.clazz);
+        env->DeleteGlobalRef(runtime.string.clazz);
     }
 } // namespace ultralight_java
