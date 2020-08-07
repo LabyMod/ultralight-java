@@ -135,5 +135,14 @@ namespace ultralight_java {
          * @return The created exception
          */
         static JSValueRef create_jserror(JSContextRef context, const std::string& message);
+
+        /**
+         * Translates an array of JavascriptValue objects to JSValueRef's.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_arguments The array of arguments to translate
+         * @return The translated array, or nullptr, if the argument length is 0
+         */
+        static JSValueRef *translate_bridged_arguments(JNIEnv *env, jobjectArray java_arguments);
     };
 } // namespace ultralight_java

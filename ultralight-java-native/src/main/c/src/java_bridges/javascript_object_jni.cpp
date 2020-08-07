@@ -310,19 +310,9 @@ namespace ultralight_java {
         }
 
         size_t argument_count = env->GetArrayLength(java_arguments);
-        auto *javascript_arguments = new JSValueRef[argument_count];
-
-        for(size_t i = 0; i < argument_count; i++) {
-            jobject java_argument = env->GetObjectArrayElement(java_arguments, i);
-            auto [argument_ok, argument] = extract_secondary(env, java_argument);
-            env->DeleteLocalRef(java_argument);
-
-            if(!argument_ok) {
-                delete[] javascript_arguments;
-                return nullptr;
-            }
-
-            javascript_arguments[i] = argument;
+        auto *javascript_arguments = Util::translate_bridged_arguments(env, java_arguments);
+        if(env->ExceptionCheck()) {
+            return nullptr;
         }
 
         JSValueRef exception = nullptr;
@@ -360,19 +350,9 @@ namespace ultralight_java {
         }
 
         size_t argument_count = env->GetArrayLength(java_arguments);
-        auto *javascript_arguments = new JSValueRef[argument_count];
-
-        for(size_t i = 0; i < argument_count; i++) {
-            jobject java_argument = env->GetObjectArrayElement(java_arguments, i);
-            auto [argument_ok, argument] = extract_secondary(env, java_argument);
-            env->DeleteLocalRef(java_argument);
-
-            if(!argument_ok) {
-                delete[] javascript_arguments;
-                return nullptr;
-            }
-
-            javascript_arguments[i] = argument;
+        auto *javascript_arguments = Util::translate_bridged_arguments(env, java_arguments);
+        if(env->ExceptionCheck()) {
+            return nullptr;
         }
 
         JSValueRef exception = nullptr;

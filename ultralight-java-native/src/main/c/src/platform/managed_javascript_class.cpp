@@ -87,17 +87,25 @@ namespace ultralight_java {
         auto *class_data = reinterpret_cast<ManagedJavascriptClassData *>(JSClassGetPrivate(clazz));
 
         TemporaryJNI env;
-        auto java_object = LocalJNIReferenceWrapper<jobject>::construct(
-            env,
-            runtime.javascript_object.clazz,
-            runtime.javascript_object.constructor,
-            reinterpret_cast<jlong>(object),
-            nullptr);
+        if(class_data->functions.java_finalizer) {
+            auto java_object = LocalJNIReferenceWrapper<jobject>::construct(
+                env,
+                runtime.javascript_object.clazz,
+                runtime.javascript_object.constructor,
+                reinterpret_cast<jlong>(object),
+                nullptr);
 
-        env->CallVoidMethod(
-            class_data->functions.java_finalizer,
-            runtime.javascript_object_finalizer.finalize_javascript_object,
-            java_object.get());
+            env->CallVoidMethod(
+                class_data->functions.java_finalizer,
+                runtime.javascript_object_finalizer.finalize_javascript_object,
+                java_object.get());
+        }
+
+        auto private_data = reinterpret_cast<jobject>(JSObjectGetPrivate(object));
+        if(private_data && env->GetObjectRefType(private_data) == JNIGlobalRefType) {
+            env->DeleteGlobalRef(private_data);
+        }
+
         ProxiedJavaException::throw_if_any(env);
     }
 

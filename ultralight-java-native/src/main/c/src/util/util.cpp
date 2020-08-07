@@ -260,4 +260,26 @@ namespace ultralight_java {
         JSStringRelease(javascript_exception_message);
         return javascript_exception;
     }
+
+    JSValueRef *Util::translate_bridged_arguments(JNIEnv *env, jobjectArray java_arguments) {
+        size_t length = env->GetArrayLength(java_arguments);
+        if(length == 0) {
+            return nullptr;
+        }
+
+        auto *values = new JSValueRef[length];
+        for(size_t i = 0; i < length; i++) {
+            jobject java_argument = env->GetObjectArrayElement(java_arguments, i);
+            values[i] = reinterpret_cast<JSValueRef>(
+                env->CallLongMethod(java_argument, runtime.object_with_handle.get_handle_method));
+            env->DeleteLocalRef(java_argument);
+
+            if(env->ExceptionCheck()) {
+                delete[] values;
+                return nullptr;
+            }
+        }
+
+        return values;
+    }
 } // namespace ultralight_java
