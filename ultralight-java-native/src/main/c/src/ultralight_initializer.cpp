@@ -375,10 +375,82 @@ namespace ultralight_java {
             ultralight::kMessageSource_Other,
             "OTHER");
 
-        runtime.javascript_context.native_methods = {NATIVE_METHOD(
-            "getGlobalContext",
-            "()Lnet/janrupf/ultralight/javascript/JavascriptGlobalContext;",
-            JavascriptContextJNI::get_global_context)};
+        runtime.javascript_context.native_methods =
+            {NATIVE_METHOD(
+                 "getGlobalContext",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptGlobalContext;",
+                 JavascriptContextJNI::get_global_context),
+             NATIVE_METHOD(
+                 "getGlobalObject",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptContextJNI::get_global_object),
+             NATIVE_METHOD(
+                 "makeUndefined",
+                 "()Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_undefined),
+             NATIVE_METHOD(
+                 "makeNull", "()Lnet/janrupf/ultralight/javascript/JavascriptValue;", JavascriptContextJNI::make_null),
+             NATIVE_METHOD(
+                 "makeBoolean",
+                 "(Z)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_boolean),
+             NATIVE_METHOD(
+                 "makeNumber",
+                 "(D)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_number),
+             NATIVE_METHOD(
+                 "makeString",
+                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_string),
+             NATIVE_METHOD(
+                 "makeSymbol",
+                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_symbol),
+             NATIVE_METHOD(
+                 "makeFromJSON",
+                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_from_json),
+             NATIVE_METHOD(
+                 "makeObject",
+                 "("
+                 "Lnet/janrupf/ultralight/javascript/JavascriptClass;"
+                 "Ljava/lang/Object;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptContextJNI::make_object),
+             NATIVE_METHOD(
+                 "makeArray",
+                 "("
+                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptContextJNI::make_array),
+             NATIVE_METHOD(
+                 "makeDate",
+                 "("
+                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptContextJNI::make_date),
+             NATIVE_METHOD(
+                 "makeError",
+                 "("
+                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptContextJNI::make_error),
+             NATIVE_METHOD(
+                 "makeRegExp",
+                 "("
+                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptContextJNI::make_reg_exp),
+             NATIVE_METHOD(
+                 "makeFunction",
+                 "("
+                 "Ljava/lang/String;"
+                 "[Ljava/lang/String;"
+                 "Ljava/lang/String;"
+                 "Ljava/lang/String;"
+                 "I"
+                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 JavascriptContextJNI::make_function)};
 
         runtime.javascript_context_lock.native_methods =
             {NATIVE_METHOD(
@@ -405,6 +477,10 @@ namespace ultralight_java {
              NATIVE_METHOD("isBoolean", "()Z", JavascriptValueJNI::is_boolean),
              NATIVE_METHOD("isNumber", "()Z", JavascriptValueJNI::is_number),
              NATIVE_METHOD("isString", "()Z", JavascriptValueJNI::is_string),
+             NATIVE_METHOD(
+                 "isOfClass",
+                 "(Lnet/janrupf/ultralight/javascript/JavascriptClass;)Z",
+                 JavascriptValueJNI::is_of_class),
              NATIVE_METHOD("isObject", "()Z", JavascriptValueJNI::is_object),
              NATIVE_METHOD("isArray", "()Z", JavascriptValueJNI::is_array),
              NATIVE_METHOD("isDate", "()Z", JavascriptValueJNI::is_date),
@@ -418,10 +494,16 @@ namespace ultralight_java {
                  "isStrictEqual",
                  "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z",
                  JavascriptValueJNI::is_strict_equal),
+             NATIVE_METHOD(
+                 "isInstanceOfConstructor",
+                 "(Lnet/janrupf/ultralight/javascript/JavascriptObject;)Z",
+                 JavascriptValueJNI::is_instance_of_constructor),
              NATIVE_METHOD("toJson", "(S)Ljava/lang/String;", JavascriptValueJNI::to_json),
              NATIVE_METHOD("toBoolean", "()Z", JavascriptValueJNI::to_boolean),
              NATIVE_METHOD("toNumber", "()D", JavascriptValueJNI::to_number),
-             NATIVE_METHOD("toStringCopy", "()Ljava/lang/String;", JavascriptValueJNI::to_string_copy)};
+             NATIVE_METHOD("toStringCopy", "()Ljava/lang/String;", JavascriptValueJNI::to_string_copy),
+             NATIVE_METHOD(
+                 "toObject", "()Lnet/janrupf/ultralight/javascript/JavascriptObject;", JavascriptValueJNI::to_object)};
 
         runtime.javascript_object.native_methods =
             {NATIVE_METHOD(
@@ -625,6 +707,8 @@ namespace ultralight_java {
                  "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectToTypeConverter;"
                  ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_convert_to_type),
+             NATIVE_METHOD(
+                 "bake", "()Lnet/janrupf/ultralight/javascript/JavascriptClass;", JavascriptClassDefinitionJNI::bake),
              NATIVE_METHOD("createEmpty", "()J", JavascriptClassDefinitionJNI::create_empty),
              NATIVE_METHOD("free", "(J)V", JavascriptClassDefinitionJNI::free)};
 

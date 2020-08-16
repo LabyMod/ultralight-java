@@ -5,8 +5,8 @@ import net.janrupf.ultralight.ffi.ObjectWithHandle;
 import net.janrupf.ultralight.ffi.gc.DeletableObject;
 
 /**
- * TODO: FIX DOC LINk
- * A JavaScript class. Used with JSObjectMake to construct objects with custom behavior.
+ * A JavaScript class. Used with {@link JavascriptContext#makeObject(JavascriptClass, Object)}
+ * to construct objects with custom behavior.
  */
 @NativeType("JSClassRef")
 public class JavascriptClass implements ObjectWithHandle {

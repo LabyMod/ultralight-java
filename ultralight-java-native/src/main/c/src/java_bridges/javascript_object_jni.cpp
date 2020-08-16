@@ -2,6 +2,7 @@
 
 #include <JavaScriptCore/JavaScript.h>
 #include <tuple>
+#include <ultralight_java/ultralight_java_instance.hpp>
 
 #include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
@@ -20,7 +21,7 @@ namespace ultralight_java {
 
     static std::tuple<bool, JSContextRef, JSObjectRef> extract(JNIEnv *env, jobject java_instance) {
         auto lock = reinterpret_cast<HoldJavascriptContextLock *>(
-            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+            env->CallLongMethod(java_instance, runtime.javascript_locked_object.get_lock_handle_method));
         if(env->ExceptionCheck()) {
             return {false, nullptr, nullptr};
         }
@@ -305,7 +306,8 @@ namespace ultralight_java {
     jobject JavascriptObjectJNI::call_as_function(
         JNIEnv *env, jobject java_instance, jobject java_this_object, jobjectArray java_arguments) {
         auto [ok, context, object, lock] = extract_with_lock(env, java_instance);
-        auto [this_object_ok, this_object] = extract_secondary(env, java_this_object);
+        auto [this_object_ok, this_object] = java_this_object ? extract_secondary(env, java_this_object) :
+                                                                std::make_tuple(true, nullptr);
         if(!ok || !this_object_ok) {
             return nullptr;
         }
@@ -324,6 +326,9 @@ namespace ultralight_java {
         if(exception) {
             Util::throw_jssvalue_ref_as_java_exception(
                 "Error while calling javascript object as function", context, exception, env, lock);
+            return nullptr;
+        } else if(!exception && !return_value) {
+            env->ThrowNew(runtime.illegal_state_exception.clazz, "Object can't be called as a function");
             return nullptr;
         }
 

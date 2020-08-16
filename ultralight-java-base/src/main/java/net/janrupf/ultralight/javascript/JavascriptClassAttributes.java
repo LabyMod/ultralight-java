@@ -13,9 +13,8 @@ public final class JavascriptClassAttributes {
     public static final int NONE = 0;
 
     /**
-     * TODO: FIX DOC LINK
      * Specifies that a class should not automatically generate a shared prototype for its instance objects. Use
-     * this in combination with JSObjectSetPrototype to manage prototypes manually.
+     * this in combination with {@link JavascriptObject#setPrototype(JavascriptValue)} to manage prototypes manually.
      */
     @NativeType("<unnamed enum>")
     public static final int NO_AUTOMATIC_PROTOTYPE = 1 << 1;

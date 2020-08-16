@@ -247,7 +247,7 @@ namespace ultralight_java {
             return nullptr;
         }
 
-        ManagedJavascriptClassData *new_data = new ManagedJavascriptClassData();
+        auto *new_data = new ManagedJavascriptClassData();
         new_data->functions.java_initializer = env->NewGlobalRef(description->data.functions.java_initializer);
         new_data->functions.java_finalizer = env->NewGlobalRef(description->data.functions.java_finalizer);
         new_data->functions.java_has_property_tester = env->NewGlobalRef(
@@ -312,10 +312,10 @@ namespace ultralight_java {
             for(const auto &[name, field] : description->data.static_fields) {
                 static_values->name = name.c_str();
                 static_values->attributes = field.attributes;
-                static_values->getPropertyEx = &ManagedJavascriptCallbacks::get_property;
+                static_values->getPropertyEx = &ManagedJavascriptCallbacks::get_static_property;
 
                 if(field.setter) {
-                    static_values->setPropertyEx = &ManagedJavascriptCallbacks::set_property;
+                    static_values->setPropertyEx = &ManagedJavascriptCallbacks::set_static_property;
                 } else {
                     static_values->setPropertyEx = nullptr;
                 }
@@ -338,7 +338,7 @@ namespace ultralight_java {
             for(const auto &[name, function] : description->data.static_functions) {
                 static_functions->name = name.c_str();
                 static_functions->attributes = function.attributes;
-                static_functions->callAsFunctionEx = &ManagedJavascriptCallbacks::call_as_function;
+                static_functions->callAsFunctionEx = &ManagedJavascriptCallbacks::call_static_function;
 
                 static_functions++;
             }

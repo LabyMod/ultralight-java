@@ -1,5 +1,7 @@
 #include "ultralight_java/platform/managed_javascript_class.hpp"
 
+#include <ultralight_java/ultralight_java_instance.hpp>
+
 #include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
 #include "ultralight_java/java_bridges/proxied_java_exception.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
@@ -165,6 +167,7 @@ namespace ultralight_java {
                 env->CallObjectMethod(
                     class_data->functions.java_property_getter,
                     runtime.javascript_object_property_getter.get_javascript_property_method,
+                    java_context.get(),
                     java_object.get(),
                     java_property_name.get()));
         if(env->ExceptionCheck()) {
@@ -188,6 +191,68 @@ namespace ultralight_java {
 
         return value;
     }
+
+    JSValueRef ManagedJavascriptCallbacks::get_static_property(
+        JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSStringRef property_name, JSValueRef *exception) {
+        auto *class_data = reinterpret_cast<ManagedJavascriptClassData *>(JSClassGetPrivate(clazz));
+
+        TemporaryJNI env;
+        LocalJNIReferenceWrapper<jobject> java_lock(env, JavascriptContextLockJNI::create(env, ctx));
+        auto java_context = WRAP_CONTEXT(env, ctx, java_lock);
+        auto java_object = WRAP_OBJECT(env, ctx, object, java_lock);
+        LocalJNIReferenceWrapper<jstring>
+            java_property_name(env, Util::create_jstring_from_jsstring_ref(env, property_name));
+
+        if(env->ExceptionCheck()) {
+            *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
+            env->ExceptionClear();
+            if(java_lock) {
+                env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            }
+            return nullptr;
+        }
+
+        auto getter_index = Util::create_utf8_from_jsstring_ref(property_name);
+        LocalJNIReferenceWrapper<jobject> ret(env);
+
+        if(auto it = class_data->static_fields.find(getter_index); it != class_data->static_fields.end()) {
+            ret = LocalJNIReferenceWrapper<jobject>(
+                env,
+                env->CallObjectMethod(
+                    it->second.getter,
+                    runtime.javascript_object_property_getter.get_javascript_property_method,
+                    java_context.get(),
+                    java_object.get(),
+                    java_property_name.get()));
+            
+        } else {
+            env->ThrowNew(
+                runtime.illegal_argument_exception.clazz,
+                ("Tried to get non existent static property " + getter_index).c_str());
+        }
+
+        if(env->ExceptionCheck()) {
+            *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
+            env->ExceptionClear();
+            env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            return nullptr;
+        }
+
+        if(!ret) {
+            env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            *exception = Util::create_jserror(ctx, "Java function returned null");
+            return nullptr;
+        }
+
+        auto value = reinterpret_cast<JSValueRef>(
+            env->CallLongMethod(ret, runtime.object_with_handle.get_handle_method));
+        JSValueProtect(ctx, value);
+
+        env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+
+        return value;
+    }
+
     bool ManagedJavascriptCallbacks::set_property(
         JSContextRef ctx,
         JSClassRef clazz,
@@ -222,6 +287,60 @@ namespace ultralight_java {
             java_object.get(),
             java_property_name.get(),
             java_value.get());
+
+        if(env->ExceptionCheck()) {
+            *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
+            env->ExceptionClear();
+            env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            return false;
+        }
+
+        return ret;
+    }
+
+    bool ManagedJavascriptCallbacks::set_static_property(
+        JSContextRef ctx,
+        JSClassRef clazz,
+        JSObjectRef object,
+        JSStringRef property_name,
+        JSValueRef value,
+        JSValueRef *exception) {
+        auto *class_data = reinterpret_cast<ManagedJavascriptClassData *>(JSClassGetPrivate(clazz));
+
+        TemporaryJNI env;
+        LocalJNIReferenceWrapper<jobject> java_lock(env, JavascriptContextLockJNI::create(env, ctx));
+        auto java_context = WRAP_CONTEXT(env, ctx, java_lock);
+        auto java_object = WRAP_OBJECT(env, ctx, object, java_lock);
+        auto java_value = WRAP_VALUE(env, ctx, value, java_lock);
+        LocalJNIReferenceWrapper<jstring>
+            java_property_name(env, Util::create_jstring_from_jsstring_ref(env, property_name));
+
+        if(env->ExceptionCheck()) {
+            *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
+            env->ExceptionClear();
+
+            if(java_lock) {
+                env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            }
+            return false;
+        }
+
+        auto setter_index = Util::create_utf8_from_jsstring_ref(property_name);
+
+        jboolean ret = false;
+        if(auto it = class_data->static_fields.find(setter_index); it != class_data->static_fields.end()) {
+            ret = env->CallBooleanMethod(
+                it->second.setter,
+                runtime.javascript_object_property_setter.set_javascript_property_method,
+                java_context.get(),
+                java_object.get(),
+                java_property_name.get(),
+                java_value.get());
+        } else {
+            env->ThrowNew(
+                runtime.illegal_state_exception.clazz,
+                ("Tried to set non existent static property " + setter_index).c_str());
+        }
 
         if(env->ExceptionCheck()) {
             *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
@@ -316,6 +435,7 @@ namespace ultralight_java {
     JSValueRef ManagedJavascriptCallbacks::call_as_function(
         JSContextRef ctx,
         JSClassRef clazz,
+        JSStringRef /*function_name*/,
         JSObjectRef function,
         JSObjectRef this_object,
         size_t argument_count,
@@ -360,6 +480,85 @@ namespace ultralight_java {
                     java_function.get(),
                     java_this_object.get(),
                     java_arguments.get()));
+
+        if(env->ExceptionCheck()) {
+            *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
+            env->ExceptionClear();
+            env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            env->PopLocalFrame(nullptr);
+            return nullptr;
+        } else if(!ret) {
+            env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            *exception = Util::create_jserror(ctx, "callAsJavascriptFunction returned null");
+            env->PopLocalFrame(nullptr);
+            return nullptr;
+        }
+
+        auto value = reinterpret_cast<JSValueRef>(
+            env->CallLongMethod(ret, runtime.object_with_handle.get_handle_method));
+        env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+        env->PopLocalFrame(nullptr);
+        JSValueProtect(ctx, value);
+
+        return value;
+    }
+
+    JSValueRef ManagedJavascriptCallbacks::call_static_function(
+        JSContextRef ctx,
+        JSClassRef clazz,
+        JSStringRef function_name,
+        JSObjectRef function,
+        JSObjectRef this_object,
+        size_t argument_count,
+        const JSValueRef *arguments,
+        JSValueRef *exception) {
+        auto *class_data = reinterpret_cast<ManagedJavascriptClassData *>(JSClassGetPrivate(clazz));
+
+        TemporaryJNI env;
+        env->PushLocalFrame(argument_count + 8);
+
+        LocalJNIReferenceWrapper<jobject> java_lock(env, JavascriptContextLockJNI::create(env, ctx));
+        auto java_context = WRAP_CONTEXT(env, ctx, java_lock);
+        auto java_function = WRAP_OBJECT(env, ctx, function, java_lock);
+        auto java_this_object = WRAP_OBJECT(env, ctx, this_object, java_lock);
+
+        LocalJNIReferenceWrapper<jobjectArray>
+            java_arguments(env, env->NewObjectArray(argument_count, runtime.javascript_value.clazz, nullptr));
+
+        for(size_t i = 0; i < argument_count; i++) {
+            JSValueRef argument = arguments[i];
+            auto java_argument = WRAP_VALUE(env, ctx, argument, java_lock);
+            env->SetObjectArrayElement(java_arguments.get(), i, java_argument.get());
+        }
+
+        if(env->ExceptionCheck()) {
+            if(java_lock) {
+                env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            }
+
+            *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
+            env->ExceptionClear();
+            env->PopLocalFrame(nullptr);
+            return nullptr;
+        }
+
+        auto function_index = Util::create_utf8_from_jsstring_ref(function_name);
+        LocalJNIReferenceWrapper<jobject> ret(env);
+        if(auto it = class_data->static_functions.find(function_index); it != class_data->static_functions.end()) {
+            ret = LocalJNIReferenceWrapper<jobject>(
+                env,
+                env->CallObjectMethod(
+                    it->second.function,
+                    runtime.javascript_object_function.call_as_javascript_function,
+                    java_context.get(),
+                    java_function.get(),
+                    java_this_object.get(),
+                    java_arguments.get()));
+        } else {
+            env->ThrowNew(
+                runtime.illegal_argument_exception.clazz,
+                ("Tried to get call non existent static function " + function_index).c_str());
+        }
 
         if(env->ExceptionCheck()) {
             *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);

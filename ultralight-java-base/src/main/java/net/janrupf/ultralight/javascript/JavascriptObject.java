@@ -1,8 +1,10 @@
 package net.janrupf.ultralight.javascript;
 
+import net.janrupf.ultralight.annotation.NativeCall;
 import net.janrupf.ultralight.annotation.NativeType;
 import net.janrupf.ultralight.annotation.Unsigned;
 
+@NativeType("JSObjectRef")
 public class JavascriptObject extends JavascriptValue {
     /**
      * Constructs a new {@link JavascriptObject} wrapping an existing value reference in a locked context.
@@ -10,6 +12,7 @@ public class JavascriptObject extends JavascriptValue {
      * @param handle The native value reference
      * @param lock   The context the value exists in
      */
+    @NativeCall
     JavascriptObject(long handle, JavascriptContextLock lock) {
         super(handle, lock);
     }

@@ -15,9 +15,9 @@ public final class JavascriptPropertyAttributes {
     public static int READ_ONLY = 1 << 1;
 
     /**
-     * TODO: FIX DOC LINK
      * <p>
-     * Specifies that a property should not be enumerated by JSPropertyEnumerators and JavaScript for...in loops.
+     * Specifies that a property should not be enumerated by {@link JavascriptObject#copyPropertyNames()}
+     * and JavaScript for...in loops.
      */
     public static int DONT_ENUM = 1 << 2;
 

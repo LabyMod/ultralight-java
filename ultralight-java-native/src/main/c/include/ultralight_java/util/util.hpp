@@ -24,6 +24,14 @@ namespace ultralight_java {
         explicit Util() = delete;
 
         /**
+          * Creates a std::string from a javascript string.
+          *
+          * @param str The string to convert
+          * @return The converted string
+          */
+        static std::string create_utf8_from_jsstring_ref(JSStringRef str);
+
+        /**
          * Creates an ultralight::String16 from a java string.
          *
          * @param env The JNI environment to use for accessing java

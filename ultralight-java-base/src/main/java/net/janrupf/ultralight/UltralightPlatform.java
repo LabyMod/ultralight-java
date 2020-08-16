@@ -87,9 +87,7 @@ public class UltralightPlatform implements ObjectWithHandle {
      * @return The native underlying pointer
      */
     @Override
-    public @NativeType("ultralight::Platform *")
-    @Unsigned
-    long getHandle() {
+    public @NativeType("ultralight::Platform *") @Unsigned long getHandle() {
         return handle;
     }
 }

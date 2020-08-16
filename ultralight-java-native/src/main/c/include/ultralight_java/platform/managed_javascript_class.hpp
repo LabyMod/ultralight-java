@@ -114,9 +114,23 @@ namespace ultralight_java {
          * @param object The object to retrieve the property from
          * @param property_name The name of the property to retrieve
          * @param exception Pointer to store an exception into if one occurs
-         * @return THe found property, or null, if the request shall be forwarded
+         * @return The found property, or null, if the request shall be forwarded
          */
         static JSValueRef get_property(
+            JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSStringRef property_name, JSValueRef *exception);
+
+        /**
+         * Retrieves a static property from a Javascript object bridged from Java. The private data of the object needs
+         * to point to a ManagedJavascriptPrivateData struct.
+         *
+         * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
+         * @param object The object to retrieve the static property from
+         * @param property_name The name of the static property to retrieve
+         * @param exception Pointer to store an exception into if one occurs
+         * @return The found static property, or null, if the request shall be forwarded
+         */
+        static JSValueRef get_static_property(
             JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSStringRef property_name, JSValueRef *exception);
 
         /**
@@ -133,6 +147,27 @@ namespace ultralight_java {
          *         delegated
          */
         static bool set_property(
+            JSContextRef ctx,
+            JSClassRef clazz,
+            JSObjectRef object,
+            JSStringRef property_name,
+            JSValueRef value,
+            JSValueRef *exception);
+
+        /**
+         * Sets a static property on a Javascript object bridged from Java. The private data of the object needs to point
+         * to a ManagedJavascriptPrivateData struct.
+         *
+         * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
+         * @param object The object to set the static property on
+         * @param property_name The name of the static property to set
+         * @param value The value to set the static property to
+         * @param exception Pointer to store an exception into if one occurs
+         * @return true if the property has been set or an exception occurred, false if setting the property should be
+         *         delegated
+         */
+        static bool set_static_property(
             JSContextRef ctx,
             JSClassRef clazz,
             JSObjectRef object,
@@ -168,12 +203,13 @@ namespace ultralight_java {
             JSContextRef ctx, JSClassRef clazz, JSObjectRef object, JSPropertyNameAccumulatorRef property_names);
 
         /**
-         * Call a Javascript object bridged from Java as a function. The private data of the object needs to point
+         * Calls a Javascript object bridged from Java as a function. The private data of the object needs to point
          * to a ManagedJavascriptPrivateData struct.
          *
          * @param ctx The execution context to use
          * @param clazz The class the callback is being invoked for
          * @param function The function being called
+         * @param function_name The name of the function being called
          * @param this_object The this context to use while calling the function
          * @param argument_count The amount of arguments in the arguments array
          * @param arguments The arguments the function is being called with
@@ -183,6 +219,31 @@ namespace ultralight_java {
         static JSValueRef call_as_function(
             JSContextRef ctx,
             JSClassRef clazz,
+            JSStringRef function_name,
+            JSObjectRef function,
+            JSObjectRef this_object,
+            size_t argument_count,
+            const JSValueRef arguments[],
+            JSValueRef *exception);
+
+        /**
+         * Calls a static function on a Javascript object bridged from Java. The private data of the object needs to point
+         * to a ManagedJavascriptPrivateData struct.
+         *
+         * @param ctx The execution context to use
+         * @param clazz The class the callback is being invoked for
+         * @param function The function being called
+         * @param function_name The name of the function being called
+         * @param this_object The this context to use while calling the function
+         * @param argument_count The amount of arguments in the arguments array
+         * @param arguments The arguments the function is being called with
+         * @param exception Pointer to store an exception into if one occurs
+         * @return The object returned by the function
+         */
+        static JSValueRef call_static_function(
+            JSContextRef ctx,
+            JSClassRef clazz,
+            JSStringRef function_name,
             JSObjectRef function,
             JSObjectRef this_object,
             size_t argument_count,

@@ -475,7 +475,7 @@ namespace ultralight_java {
             /**
              * Natives method that should be bound
              */
-            std::array<JNINativeMethod, 1> native_methods;
+            std::array<JNINativeMethod, 15> native_methods;
         } javascript_context;
 
         struct {
@@ -529,6 +529,11 @@ namespace ultralight_java {
              * Method returning a C++ pointer to the underlying context object
              */
             jmethodID get_context_handle_method;
+
+            /**
+             * Method returning a C++ pointer to the underlying lock object.
+             */
+            jmethodID get_lock_handle_method;
         } javascript_locked_object;
 
         struct {
@@ -557,7 +562,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 18> native_methods;
+            std::array<JNINativeMethod, 21> native_methods;
         } javascript_value;
 
         struct {
@@ -627,7 +632,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 17> native_methods;
+            std::array<JNINativeMethod, 18> native_methods;
         } javascript_class_definition;
 
         struct {

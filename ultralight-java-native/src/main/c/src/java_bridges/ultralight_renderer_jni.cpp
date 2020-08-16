@@ -2,6 +2,7 @@
 
 #include <Ultralight/Ultralight.h>
 
+#include "ultralight_java/java_bridges/proxied_java_exception.hpp"
 #include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 
@@ -11,10 +12,10 @@ namespace ultralight_java {
         auto renderer = ultralight::Renderer::Create();
 
         // Package the instance into a java object
-        jobject pointer = UltralightRefPtrJNI::create(env,
-                                                      ultralight::RefPtr<ultralight::Renderer>(std::move(renderer)));
+        jobject
+            pointer = UltralightRefPtrJNI::create(env, ultralight::RefPtr<ultralight::Renderer>(std::move(renderer)));
 
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             // An exception occurred in java, don't try to construct a new object
             return nullptr;
         }
@@ -23,10 +24,10 @@ namespace ultralight_java {
         return env->NewObject(runtime.ultralight_renderer.clazz, runtime.ultralight_renderer.constructor, pointer);
     }
 
-    jobject
-    UltralightRendererJNI::createView(JNIEnv *env, jobject instance, jlong width, jlong height, jboolean transparent) {
+    jobject UltralightRendererJNI::createView(
+        JNIEnv *env, jobject instance, jlong width, jlong height, jboolean transparent) {
         auto renderer = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::Renderer>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
@@ -42,25 +43,33 @@ namespace ultralight_java {
 
     void UltralightRendererJNI::update(JNIEnv *env, jobject instance) {
         auto renderer = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::Renderer>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
-        renderer->Update();
+        try {
+            renderer->Update();
+        } catch(ProxiedJavaException &ex) {
+            ex.throw_to_java(env);
+        }
     }
 
     void UltralightRendererJNI::render(JNIEnv *env, jobject instance) {
         auto renderer = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::Renderer>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
-        renderer->Render();
+        try {
+            renderer->Render();
+        } catch(ProxiedJavaException &ex) {
+            ex.throw_to_java(env);
+        }
     }
 
     void UltralightRendererJNI::purgeMemory(JNIEnv *env, jobject instance) {
         auto renderer = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::Renderer>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -69,10 +78,14 @@ namespace ultralight_java {
 
     void UltralightRendererJNI::logMemoryUsage(JNIEnv *env, jobject instance) {
         auto renderer = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::Renderer>(env, instance);
-        if (env->ExceptionCheck()) {
+        if(env->ExceptionCheck()) {
             return;
         }
 
-        renderer->LogMemoryUsage();
+        try {
+            renderer->LogMemoryUsage();
+        } catch(ProxiedJavaException &ex) {
+            ex.throw_to_java(env);
+        }
     }
-}
+} // namespace ultralight_java

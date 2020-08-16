@@ -30,6 +30,18 @@ public interface JavascriptLockedObject {
      */
     @NativeCall
     @Unsigned
-    @NativeType("void *")
+    @NativeType("JSContextRef")
     long getContextHandle();
+
+    /**
+     * Retrieves the handle of the lock this object is locked with. If the object is not locked anymore, this method
+     * throws an {@link IllegalStateException}.
+     *
+     * @return The handle of the lock this object is currently locked with
+     * @throws IllegalStateException If the context object is not locked anymore
+     */
+    @NativeCall
+    @Unsigned
+    @NativeType("ultralight_java::HoldContextLock *")
+    long getLockHandle();
 }

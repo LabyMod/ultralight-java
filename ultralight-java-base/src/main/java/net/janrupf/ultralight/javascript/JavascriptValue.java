@@ -26,7 +26,7 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
         this.handle = handle;
         this.lock = lock;
 
-        if(this.lock != null) {
+        if (this.lock != null) {
             this.lock.addDependency(this);
         }
     }
@@ -94,7 +94,13 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
      */
     public native boolean isObject();
 
-    // TODO: isObjectOfClass
+    /**
+     * Tests whether this value is an instance of the provided {@link JavascriptClass}.
+     *
+     * @param clazz The class to test for
+     * @return {@code true} if this value is an instance of the class, {@code false} otherwise
+     */
+    public native boolean isOfClass(JavascriptClass clazz);
 
     /**
      * Tests whether this value is of the {@link JavascriptType#OBJECT} type and is an array.
@@ -154,18 +160,27 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
      *
      * @param other The object to compare this value with
      * @return {@code true} if the other object is also a {@link JavascriptValue} and has the same handle, {@code false}
-     *         otherwise
+     * otherwise
      */
     @Unstable("Comparison of Javascript objects is subject to change")
     public boolean equals(Object other) {
-        if(!(other instanceof JavascriptValue)) {
+        if (!(other instanceof JavascriptValue)) {
             return false;
         }
 
         return ((JavascriptValue) other).handle == handle;
     }
 
-    // TODO: isInstanceOfConstructor
+    /**
+     * Tests whether a {@link JavascriptValue} value is an object constructed by a given constructor,
+     * as compared by the Javascript instanceof operator.
+     *
+     * @param constructor The constructor to test against
+     * @return {@code true} if this value has been constructed using the given constructor
+     * @throws JavascriptException If an error occurs while checking if this object has been constructed using
+     *                             the given constructor
+     */
+    public native boolean isInstanceOfConstructor(JavascriptObject constructor) throws JavascriptException;
 
     /**
      * Converts this {@link JavascriptValue} into a JSON string.
@@ -199,14 +214,20 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
      */
     public native String toStringCopy();
 
-    // TODO: toObject()
+    /**
+     * Converts this value into an object.
+     *
+     * @return This value as an object
+     * @throws JavascriptException If the conversion to an object fails
+     */
+    public native JavascriptObject toObject() throws JavascriptException;
 
     @Override
     public String toString() {
-        if(lock != null && lock.isLocked()) {
+        if (lock != null && lock.isLocked()) {
             try {
                 return toStringCopy();
-            } catch(JavascriptException ignored) {
+            } catch (JavascriptException ignored) {
                 return "JavascriptValue{handle = " + handle + ", lock = " + lock.getHandle() + "}";
             }
         } else {
@@ -221,9 +242,10 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
 
     @Override
     public long getHandle() {
-        if(lock == null) {
+        if (lock == null) {
             throw new IllegalStateException("This value has never been locked");
-        } if(!lock.isLocked()) {
+        }
+        if (!lock.isLocked()) {
             throw new IllegalStateException("JavascriptContext is not locked anymore");
         }
 
@@ -232,13 +254,26 @@ public class JavascriptValue implements ObjectWithHandle, JavascriptLockedObject
 
     @Override
     public long getContextHandle() {
-        if(lock == null) {
+        if (lock == null) {
             throw new IllegalStateException("This value has never been locked");
-        }if(!lock.isLocked()) {
+        }
+        if (!lock.isLocked()) {
             throw new IllegalStateException("JavascriptContext is not locked anymore");
         }
 
         return lock.getContext().getHandle();
+    }
+
+    @Override
+    public long getLockHandle() {
+        if (lock == null) {
+            throw new IllegalStateException("This value has never been locked");
+        }
+        if (!lock.isLocked()) {
+            throw new IllegalStateException("JavascriptContext is not locked anymore");
+        }
+
+        return lock.getHandle();
     }
 
     /**

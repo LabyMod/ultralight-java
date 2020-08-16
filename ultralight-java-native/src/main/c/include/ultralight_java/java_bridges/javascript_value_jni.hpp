@@ -98,6 +98,16 @@ namespace ultralight_java {
         static bool is_object(JNIEnv *env, jobject java_instance);
 
         /**
+         * Tests whether this reference is an instance of a given class.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The java instance of this JSValueRef
+         * @param java_class The class to test for
+         * @return true if this reference is an instance of the given class, false otherwise
+         */
+        static bool is_of_class(JNIEnv *env, jobject java_instance, jobject java_class);
+
+        /**
          * Tests whether this reference is an array value.
          *
          * @param env The JNI environment to use for accessing java
@@ -145,6 +155,16 @@ namespace ultralight_java {
         static bool is_strict_equal(JNIEnv *env, jobject java_instance, jobject java_other);
 
         /**
+         * Tests whether this reference has been constructed by the given constructor.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The java instance of this JSValueRef
+         * @param java_constructor The constructor to test against
+         * @return true if this reference has been constructed by the given constructor, false otherwise
+         */
+        static bool is_instance_of_constructor(JNIEnv *env, jobject java_instance, jobject java_constructor);
+
+        /**
          * Converts this reference to a json string.
          *
          * @param env The JNI environment to use for accessing java
@@ -180,5 +200,14 @@ namespace ultralight_java {
          * @return This reference as a string
          */
         static jstring to_string_copy(JNIEnv *env, jobject java_instance);
+
+        /**
+         * Converts this reference to an object.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The java instance of this JSValueRef
+         * @return This reference as an object
+         */
+        static jobject to_object(JNIEnv *env, jobject java_instance);
     };
 } // namespace ultralight_java

@@ -1,6 +1,7 @@
 #include "ultralight_java/java_bridges/javascript_value_jni.hpp"
 
 #include <JavaScriptCore/JavaScript.h>
+#include <ultralight_java/ultralight_java_instance.hpp>
 
 #include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
@@ -9,7 +10,7 @@
 namespace ultralight_java {
     static std::tuple<bool, JSContextRef, JSValueRef> extract(JNIEnv *env, jobject java_instance) {
         auto lock = reinterpret_cast<HoldJavascriptContextLock *>(
-            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+            env->CallLongMethod(java_instance, runtime.javascript_locked_object.get_lock_handle_method));
         if(env->ExceptionCheck()) {
             return {false, nullptr, nullptr};
         }
@@ -21,6 +22,16 @@ namespace ultralight_java {
         }
 
         return {true, lock->get_context(), value};
+    }
+
+    static std::tuple<bool, JSValueRef> extract_secondary(JNIEnv *env, jobject java_instance) {
+        auto value = reinterpret_cast<JSValueRef>(
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
+            return {false, nullptr};
+        }
+
+        return {true, value};
     }
 
     static std::tuple<bool, JSContextRef, JSValueRef, jobject> extract_with_lock(JNIEnv *env, jobject java_instance) {
@@ -128,6 +139,21 @@ namespace ultralight_java {
         return JSValueIsObject(context, value);
     }
 
+    bool JavascriptValueJNI::is_of_class(JNIEnv *env, jobject java_instance, jobject java_class) {
+        auto [ok, context, value] = extract(env, java_instance);
+        if(!ok) {
+            return false;
+        }
+
+        auto clazz = reinterpret_cast<JSClassRef>(
+            env->CallLongMethod(java_class, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
+            return false;
+        }
+
+        return JSValueIsObjectOfClass(context, value, clazz);
+    }
+
     bool JavascriptValueJNI::is_array(JNIEnv *env, jobject java_instance) {
         auto [ok, context, value] = extract(env, java_instance);
         if(!ok) {
@@ -200,12 +226,35 @@ namespace ultralight_java {
             return JSValueIsNull(context, value);
         }
 
-        auto [other_ok, _, other_value] = extract(env, java_other);
+        auto [other_ok, other_value] = extract_secondary(env, java_other);
         if(!other_ok) {
             return false;
         }
 
         return JSValueIsStrictEqual(context, value, other_value);
+    }
+
+    bool JavascriptValueJNI::is_instance_of_constructor(JNIEnv *env, jobject java_instance, jobject java_constructor) {
+        auto [ok, context, value, lock] = extract_with_lock(env, java_instance);
+        if(!ok) {
+            return false;
+        }
+
+        auto constructor = reinterpret_cast<JSObjectRef>(
+            env->CallLongMethod(java_constructor, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
+            return false;
+        }
+
+        JSValueRef exception = nullptr;
+        bool is_instance = JSValueIsInstanceOfConstructor(context, value, constructor, &exception);
+        if(exception) {
+            Util::throw_jssvalue_ref_as_java_exception(
+                "Error while checking if value is instance of constructor", context, exception, env, lock);
+            return false;
+        }
+
+        return is_instance;
     }
 
     jstring JavascriptValueJNI::to_json(JNIEnv *env, jobject java_instance, jshort indentation) {
@@ -272,5 +321,28 @@ namespace ultralight_java {
         JSStringRelease(string_ref);
 
         return java_string;
+    }
+
+    jobject JavascriptValueJNI::to_object(JNIEnv *env, jobject java_instance) {
+        auto [ok, context, value, lock] = extract_with_lock(env, java_instance);
+        if(!ok) {
+            return nullptr;
+        }
+
+        JSValueRef exception = nullptr;
+        JSObjectRef object = JSValueToObject(context, value, &exception);
+        if(exception) {
+            Util::throw_jssvalue_ref_as_java_exception(
+                "Exception while converting the value to an object", context, exception, env, lock);
+            return nullptr;
+        }
+
+        JSValueProtect(context, object);
+
+        return env->NewObject(
+            runtime.javascript_object.clazz,
+            runtime.javascript_object.constructor,
+            reinterpret_cast<jlong>(object),
+            lock);
     }
 } // namespace ultralight_java

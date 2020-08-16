@@ -87,6 +87,13 @@ namespace ultralight_java {
         }
 
         /**
+         * Constructs a new JNIReferenceWrapper wrapping a null pointer.
+         *
+         * @param env THe environment to use for wrapping the null pointer
+         */
+        explicit LocalJNIReferenceWrapper(JNIEnv *env) : env(env), reference(nullptr) {}
+
+        /**
          * Constructs a new JNIReferenceWrapper wrapping a jobject.
          *
          * @param env The environment to use for wrapping the reference

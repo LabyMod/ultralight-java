@@ -1,5 +1,7 @@
 #include "ultralight_java/ultralight_java_instance.hpp"
 
+#include <ultralight_java/ultralight_java_instance.hpp>
+
 #include "ultralight_java/java_bridges/bridged_logger.hpp"
 #include "ultralight_java/java_bridges/ultralight_view_jni.hpp"
 #include "ultralight_java/ultralight_initializer.hpp"
@@ -455,6 +457,8 @@ namespace ultralight_java {
             "()Lnet/janrupf/ultralight/javascript/JavascriptContextLock;");
         runtime.javascript_locked_object.get_context_handle_method =
             env->GetMethodID(runtime.javascript_locked_object.clazz, "getContextHandle", "()J");
+        runtime.javascript_locked_object.get_lock_handle_method =
+            env->GetMethodID(runtime.javascript_locked_object.clazz, "getLockHandle", "()J");
 
         // Retrieve information about the JavascriptProtectedValue class
         runtime.javascript_protected_value.clazz = reinterpret_cast<jclass>(

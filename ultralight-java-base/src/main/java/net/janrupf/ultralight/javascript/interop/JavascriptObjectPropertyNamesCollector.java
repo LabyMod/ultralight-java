@@ -13,8 +13,7 @@ public interface JavascriptObjectPropertyNamesCollector {
     /**
      * The callback invoked when collecting the names of an object's properties.
      * <p>
-     * TODO: Implement copyPropertyNames() Property name collectors are used by {@link
-     * JavascriptObject#copyPropertyNames()} and JavaScript for...in loops.
+     * {@link JavascriptObject#copyPropertyNames()} and JavaScript for...in loops.
      * <p>
      * A class's {@link JavascriptObjectPropertyNamesCollector} callback only needs to provide the names of properties
      * that the class vends through a custom {@link JavascriptObjectPropertyGetter} or {@link

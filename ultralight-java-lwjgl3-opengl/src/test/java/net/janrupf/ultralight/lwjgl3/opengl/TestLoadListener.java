@@ -1,10 +1,7 @@
 package net.janrupf.ultralight.lwjgl3.opengl;
 
 import net.janrupf.ultralight.UltralightView;
-import net.janrupf.ultralight.javascript.JavascriptContext;
-import net.janrupf.ultralight.javascript.JavascriptContextLock;
-import net.janrupf.ultralight.javascript.JavascriptGlobalContext;
-import net.janrupf.ultralight.javascript.JavascriptValue;
+import net.janrupf.ultralight.javascript.*;
 import net.janrupf.ultralight.plugin.loading.UltralightLoadListener;
 
 /**
@@ -45,18 +42,20 @@ public class TestLoadListener implements UltralightLoadListener {
 
     @Override
     public void onWindowObjectReady(long frameId, boolean isMainFrame, String url) {
-        JavascriptValue value;
-
-        try(JavascriptContextLock lock = view.lockJavascriptContext()) {
+        try (JavascriptContextLock lock = view.lockJavascriptContext()) {
             JavascriptContext context = lock.getContext();
             JavascriptGlobalContext globalContext = context.getGlobalContext();
 
-            System.out.println("New context name: " + globalContext.getName());
+            JavascriptObject globalObject = globalContext.getGlobalObject();
+            JavascriptObject testClass = context.makeObject(TestJavascriptClass.INSTANCE);
+            globalObject.setProperty("Test", testClass, 0);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     @Override
     public void onDOMReady(long frameId, boolean isMainFrame, String url) {
-        System.out.println(frameName(frameId, isMainFrame, url) + "The DOM is ready");
+
     }
 }

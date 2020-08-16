@@ -1,5 +1,7 @@
 #include "ultralight_java/util/util.hpp"
 
+#include <ultralight_java/ultralight_java_instance.hpp>
+
 #include "ultralight_java/ultralight_java_instance.hpp"
 
 namespace ultralight_java {
@@ -21,6 +23,30 @@ namespace ultralight_java {
     template <>
     constexpr const JSChar *to_jschar_ptr(const JSChar *value) {
         return value;
+    }
+
+    std::string Util::create_utf8_from_jsstring_ref(JSStringRef str) {
+        // Get the maximum conversion length
+        size_t buffer_size = JSStringGetMaximumUTF8CStringSize(str);
+
+        if(buffer_size < 1) {
+            // Check for 0 length
+            return "";
+        }
+
+        // Allocate a buffer to store the data in
+        char *buffer = new char[buffer_size];
+
+        // Convert the string
+        size_t real_size = JSStringGetUTF8CString(str, buffer, buffer_size);
+
+        // Copy the buffer length into a std::string
+        // This constructor takes the length without the null byte
+        std::string ret(buffer, real_size - 1);
+
+        // Clean up and return
+        delete[] buffer;
+        return ret;
     }
 
     ultralight::String16 Util::create_utf16_from_jstring(JNIEnv *env, jstring str) {
@@ -228,7 +254,19 @@ namespace ultralight_java {
     JSValueRef Util::create_jssvalue_from_jthrowable(JNIEnv *env, jthrowable java_throwable, JSContextRef context) {
         auto java_exception_message = reinterpret_cast<jstring>(
             env->CallObjectMethod(java_throwable, runtime.throwable.get_message_method));
-        JSStringRef javascript_exception_message = Util::create_jsstring_ref_from_jstring(env, java_exception_message);
+        JSStringRef javascript_exception_message = ([&] {
+            if(env->IsInstanceOf(java_throwable, runtime.null_pointer_exception.clazz) && !java_exception_message) {
+                return JSStringCreateWithUTF8CString("Nullpointer exception");
+            }
+
+            return java_exception_message ? Util::create_jsstring_ref_from_jstring(env, java_exception_message) :
+                                            JSStringCreateWithUTF8CString("<No error message provided>");
+        })();
+
+        if(java_exception_message) {
+            env->DeleteLocalRef(java_exception_message);
+        }
+
         JSValueRef arguments[] = {JSValueMakeString(context, javascript_exception_message)};
 
         JSValueRef javascript_exception_exception = nullptr;
