@@ -29,6 +29,7 @@
 namespace ultralight_java {
     class BridgedLogger;
     class BridgedFileSystem;
+    class BridgedGPUDriver;
     class BridgedClipboard;
 
     struct UltralightJavaRuntime {
@@ -65,7 +66,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 7> native_methods;
+            std::array<JNINativeMethod, 8> native_methods;
         } ultralight_platform;
 
         struct {
@@ -249,6 +250,20 @@ namespace ultralight_java {
              */
             std::array<JNINativeMethod, 1> native_methods;
         } ultralight_bitmap_surface;
+
+        struct {
+            /**
+             * The java class itself
+             */
+             jclass clazz;
+
+             /**
+              * Constructor
+              */
+              jmethodID constructor;
+
+              jmethodID add_method;
+        } ultralight_commandlist;
 
         struct {
             /**
@@ -468,6 +483,28 @@ namespace ultralight_java {
             jmethodID close_file_method;
             jmethodID read_from_file_method;
         } ultralight_file_system;
+
+        struct {
+            /**
+             * The java class itself
+             */
+             jclass clazz;
+
+             jmethodID begin_synchronize_method;
+             jmethodID end_synchronize_method;
+             jmethodID next_texture_id_method;
+             jmethodID create_texture_method;
+             jmethodID update_texture_method;
+             jmethodID destroy_texture_method;
+             jmethodID next_render_buffer_id_method;
+             jmethodID create_render_buffer_method;
+             jmethodID destroy_render_buffer_method;
+             jmethodID next_geometry_id_method;
+             jmethodID create_geometry_method;
+             jmethodID update_geometry_method;
+             jmethodID destroy_geometry_method;
+             jmethodID update_command_list_method;
+        } ultralight_gpu_driver;
 
         struct {
             /**
@@ -817,6 +854,11 @@ namespace ultralight_java {
          * Current global file system instance, or nullptr, if none
          */
         BridgedFileSystem *bridged_file_system;
+
+        /**
+         * Current global GPU driver instance, or nullptr, if none
+         */
+         BridgedGPUDriver *bridged_gpu_driver;
 
         /**
          * Current global clipboard instance, or nullptr, if none

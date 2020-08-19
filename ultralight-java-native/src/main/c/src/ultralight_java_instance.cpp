@@ -234,6 +234,14 @@ namespace ultralight_java {
             runtime.ultralight_bitmap.native_methods.data(),
             runtime.ultralight_bitmap.native_methods.size());
 
+        // Retrieve information about the UltralightCommandList class
+        runtime.ultralight_commandlist.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/render/UltralightCommandList")));
+        runtime.ultralight_commandlist.constructor =
+            env->GetMethodID(runtime.ultralight_commandlist.clazz, "<init>", "()V");
+        runtime.ultralight_commandlist.add_method =
+            env->GetMethodID(runtime.ultralight_commandlist.clazz, "add", "(Lnet/janrupf/ultralight/plugin/render/UltralightCommand;)Z");
+
         // Retrieve information about the UltralightLoadListener
         runtime.ultralight_load_listener.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/loading/UltralightLoadListener")));

@@ -27,6 +27,7 @@ import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.plugin.clipboard.UltralightClipboard;
 import com.labymedia.ultralight.plugin.filesystem.UltralightFileSystem;
 import com.labymedia.ultralight.plugin.logging.UltralightLogger;
+import net.janrupf.ultralight.plugin.render.UltralightGPUDriver;
 
 /**
  * Platform singleton to configure Ultralight and provide user-defined implementations for various platform operations.
@@ -81,6 +82,13 @@ public class UltralightPlatform implements ObjectWithHandle {
     public native void setFileSystem(UltralightFileSystem fileSystem);
 
     /**
+     * Set the GPU driver implementation
+     *
+     * @param gpuDriver The GPU driver implementation to use
+     */
+    public native void setGPUDriver(UltralightGPUDriver gpuDriver);
+
+    /**
      * Set the Clipboard (will be used for all clipboard operations).
      *
      * @param clipboard A user-defined Clipboard implementation
@@ -88,8 +96,6 @@ public class UltralightPlatform implements ObjectWithHandle {
     public native void setClipboard(UltralightClipboard clipboard);
 
     // TODO: Font loader support
-
-    // TODO: GPU driver support
 
     // TODO: Surface factory support
 

@@ -57,6 +57,10 @@ namespace ultralight_java {
                  "(Lcom/labymedia/ultralight/plugin/filesystem/UltralightFileSystem;)V",
                  UltralightPlatformJNI::set_file_system),
              NATIVE_METHOD(
+                 "setGPUDriver",
+                 "(Lcom/labymedia/ultralight/plugin/render/UltralightGPUDriver;)V",
+                 UltralightPlatformJNI::set_gpu_driver),
+             NATIVE_METHOD(
                  "setClipboard",
                  "(Lcom/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
                  UltralightPlatformJNI::set_clipboard),
@@ -747,6 +751,7 @@ namespace ultralight_java {
 
         runtime.bridged_logger = nullptr;
         runtime.bridged_file_system = nullptr;
+        runtime.bridged_gpu_driver = nullptr;
         runtime.bridged_clipboard = nullptr;
     }
 } // namespace ultralight_java

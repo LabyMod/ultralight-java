@@ -47,6 +47,7 @@ set(ULTRALIGHT_JAVA_INCLUDE_DIR "${CMAKE_CURRENT_LIST_DIR}/include")
 set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/bridged_clipboard.cpp
         src/java_bridges/bridged_file_system.cpp
+        src/java_bridges/bridged_gpu_driver.cpp
         src/java_bridges/bridged_logger.cpp
         src/java_bridges/bridged_load_listener.cpp
         src/java_bridges/bridged_view_listener.cpp
@@ -60,6 +61,7 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/proxied_java_exception.cpp
         src/java_bridges/ultralight_bitmap_jni.cpp
         src/java_bridges/ultralight_bitmap_surface_jni.cpp
+        src/java_bridges/ultralight_commandlist_jni.cpp
         src/java_bridges/ultralight_key_event_jni.cpp
         src/java_bridges/ultralight_platform_jni.cpp
         src/java_bridges/ultralight_ref_ptr_jni.cpp
