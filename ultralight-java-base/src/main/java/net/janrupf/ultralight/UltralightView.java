@@ -57,14 +57,18 @@ public class UltralightView implements ObjectWithHandle {
      *
      * @return The width of the view
      */
-    public native @NativeType("uint32_t") @Unsigned long width();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long width();
 
     /**
      * Get the height of the View, in pixels.
      *
      * @return The height of the view
      */
-    public native @NativeType("uint32_t") @Unsigned long height();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long height();
 
     /**
      * Check if the main frame of the page is currently loading.
@@ -80,13 +84,12 @@ public class UltralightView implements ObjectWithHandle {
      * <b>Only valid when the GPU renderer is disabled in Config.</b>
      * <p>
      * TODO: Fix doc/implement
-     * <strike>
-     * The default Surface is BitmapSurface but you can provide your
-     * own Surface implementation via Platform::set_surface_factory.
-     * </strike>
      *
      * @return The surface of this view, or {@code null}, if GPU rendering is enabled
      */
+    // Not implemented yet:
+    // The default Surface is BitmapSurface but you can provide your
+    // own Surface implementation via Platform::set_surface_factory.
     public native UltralightSurface surface();
 
     /**
@@ -157,12 +160,6 @@ public class UltralightView implements ObjectWithHandle {
      * result as a String.
      * <p>
      * You do not need to lock the JS context, it is done automatically.
-     * <p>
-     * <strike>
-     * If you need lower-level access to native JavaScript values, you
-     * should instead lock the JS context and call JSEvaluateScript() in
-     * the JavaScriptCore C API. @see <JavaScriptCore/JSBase.h>
-     * </strike>
      *
      * @param script A string of JavaScript to evaluate in the main frame.
      * @return The JavaScript result typecast to a String.

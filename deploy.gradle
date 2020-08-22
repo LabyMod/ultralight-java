@@ -1,0 +1,49 @@
+def getProp(name) {
+    String val = System.getenv(name)
+    if (val != null) {
+        return val
+    } else if (project.hasProperty(name)) {
+        return project.getProperty(name)
+    } else {
+        throw new IllegalStateException("No property with the name ${name} found")
+    }
+}
+
+def artifactoryContextUrl = getProp("artifactory_contextUrl")
+def artifactoryRepoKey = getProp("artifactory_repoKey")
+def artifactoryUser = getProp("artifactory_user")
+def artifactoryPassword = getProp("artifactory_password")
+
+subprojects {
+    pluginManager.withPlugin("java") {
+        apply plugin: 'com.jfrog.artifactory'
+
+        afterEvaluate {
+            artifactory {
+                contextUrl = artifactoryContextUrl
+
+                publish {
+                    repository {
+                        repoKey = artifactoryRepoKey
+                        username = artifactoryUser
+                        password = artifactoryPassword
+                        maven = true
+                    }
+
+                    defaults {
+                        publications("mavenJava")
+                    }
+                }
+
+                resolve {
+                    repository {
+                        repoKey = "general"
+                        username = artifactoryUser
+                        password = artifactoryPassword
+                        maven = true
+                    }
+                }
+            }
+        }
+    }
+}

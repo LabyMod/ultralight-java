@@ -43,7 +43,7 @@ public class UltralightBitmap implements ObjectWithHandle {
      * @param height     The height in pixels
      * @param format     The pixel format to use
      * @param rowBytes   The number of bytes between each row (note that this
-     *                   value should be >= width * {@link UltralightBitmapFormat#getBytesPerPixel()})
+     *                   value should be &gt;= width * {@link UltralightBitmapFormat#getBytesPerPixel()})
      * @param pixels     Pointer to raw pixel buffer,
      * @param fixupGamma Whether or not we should reinterpret the source
      *                   as an sRGB bitmap with premultiplied alpha applied
@@ -119,7 +119,7 @@ public class UltralightBitmap implements ObjectWithHandle {
     public native @NativeType("uint32_t") @Unsigned long bpp();
 
     /**
-     * Get the number of bytes between each row (this is always >= width * {@link #bpp()}).
+     * Get the number of bytes between each row (this is always &gt;= width * {@link #bpp()}).
      *
      * @return The number of bytes between each row
      */

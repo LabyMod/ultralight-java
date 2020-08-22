@@ -1,7 +1,6 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
 plugins {
     id 'java-library'
+    id 'maven-publish'
 }
 
 group 'net.janrupf'
@@ -9,5 +8,12 @@ group 'net.janrupf'
 processResources {
     from(nativeBinaries) {
         into "native-binaries"
+    }
+}
+
+commonPublish(project) {
+    pom {
+        name = "UltralightJava"
+        description = "Ultralight bindings for Java"
     }
 }

@@ -14,12 +14,11 @@ import net.janrupf.ultralight.ffi.RefPtr;
  * coordinates all painting, rendering, network requests, and event dispatch.
  * <p>
  * TODO: Implement the AppCore API for Java
- * <strike>
- * You don't have to create this instance directly if you use the
- * AppCore API. The App class will automatically create a Renderer and
- * perform all rendering within its run loop.
- * </strike>
  */
+// Not implemented yet:
+// You don't have to create this instance directly if you use the
+// AppCore API. The App class will automatically create a Renderer and
+// perform all rendering within its run loop.
 @NativeType("ultralight::RefPtr<ultralight::Renderer>")
 public class UltralightRenderer implements ObjectWithHandle {
     /**
@@ -29,8 +28,8 @@ public class UltralightRenderer implements ObjectWithHandle {
      * You should only create one Renderer per application lifetime.
      *
      * @return A ref-pointer to a new Renderer instance. You should
-     * assign it to either a Ref<Renderer> (non-nullable) or
-     * RefPtr<Renderer> (nullable).
+     * assign it to either a Ref&lt;Renderer&gt; (non-nullable) or
+     * RefPt&lt;Renderer&gt; (nullable).
      */
     public static native UltralightRenderer create();
 

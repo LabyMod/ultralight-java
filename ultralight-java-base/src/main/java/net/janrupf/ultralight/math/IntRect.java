@@ -198,7 +198,7 @@ public final class IntRect {
     /**
      * Checks if this {@link IntRect} intersects with another {@link IntRect}.
      * <b>This is used for pixel operations, so only intersections with a width and
-     * height >= count as intersection!</b>
+     * height &gt;= count as intersection!</b>
      *
      * @param other The rectangle to check for intersection with this one
      * @return Whether this rectangle intersects with another rectangle
