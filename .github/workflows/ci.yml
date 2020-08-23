@@ -95,7 +95,7 @@ jobs:
       - name: Build lwjgl3-opengl with gradle
         run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries ultralight-java-lwjgl3-opengl:build"
       - name: Deploy to artifactory
-        # if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/master'
         run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries :artifactoryPublish"
         env:
           artifactory_deploy: true
