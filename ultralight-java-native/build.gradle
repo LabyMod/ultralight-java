@@ -32,16 +32,7 @@ task build(type: CMakeBuildTask) {
     generationDirectory new File(buildDir, "cmake-gen-" + ultralightOsIdentifier())
 
     cmake {
-        if(is32bit) {
-            if(!Os.isFamily(Os.FAMILY_WINDOWS)) {
-                throw new GradleException("Only windows supports 32bit currently")
-            } else {
-                arguments = [
-                        "-A", "Win32",
-                        "-T", "host=x64"
-                ]
-            }
-        } else if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+        if(Os.isFamily(Os.FAMILY_WINDOWS)) {
             arguments = [
                     "-A", "x64",
                     "-T", "host=x64"
@@ -52,12 +43,12 @@ task build(type: CMakeBuildTask) {
                 "CMAKE_BUILD_TYPE": java.util.Optional.of("Release"),
                 "CMAKE_RUNTIME_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
                 "CMAKE_LIBRARY_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
-                "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
-                "GENERATED_JNI_HEADERS_DIR": java.util.Optional.of(generatedHeadersDir.absolutePath)
+                "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath)
         ]
 
         def javaHome = System.getProperty("java.home")
         if(javaHome != null) {
+            println "Building using JDK at ${javaHome}"
             javaHome = javaHome.replace('\\', '/')
             variable "JAVA_HOME", javaHome
         }

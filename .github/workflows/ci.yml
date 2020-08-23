@@ -39,11 +39,6 @@ jobs:
           path: artifacts
 
   build-binaries-windows:
-    strategy:
-      fail-fast: false
-      matrix:
-        arch: [64bit]
-
     name: windows-latest build
     runs-on: windows-latest
 
@@ -57,7 +52,7 @@ jobs:
         with:
           java-version: 8
       - name: Build native with gradle (Windows)
-        run: gradlew -PCI=true ultralight-java-native:build -P${{ matrix.arch }}
+        run: gradlew -PCI=true ultralight-java-native:build
         shell: cmd
       - name: Prepare artifacts
         shell: bash
@@ -112,4 +107,4 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: Final artifacts
-          path: juklear-*/build/libs/*.jar
+          path: ultralight-java-*/build/libs/*.jar

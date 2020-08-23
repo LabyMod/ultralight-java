@@ -46,8 +46,6 @@ if(!project.hasProperty("nativeBinaryExternalDir")) {
     isExternalBuild = true
 }
 
-ext.is32bit = project.hasProperty("32bit")
-
 project(":ultralight-java-base").afterEvaluate { javaProject ->
     project(":ultralight-java-native").afterEvaluate { nativeProject ->
         if(!isExternalBuild) {
@@ -80,12 +78,7 @@ def processBinary(File binary, boolean doMove) {
     String extension = getExtension(binary)
     String path = getPathWithoutExtension(binary)
 
-    File newPath
-    if(ext.is32bit) {
-        newPath = new File(path + "-32." + extension)
-    } else {
-        newPath = new File(path + "-64." + extension)
-    }
+    File newPath = new File(path + "-64." + extension)
 
     if(doMove) {
         println "Moving ${binary.absolutePath} to ${newPath.absolutePath}"
