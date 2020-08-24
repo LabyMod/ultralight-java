@@ -16,11 +16,11 @@ def ultralightOsIdentifier = {
     def bitName = (System.getProperty("os.arch", "?").contains("64") ||
             System.getProperty("sun.arch.data.model", "?").contains("64")) ? "64" : "32"
 
-    if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         return "win-x" + bitName
-    } else if(Os.isFamily(Os.FAMILY_MAC)) {
+    } else if (Os.isFamily(Os.FAMILY_MAC)) {
         return "mac-x" + bitName
-    } else if(Os.isFamily(Os.FAMILY_UNIX)) {
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         return "linux-x" + bitName
     } else {
         throw new UnsupportedOperationException("This OS is not supported")
@@ -32,16 +32,7 @@ task build(type: CMakeBuildTask) {
     generationDirectory new File(buildDir, "cmake-gen-" + ultralightOsIdentifier())
 
     cmake {
-        if(is32bit) {
-            if(!Os.isFamily(Os.FAMILY_WINDOWS)) {
-                throw new GradleException("Only windows supports 32bit currently")
-            } else {
-                arguments = [
-                        "-A", "Win32",
-                        "-T", "host=x64"
-                ]
-            }
-        } else if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+        if (Os.isFamily(Os.FAMILY_WINDOWS)) {
             arguments = [
                     "-A", "x64",
                     "-T", "host=x64"
@@ -49,17 +40,25 @@ task build(type: CMakeBuildTask) {
         }
 
         variables = [
-                "CMAKE_BUILD_TYPE": java.util.Optional.of("Release"),
+                "CMAKE_BUILD_TYPE"              : java.util.Optional.of("Release"),
                 "CMAKE_RUNTIME_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
                 "CMAKE_LIBRARY_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
-                "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
-                "GENERATED_JNI_HEADERS_DIR": java.util.Optional.of(generatedHeadersDir.absolutePath)
+                "CMAKE_ARCHIVE_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath)
         ]
 
-        def javaHome = System.getProperty("java.home")
-        if(javaHome != null) {
-            javaHome = javaHome.replace('\\', '/')
-            variable "JAVA_HOME", javaHome
+        def javaHome = file(System.getProperty("java.home"))
+        if (javaHome != null) {
+            def includeDir = new File(javaHome, "include")
+            if (!includeDir.exists()) {
+                javaHome = javaHome.parentFile
+                includeDir = new File(javaHome, "include")
+                if (!includeDir.exists()) {
+                    throw new UnsupportedOperationException("Gradle has been run with a JRE, and a JDK could not be found")
+                }
+            }
+
+            println "Building using JDK at ${javaHome.absolutePath}"
+            variable "JAVA_HOME", javaHome.absolutePath.replace('\\', '/')
         }
     }
 }

@@ -59,7 +59,7 @@ def ultralightOsIdentifier = {
 }
 
 task copyTestResources(type: Copy) {
-    from "../ultralight-java-native/src/main/c/3rdparty/ultralight-${ultralightOsIdentifier()}/bin"
+    from new File(project(':ultralight-java-native').buildDir, "cmake-gen-${ultralightOsIdentifier()}/3rdparty/ultralight-${ultralightOsIdentifier()}/bin")
     include "**/*.dll", "resources/cacert.pem"
     into runDir
 }

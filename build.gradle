@@ -1,3 +1,9 @@
+buildscript {
+    if(System.getenv("artifactory_deploy") || project.hasProperty("artifactory_deploy")) {
+        apply from: file("deploy-settings.gradle"), to: it
+    }
+}
+
 plugins {
     id 'maven-publish'
 }
@@ -6,6 +12,47 @@ group 'net.janrupf'
 version '0.1.0'
 
 apply from: 'ci.gradle'
+
+ext.commonPublish = { Project currentProject, Closure config ->
+    currentProject.publishing {
+        publications {
+            mavenJava(MavenPublication) {
+                from currentProject.components.java
+
+                configure(it, config)
+
+                version = rootProject.version
+
+                pom {
+                    url = "https://github.com/LabyMod/ultralight-java"
+
+                    licenses {
+                        license {
+                            name = "ARR"
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = "LabyMedia"
+                            email = "contact@labymod.net"
+                        }
+                    }
+
+                    scm {
+                        connection = "scm:git:git://github.com/LabyMod/ultralight-java.git"
+                        developerConnection = "scm:git:ssh://github.com/LabyMod/ultralight-java.git"
+                        url = "https://github.com/LabyMod/ultralight-java"
+                    }
+                }
+            }
+        }
+    }
+}
+
+if(System.getenv("artifactory_deploy") || project.hasProperty("artifactory_deploy")) {
+    apply from: file("deploy.gradle")
+}
 
 subprojects {
     tasks.withType(GenerateModuleMetadata) {

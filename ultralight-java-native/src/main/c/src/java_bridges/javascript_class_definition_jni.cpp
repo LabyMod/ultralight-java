@@ -306,8 +306,8 @@ namespace ultralight_java {
         class_definition.parentClass = parent_class;
 
         if(!description->data.static_fields.empty()) {
-            auto *static_values = new JSStaticValue[description->data.static_fields.size() + 1];
-            class_definition.staticValues = static_values;
+            auto *static_values = new JSStaticValueEx[description->data.static_fields.size() + 1];
+            class_definition.staticValuesEx = static_values;
 
             for(const auto &[name, field] : description->data.static_fields) {
                 static_values->name = name.c_str();
@@ -332,8 +332,8 @@ namespace ultralight_java {
         }
 
         if(!description->data.static_functions.empty()) {
-            auto *static_functions = new JSStaticFunction[description->data.static_functions.size() + 1];
-            class_definition.staticFunctions = static_functions;
+            auto *static_functions = new JSStaticFunctionEx[description->data.static_functions.size() + 1];
+            class_definition.staticFunctionsEx = static_functions;
 
             for(const auto &[name, function] : description->data.static_functions) {
                 static_functions->name = name.c_str();
