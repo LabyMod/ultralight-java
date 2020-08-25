@@ -24,23 +24,23 @@
 namespace ultralight_java {
     void init_runtime_struct() {
         runtime.ultralight_platform.native_methods = {
-            NATIVE_METHOD("instance", "()Lnet/janrupf/ultralight/UltralightPlatform;", UltralightPlatformJNI::instance),
+            NATIVE_METHOD("instance", "()Lnet/labymedia/ultralight/UltralightPlatform;", UltralightPlatformJNI::instance),
             NATIVE_METHOD(
-                "setConfig", "(Lnet/janrupf/ultralight/config/UltralightConfig;)V", UltralightPlatformJNI::set_config),
+                "setConfig", "(Lnet/labymedia/ultralight/config/UltralightConfig;)V", UltralightPlatformJNI::set_config),
             NATIVE_METHOD("usePlatformFontLoader", "()V", UltralightPlatformJNI::use_platform_font_loader),
             NATIVE_METHOD(
                 "usePlatformFileSystem", "(Ljava/lang/String;)V", UltralightPlatformJNI::use_platform_file_system),
             NATIVE_METHOD(
                 "setFileSystem",
-                "(Lnet/janrupf/ultralight/plugin/filesystem/UltralightFileSystem;)V",
+                "(Lnet/labymedia/ultralight/plugin/filesystem/UltralightFileSystem;)V",
                 UltralightPlatformJNI::set_file_system),
             NATIVE_METHOD(
                 "setClipboard",
-                "(Lnet/janrupf/ultralight/plugin/clipboard/UltralightClipboard;)V",
+                "(Lnet/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
                 UltralightPlatformJNI::set_clipboard),
             NATIVE_METHOD(
                 "setLogger",
-                "(Lnet/janrupf/ultralight/plugin/logging/UltralightLogger;)V",
+                "(Lnet/labymedia/ultralight/plugin/logging/UltralightLogger;)V",
                 UltralightPlatformJNI::set_logger)};
 
         runtime.face_winding.constants = JavaEnum<ultralight::FaceWinding>(
@@ -68,9 +68,9 @@ namespace ultralight_java {
         runtime.ref_ptr.native_methods = {NATIVE_METHOD("delete", "(J)V", UltralightRefPtrJNI::_delete)};
 
         runtime.ultralight_renderer.native_methods =
-            {NATIVE_METHOD("create", "()Lnet/janrupf/ultralight/UltralightRenderer;", UltralightRendererJNI::create),
+            {NATIVE_METHOD("create", "()Lnet/labymedia/ultralight/UltralightRenderer;", UltralightRendererJNI::create),
              NATIVE_METHOD(
-                 "createView", "(JJZ)Lnet/janrupf/ultralight/UltralightView;", UltralightRendererJNI::createView),
+                 "createView", "(JJZ)Lnet/labymedia/ultralight/UltralightView;", UltralightRendererJNI::createView),
              NATIVE_METHOD("update", "()V", UltralightRendererJNI::update),
              NATIVE_METHOD("render", "()V", UltralightRendererJNI::render),
              NATIVE_METHOD("purgeMemory", "()V", UltralightRendererJNI::purgeMemory),
@@ -82,13 +82,13 @@ namespace ultralight_java {
              NATIVE_METHOD("width", "()J", UltralightViewJNI::width),
              NATIVE_METHOD("height", "()J", UltralightViewJNI::height),
              NATIVE_METHOD("isLoading", "()Z", UltralightViewJNI::is_loading),
-             NATIVE_METHOD("surface", "()Lnet/janrupf/ultralight/UltralightSurface;", UltralightViewJNI::surface),
+             NATIVE_METHOD("surface", "()Lnet/labymedia/ultralight/UltralightSurface;", UltralightViewJNI::surface),
              NATIVE_METHOD("loadHTML", "(Ljava/lang/String;Ljava/lang/String;Z)V", UltralightViewJNI::load_html),
              NATIVE_METHOD("loadURL", "(Ljava/lang/String;)V", UltralightViewJNI::load_url),
              NATIVE_METHOD("resize", "(JJ)V", UltralightViewJNI::resize),
              NATIVE_METHOD(
                  "lockJavascriptContext",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptContextLock;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptContextLock;",
                  UltralightViewJNI::lock_javascript_context),
              NATIVE_METHOD(
                  "evaluateScript", "(Ljava/lang/String;)Ljava/lang/String;", UltralightViewJNI::evaluate_script),
@@ -105,27 +105,27 @@ namespace ultralight_java {
              NATIVE_METHOD("hasInputFocus", "()Z", UltralightViewJNI::has_input_focus),
              NATIVE_METHOD(
                  "fireKeyEvent",
-                 "(Lnet/janrupf/ultralight/input/UltralightKeyEvent;)V",
+                 "(Lnet/labymedia/ultralight/input/UltralightKeyEvent;)V",
                  UltralightViewJNI::fire_key_event),
              NATIVE_METHOD(
                  "fireMouseEvent",
-                 "(Lnet/janrupf/ultralight/input/UltralightMouseEvent;)V",
+                 "(Lnet/labymedia/ultralight/input/UltralightMouseEvent;)V",
                  UltralightViewJNI::fire_mouse_event),
              NATIVE_METHOD(
                  "fireScrollEvent",
-                 "(Lnet/janrupf/ultralight/input/UltralightScrollEvent;)V",
+                 "(Lnet/labymedia/ultralight/input/UltralightScrollEvent;)V",
                  UltralightViewJNI::fire_scroll_event),
              NATIVE_METHOD(
                  "setViewListener",
-                 "(Lnet/janrupf/ultralight/plugin/view/UltralightViewListener;)V",
+                 "(Lnet/labymedia/ultralight/plugin/view/UltralightViewListener;)V",
                  UltralightViewJNI::set_view_listener),
              NATIVE_METHOD(
                  "setLoadListener",
-                 "(Lnet/janrupf/ultralight/plugin/loading/UltralightLoadListener;)V",
+                 "(Lnet/labymedia/ultralight/plugin/loading/UltralightLoadListener;)V",
                  UltralightViewJNI::set_load_listener),
              NATIVE_METHOD("setNeedsPaint", "(Z)V", UltralightViewJNI::set_needs_paint),
              NATIVE_METHOD("needsPaint", "()Z", UltralightViewJNI::needs_paint),
-             NATIVE_METHOD("inspector", "()Lnet/janrupf/ultralight/UltralightView;", UltralightViewJNI::inspector)};
+             NATIVE_METHOD("inspector", "()Lnet/labymedia/ultralight/UltralightView;", UltralightViewJNI::inspector)};
 
         runtime.ultralight_surface.native_methods =
             {NATIVE_METHOD("width", "()J", UltralightSurfaceJNI::width),
@@ -136,12 +136,12 @@ namespace ultralight_java {
              NATIVE_METHOD("unlockPixels", "()V", UltralightSurfaceJNI::unlockPixels),
              NATIVE_METHOD("resize", "(JJ)V", UltralightSurfaceJNI::resize),
              NATIVE_METHOD(
-                 "setDirtyBounds", "(Lnet/janrupf/ultralight/math/IntRect;)V", UltralightSurfaceJNI::setDirtyBounds),
-             NATIVE_METHOD("dirtyBounds", "()Lnet/janrupf/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
+                 "setDirtyBounds", "(Lnet/labymedia/ultralight/math/IntRect;)V", UltralightSurfaceJNI::setDirtyBounds),
+             NATIVE_METHOD("dirtyBounds", "()Lnet/labymedia/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
              NATIVE_METHOD("clearDirtyBounds", "()V", UltralightSurfaceJNI::clearDirtyBounds)};
 
         runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
-            "bitmap", "()Lnet/janrupf/ultralight/bitmap/UltralightBitmap;", UltralightBitmapSurfaceJNI::bitmap)};
+            "bitmap", "()Lnet/labymedia/ultralight/bitmap/UltralightBitmap;", UltralightBitmapSurfaceJNI::bitmap)};
 
         runtime.ultralight_bitmap_format.constants = JavaEnum<ultralight::BitmapFormat>(
             ultralight::kBitmapFormat_A8_UNORM,
@@ -152,15 +152,15 @@ namespace ultralight_java {
         runtime.ultralight_bitmap.native_methods =
             {JNINativeMethod{
                  const_cast<char *>("create"),
-                 const_cast<char *>("()Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"),
+                 const_cast<char *>("()Lnet/labymedia/ultralight/bitmap/UltralightBitmap;"),
                  reinterpret_cast<void *>(static_cast<jobject (*)(JNIEnv *, jclass)>(&UltralightBitmapJNI::create))},
              JNINativeMethod{
                  const_cast<char *>("create"),
                  const_cast<char *>("("
                                     "J"
                                     "J"
-                                    "Lnet/janrupf/ultralight/bitmap/UltralightBitmapFormat;"
-                                    ")Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"),
+                                    "Lnet/labymedia/ultralight/bitmap/UltralightBitmapFormat;"
+                                    ")Lnet/labymedia/ultralight/bitmap/UltralightBitmap;"),
                  reinterpret_cast<void *>(
                      static_cast<jobject (*)(JNIEnv *, jclass, jlong, jlong, jobject)>(&UltralightBitmapJNI::create))},
              JNINativeMethod{
@@ -168,26 +168,26 @@ namespace ultralight_java {
                  const_cast<char *>("("
                                     "J"
                                     "J"
-                                    "Lnet/janrupf/ultralight/bitmap/UltralightBitmapFormat;"
+                                    "Lnet/labymedia/ultralight/bitmap/UltralightBitmapFormat;"
                                     "J"
                                     "Ljava/nio/ByteBuffer;"
                                     "Z"
-                                    ")Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"),
+                                    ")Lnet/labymedia/ultralight/bitmap/UltralightBitmap;"),
                  reinterpret_cast<void *>(
                      static_cast<jobject (*)(JNIEnv *, jclass, jlong, jlong, jobject, jlong, jobject, jboolean)>(
                          &UltralightBitmapJNI::create))},
              JNINativeMethod{
                  const_cast<char *>("create"),
                  const_cast<char *>("("
-                                    "Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"
-                                    ")Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"),
+                                    "Lnet/labymedia/ultralight/bitmap/UltralightBitmap;"
+                                    ")Lnet/labymedia/ultralight/bitmap/UltralightBitmap;"),
                  reinterpret_cast<void *>(
                      static_cast<jobject (*)(JNIEnv *, jclass, jobject)>(&UltralightBitmapJNI::create))},
              NATIVE_METHOD("width", "()J", UltralightBitmapJNI::width),
              NATIVE_METHOD("height", "()J", UltralightBitmapJNI::height),
-             NATIVE_METHOD("bounds", "()Lnet/janrupf/ultralight/math/IntRect;", UltralightBitmapJNI::bounds),
+             NATIVE_METHOD("bounds", "()Lnet/labymedia/ultralight/math/IntRect;", UltralightBitmapJNI::bounds),
              NATIVE_METHOD(
-                 "format", "()Lnet/janrupf/ultralight/bitmap/UltralightBitmapFormat;", UltralightBitmapJNI::format),
+                 "format", "()Lnet/labymedia/ultralight/bitmap/UltralightBitmapFormat;", UltralightBitmapJNI::format),
              NATIVE_METHOD("bpp", "()J", UltralightBitmapJNI::bpp),
              NATIVE_METHOD("rowBytes", "()J", UltralightBitmapJNI::row_bytes),
              NATIVE_METHOD("size", "()J", UltralightBitmapJNI::size),
@@ -197,24 +197,24 @@ namespace ultralight_java {
              NATIVE_METHOD("rawPixels", "()Ljava/nio/ByteBuffer;", UltralightBitmapJNI::raw_pixels),
              NATIVE_METHOD("isEmpty", "()Z", UltralightBitmapJNI::is_emtpy),
              NATIVE_METHOD("erase", "()V", UltralightBitmapJNI::erase),
-             NATIVE_METHOD("set", "(Lnet/janrupf/ultralight/bitmap/UltralightBitmap;)V", UltralightBitmapJNI::set),
+             NATIVE_METHOD("set", "(Lnet/labymedia/ultralight/bitmap/UltralightBitmap;)V", UltralightBitmapJNI::set),
              NATIVE_METHOD(
                  "drawBitmap",
                  "("
-                 "Lnet/janrupf/ultralight/math/IntRect;"
-                 "Lnet/janrupf/ultralight/math/IntRect;"
-                 "Lnet/janrupf/ultralight/bitmap/UltralightBitmap;"
+                 "Lnet/labymedia/ultralight/math/IntRect;"
+                 "Lnet/labymedia/ultralight/math/IntRect;"
+                 "Lnet/labymedia/ultralight/bitmap/UltralightBitmap;"
                  "Z"
                  ")Z",
                  UltralightBitmapJNI::width),
              NATIVE_METHOD("writePNG", "(Ljava/lang/String;)Z", UltralightBitmapJNI::write_png),
              NATIVE_METHOD(
-                 "resample", "(Lnet/janrupf/ultralight/bitmap/UltralightBitmap;Z)Z", UltralightBitmapJNI::resample),
+                 "resample", "(Lnet/labymedia/ultralight/bitmap/UltralightBitmap;Z)Z", UltralightBitmapJNI::resample),
              NATIVE_METHOD("swapRedBlueChannels", "()V", UltralightBitmapJNI::swap_red_blue_channels)};
 
         runtime.ultralight_key_event.native_methods = {NATIVE_METHOD(
             "getKeyIdentifierFromVirtualKeyCode",
-            "(Lnet/janrupf/ultralight/input/UltralightKey;)Ljava/lang/String;",
+            "(Lnet/labymedia/ultralight/input/UltralightKey;)Ljava/lang/String;",
             UltralightKeyEventJNI::get_key_identifier_from_virtual_key_code)};
 
         runtime.ultralight_key_event_type.constants = JavaEnum<ultralight::KeyEvent::Type>(
@@ -378,68 +378,68 @@ namespace ultralight_java {
         runtime.javascript_context.native_methods =
             {NATIVE_METHOD(
                  "getGlobalContext",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptGlobalContext;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptGlobalContext;",
                  JavascriptContextJNI::get_global_context),
              NATIVE_METHOD(
                  "getGlobalObject",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptContextJNI::get_global_object),
              NATIVE_METHOD(
                  "makeUndefined",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_undefined),
              NATIVE_METHOD(
-                 "makeNull", "()Lnet/janrupf/ultralight/javascript/JavascriptValue;", JavascriptContextJNI::make_null),
+                 "makeNull", "()Lnet/labymedia/ultralight/javascript/JavascriptValue;", JavascriptContextJNI::make_null),
              NATIVE_METHOD(
                  "makeBoolean",
-                 "(Z)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "(Z)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_boolean),
              NATIVE_METHOD(
                  "makeNumber",
-                 "(D)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "(D)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_number),
              NATIVE_METHOD(
                  "makeString",
-                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "(Ljava/lang/String;)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_string),
              NATIVE_METHOD(
                  "makeSymbol",
-                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "(Ljava/lang/String;)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_symbol),
              NATIVE_METHOD(
                  "makeFromJSON",
-                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "(Ljava/lang/String;)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_from_json),
              NATIVE_METHOD(
                  "makeObject",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/JavascriptClass;"
+                 "Lnet/labymedia/ultralight/javascript/JavascriptClass;"
                  "Ljava/lang/Object;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptContextJNI::make_object),
              NATIVE_METHOD(
                  "makeArray",
                  "("
-                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptContextJNI::make_array),
              NATIVE_METHOD(
                  "makeDate",
                  "("
-                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptContextJNI::make_date),
              NATIVE_METHOD(
                  "makeError",
                  "("
-                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptContextJNI::make_error),
              NATIVE_METHOD(
                  "makeRegExp",
                  "("
-                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptContextJNI::make_reg_exp),
              NATIVE_METHOD(
                  "makeFunction",
@@ -449,13 +449,13 @@ namespace ultralight_java {
                  "Ljava/lang/String;"
                  "Ljava/lang/String;"
                  "I"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptContextJNI::make_function)};
 
         runtime.javascript_context_lock.native_methods =
             {NATIVE_METHOD(
                  "getContext",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptContext;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptContext;",
                  JavascriptContextLockJNI::get_context),
              NATIVE_METHOD("release", "()V", JavascriptContextLockJNI::release)};
 
@@ -467,11 +467,11 @@ namespace ultralight_java {
         runtime.javascript_value.native_methods =
             {NATIVE_METHOD(
                  "protect",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptProtectedValue;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptProtectedValue;",
                  JavascriptValueJNI::protect),
              NATIVE_METHOD("contextUnlocking", "()V", JavascriptValueJNI::context_unlocking),
              NATIVE_METHOD(
-                 "getType", "()Lnet/janrupf/ultralight/javascript/JavascriptType;", JavascriptValueJNI::get_type),
+                 "getType", "()Lnet/labymedia/ultralight/javascript/JavascriptType;", JavascriptValueJNI::get_type),
              NATIVE_METHOD("isUndefined", "()Z", JavascriptValueJNI::is_undefined),
              NATIVE_METHOD("isNull", "()Z", JavascriptValueJNI::is_null),
              NATIVE_METHOD("isBoolean", "()Z", JavascriptValueJNI::is_boolean),
@@ -479,80 +479,80 @@ namespace ultralight_java {
              NATIVE_METHOD("isString", "()Z", JavascriptValueJNI::is_string),
              NATIVE_METHOD(
                  "isOfClass",
-                 "(Lnet/janrupf/ultralight/javascript/JavascriptClass;)Z",
+                 "(Lnet/labymedia/ultralight/javascript/JavascriptClass;)Z",
                  JavascriptValueJNI::is_of_class),
              NATIVE_METHOD("isObject", "()Z", JavascriptValueJNI::is_object),
              NATIVE_METHOD("isArray", "()Z", JavascriptValueJNI::is_array),
              NATIVE_METHOD("isDate", "()Z", JavascriptValueJNI::is_date),
              NATIVE_METHOD(
                  "getTypedArrayType",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptTypedArrayType;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptTypedArrayType;",
                  JavascriptValueJNI::get_typed_array_type),
              NATIVE_METHOD(
-                 "isEqual", "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z", JavascriptValueJNI::is_equal),
+                 "isEqual", "(Lnet/labymedia/ultralight/javascript/JavascriptValue;)Z", JavascriptValueJNI::is_equal),
              NATIVE_METHOD(
                  "isStrictEqual",
-                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z",
+                 "(Lnet/labymedia/ultralight/javascript/JavascriptValue;)Z",
                  JavascriptValueJNI::is_strict_equal),
              NATIVE_METHOD(
                  "isInstanceOfConstructor",
-                 "(Lnet/janrupf/ultralight/javascript/JavascriptObject;)Z",
+                 "(Lnet/labymedia/ultralight/javascript/JavascriptObject;)Z",
                  JavascriptValueJNI::is_instance_of_constructor),
              NATIVE_METHOD("toJson", "(S)Ljava/lang/String;", JavascriptValueJNI::to_json),
              NATIVE_METHOD("toBoolean", "()Z", JavascriptValueJNI::to_boolean),
              NATIVE_METHOD("toNumber", "()D", JavascriptValueJNI::to_number),
              NATIVE_METHOD("toStringCopy", "()Ljava/lang/String;", JavascriptValueJNI::to_string_copy),
              NATIVE_METHOD(
-                 "toObject", "()Lnet/janrupf/ultralight/javascript/JavascriptObject;", JavascriptValueJNI::to_object)};
+                 "toObject", "()Lnet/labymedia/ultralight/javascript/JavascriptObject;", JavascriptValueJNI::to_object)};
 
         runtime.javascript_object.native_methods =
             {NATIVE_METHOD(
                  "getPrototype",
-                 "()Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptObjectJNI::get_prototype),
              NATIVE_METHOD(
                  "setPrototype",
-                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)V",
+                 "(Lnet/labymedia/ultralight/javascript/JavascriptValue;)V",
                  JavascriptObjectJNI::set_prototype),
              NATIVE_METHOD("hasProperty", "(Ljava/lang/String;)Z", JavascriptObjectJNI::has_property),
              NATIVE_METHOD(
                  "getProperty",
-                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "(Ljava/lang/String;)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptObjectJNI::get_property),
              NATIVE_METHOD(
                  "setProperty",
-                 "(Ljava/lang/String;Lnet/janrupf/ultralight/javascript/JavascriptValue;I)V",
+                 "(Ljava/lang/String;Lnet/labymedia/ultralight/javascript/JavascriptValue;I)V",
                  JavascriptObjectJNI::set_property),
              NATIVE_METHOD("deleteProperty", "(Ljava/lang/String;)Z", JavascriptObjectJNI::delete_property),
              NATIVE_METHOD(
                  "hasPropertyForKey",
-                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z",
+                 "(Lnet/labymedia/ultralight/javascript/JavascriptValue;)Z",
                  JavascriptObjectJNI::has_property_for_key),
              NATIVE_METHOD(
                  "getPropertyForKey",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptObjectJNI::get_property_for_key),
              NATIVE_METHOD(
                  "setPropertyForKey",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+                 "Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 "Lnet/labymedia/ultralight/javascript/JavascriptValue;"
                  "I"
                  ")V",
                  JavascriptObjectJNI::set_property_for_key),
              NATIVE_METHOD(
                  "deletePropertyForKey",
-                 "(Lnet/janrupf/ultralight/javascript/JavascriptValue;)Z",
+                 "(Lnet/labymedia/ultralight/javascript/JavascriptValue;)Z",
                  JavascriptObjectJNI::delete_property_for_key),
              NATIVE_METHOD(
                  "getPropertyAtIndex",
-                 "(J)Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "(J)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptObjectJNI::get_property_at_index),
              NATIVE_METHOD(
                  "setPropertyAtIndex",
-                 "(JLnet/janrupf/ultralight/javascript/JavascriptValue;)V",
+                 "(JLnet/labymedia/ultralight/javascript/JavascriptValue;)V",
                  JavascriptObjectJNI::set_property_at_index),
              NATIVE_METHOD("getPrivate", "()Ljava/lang/Object;", JavascriptObjectJNI::get_private),
              NATIVE_METHOD("setPrivate", "(Ljava/lang/Object;)V", JavascriptObjectJNI::set_private),
@@ -560,16 +560,16 @@ namespace ultralight_java {
              NATIVE_METHOD(
                  "callAsFunction",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
-                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptValue;",
+                 "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
+                 "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptObjectJNI::call_as_function),
              NATIVE_METHOD("isConstructor", "()Z", JavascriptObjectJNI::is_constructor),
              NATIVE_METHOD(
                  "callAsConstructor",
                  "("
-                 "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptObject;",
+                 "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptObject;",
                  JavascriptObjectJNI::call_as_constructor),
              NATIVE_METHOD("copyPropertyNames", "()[Ljava/lang/String;", JavascriptObjectJNI::copy_property_names)};
 
@@ -618,97 +618,97 @@ namespace ultralight_java {
         runtime.javascript_class_definition.native_methods =
             {NATIVE_METHOD(
                  "name",
-                 "(Ljava/lang/String;)Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "(Ljava/lang/String;)Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::name),
              NATIVE_METHOD(
                  "attributes",
-                 "(I)Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "(I)Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::attributes),
              NATIVE_METHOD(
                  "parentClass",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/JavascriptClass;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/JavascriptClass;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::parent_class),
              NATIVE_METHOD(
                  "staticValue",
                  "("
                  "Ljava/lang/String;"
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyGetter;"
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertySetter;"
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyGetter;"
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectPropertySetter;"
                  "I"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::static_value),
              NATIVE_METHOD(
                  "staticFunction",
                  "("
                  "Ljava/lang/String;"
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectFunction;"
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectFunction;"
                  "I"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::static_function),
              NATIVE_METHOD(
                  "onInitialize",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectInitializer;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectInitializer;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_initialize),
              NATIVE_METHOD(
                  "onFinalize",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectFinalizer;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectFinalizer;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_finalize),
              NATIVE_METHOD(
                  "onGetProperty",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyGetter;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyGetter;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_get_property),
              NATIVE_METHOD(
                  "onSetProperty",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertySetter;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectPropertySetter;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_set_property),
              NATIVE_METHOD(
                  "onDeleteProperty",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyDeleter;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyDeleter;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_delete_property),
              NATIVE_METHOD(
                  "onGetPropertyNames",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyNamesCollector;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyNamesCollector;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_get_property_names),
              NATIVE_METHOD(
                  "onCallAsFunction",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectFunction;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectFunction;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_call_as_function),
              NATIVE_METHOD(
                  "onCallAsConstructor",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectConstructor;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectConstructor;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_call_as_constructor),
              NATIVE_METHOD(
                  "onHasInstance",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectHasInstanceTester;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectHasInstanceTester;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_has_instance),
              NATIVE_METHOD(
                  "onConvertToType",
                  "("
-                 "Lnet/janrupf/ultralight/javascript/interop/JavascriptObjectToTypeConverter;"
-                 ")Lnet/janrupf/ultralight/javascript/JavascriptClassDefinition;",
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectToTypeConverter;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_convert_to_type),
              NATIVE_METHOD(
-                 "bake", "()Lnet/janrupf/ultralight/javascript/JavascriptClass;", JavascriptClassDefinitionJNI::bake),
+                 "bake", "()Lnet/labymedia/ultralight/javascript/JavascriptClass;", JavascriptClassDefinitionJNI::bake),
              NATIVE_METHOD("createEmpty", "()J", JavascriptClassDefinitionJNI::create_empty),
              NATIVE_METHOD("free", "(J)V", JavascriptClassDefinitionJNI::free)};
 

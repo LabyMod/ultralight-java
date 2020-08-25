@@ -6,7 +6,7 @@
 
 namespace ultralight_java {
     /**
-     * Bridge for net/janrupf/ultralight/plugin/view/UltralightViewListener to ultralight::ViewListener
+     * Bridge for net/labymedia/ultralight/plugin/view/UltralightViewListener to ultralight::ViewListener
      */
     class BridgedViewListener : public ultralight::ViewListener, public JNIReferenceWrapper {
     public:

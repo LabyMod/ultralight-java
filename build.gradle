@@ -8,7 +8,7 @@ plugins {
     id 'maven-publish'
 }
 
-group 'net.janrupf'
+group 'net.labymedia'
 version '0.1.0'
 
 apply from: 'ci.gradle'

@@ -6,7 +6,7 @@
 
 namespace ultralight_java {
     /**
-     * Bridge for net/janrupf/ultralight/plugin/filesystem/UltralightFileSystem to ultralight::FileSystem
+     * Bridge for net/labymedia/ultralight/plugin/filesystem/UltralightFileSystem to ultralight::FileSystem
      */
     class BridgedFileSystem : public ultralight::FileSystem, public JNIReferenceWrapper {
     public:
