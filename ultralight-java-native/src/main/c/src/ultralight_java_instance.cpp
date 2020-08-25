@@ -43,13 +43,13 @@ namespace ultralight_java {
 
         // Retrieve information about the ObjectWithHandle interface
         runtime.object_with_handle.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/ffi/ObjectWithHandle")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/ffi/ObjectWithHandle")));
         runtime.object_with_handle
             .get_handle_method = env->GetMethodID(runtime.object_with_handle.clazz, "getHandle", "()J");
 
         // Retrieve information about the UltralightPlatform class
         runtime.ultralight_platform.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/UltralightPlatform")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/UltralightPlatform")));
         runtime.ultralight_platform.constructor = env->GetMethodID(runtime.ultralight_platform.clazz, "<init>", "(J)V");
 
         // Register the native methods for the UltralightPlatform class
@@ -60,7 +60,7 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightConfig class
         auto ultralight_config_class = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/config/UltralightConfig")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/config/UltralightConfig")));
         runtime.ultralight_config.clazz = ultralight_config_class;
 
         auto &ultralight_config = runtime.ultralight_config;
@@ -71,11 +71,11 @@ namespace ultralight_java {
         ultralight_config.use_gpu_renderer_field = env->GetFieldID(ultralight_config_class, "useGpuRenderer", "Z");
         ultralight_config.device_scale_field = env->GetFieldID(ultralight_config_class, "deviceScale", "D");
         ultralight_config.face_winding_field =
-            env->GetFieldID(ultralight_config_class, "faceWinding", "Lnet/janrupf/ultralight/config/FaceWinding;");
+            env->GetFieldID(ultralight_config_class, "faceWinding", "Lnet/labymedia/ultralight/config/FaceWinding;");
         ultralight_config.enable_images_field = env->GetFieldID(ultralight_config_class, "enableImages", "Z");
         ultralight_config.enable_javascript_field = env->GetFieldID(ultralight_config_class, "enableJavascript", "Z");
         ultralight_config.font_hinting_field =
-            env->GetFieldID(ultralight_config_class, "fontHinting", "Lnet/janrupf/ultralight/config/FontHinting;");
+            env->GetFieldID(ultralight_config_class, "fontHinting", "Lnet/labymedia/ultralight/config/FontHinting;");
         ultralight_config.font_gamma_field = env->GetFieldID(ultralight_config_class, "fontGamma", "D");
         ultralight_config.font_family_standard_field =
             env->GetFieldID(ultralight_config_class, "fontFamilyStandard", "Ljava/lang/String;");
@@ -102,36 +102,36 @@ namespace ultralight_java {
 
         // Retrieve information about the FaceWinding enum
         runtime.face_winding.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/config/FaceWinding")));
-        if(!runtime.face_winding.constants.init(env, "net/janrupf/ultralight/config/FaceWinding")) {
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/config/FaceWinding")));
+        if(!runtime.face_winding.constants.init(env, "net/labymedia/ultralight/config/FaceWinding")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the FontHinting enum
         runtime.font_hinting.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/config/FontHinting")));
-        if(!runtime.font_hinting.constants.init(env, "net/janrupf/ultralight/config/FontHinting")) {
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/config/FontHinting")));
+        if(!runtime.font_hinting.constants.init(env, "net/labymedia/ultralight/config/FontHinting")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightLogger interface
         runtime.logger.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/logging/UltralightLogger")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/logging/UltralightLogger")));
         runtime.logger.log_message_method = env->GetMethodID(
             runtime.logger.clazz,
             "logMessage",
-            "(Lnet/janrupf/ultralight/plugin/logging/UltralightLogLevel;Ljava/lang/String;)V");
+            "(Lnet/labymedia/ultralight/plugin/logging/UltralightLogLevel;Ljava/lang/String;)V");
 
         // Retrieve information about the UltralightLogLevel enum
         runtime.log_level.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/logging/UltralightLogLevel")));
-        if(!runtime.log_level.constants.init(env, "net/janrupf/ultralight/plugin/logging/UltralightLogLevel")) {
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/logging/UltralightLogLevel")));
+        if(!runtime.log_level.constants.init(env, "net/labymedia/ultralight/plugin/logging/UltralightLogLevel")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the RefPtr class
         runtime.ref_ptr.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/ffi/RefPtr")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/ffi/RefPtr")));
         runtime.ref_ptr.constructor = env->GetMethodID(runtime.ref_ptr.clazz, "<init>", "(J)V");
 
         // Register the native methods for the RefPtr class
@@ -140,9 +140,9 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightRenderer class
         runtime.ultralight_renderer.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/UltralightRenderer")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/UltralightRenderer")));
         runtime.ultralight_renderer.constructor =
-            env->GetMethodID(runtime.ultralight_renderer.clazz, "<init>", "(Lnet/janrupf/ultralight/ffi/RefPtr;)V");
+            env->GetMethodID(runtime.ultralight_renderer.clazz, "<init>", "(Lnet/labymedia/ultralight/ffi/RefPtr;)V");
 
         // Register the native methods for the UltralightRenderer class
         env->RegisterNatives(
@@ -152,9 +152,9 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightView class
         runtime.ultralight_view.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/UltralightView")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/UltralightView")));
         runtime.ultralight_view.constructor =
-            env->GetMethodID(runtime.ultralight_view.clazz, "<init>", "(Lnet/janrupf/ultralight/ffi/RefPtr;)V");
+            env->GetMethodID(runtime.ultralight_view.clazz, "<init>", "(Lnet/labymedia/ultralight/ffi/RefPtr;)V");
 
         // Register the native methods for the UltralightView class
         env->RegisterNatives(
@@ -164,7 +164,7 @@ namespace ultralight_java {
 
         // Retrieve information about the IntRect class
         runtime.int_rect.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/math/IntRect")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/math/IntRect")));
         runtime.int_rect.bounds_constructor = env->GetMethodID(runtime.int_rect.clazz, "<init>", "(IIII)V");
         runtime.int_rect.left_field = env->GetFieldID(runtime.int_rect.clazz, "left", "I");
         runtime.int_rect.top_field = env->GetFieldID(runtime.int_rect.clazz, "top", "I");
@@ -173,9 +173,9 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightSurface class
         runtime.ultralight_surface.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/UltralightSurface")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/UltralightSurface")));
         runtime.ultralight_surface.constructor =
-            env->GetMethodID(runtime.ultralight_surface.clazz, "<init>", "(Lnet/janrupf/ultralight/UltralightView;J)V");
+            env->GetMethodID(runtime.ultralight_surface.clazz, "<init>", "(Lnet/labymedia/ultralight/UltralightView;J)V");
 
         // Register the native methods for the UltralightSurface class
         env->RegisterNatives(
@@ -185,9 +185,9 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightBitmapSurface class
         runtime.ultralight_bitmap_surface.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/bitmap/UltralightBitmapSurface")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/bitmap/UltralightBitmapSurface")));
         runtime.ultralight_bitmap_surface.constructor = env->GetMethodID(
-            runtime.ultralight_bitmap_surface.clazz, "<init>", "(Lnet/janrupf/ultralight/UltralightView;J)V");
+            runtime.ultralight_bitmap_surface.clazz, "<init>", "(Lnet/labymedia/ultralight/UltralightView;J)V");
 
         // Register the native methods for the UltralightBitmapSurface class
         env->RegisterNatives(
@@ -197,17 +197,17 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightBitmapFormat enum
         runtime.ultralight_bitmap_format.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/bitmap/UltralightBitmapFormat")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/bitmap/UltralightBitmapFormat")));
         if(!runtime.ultralight_bitmap_format.constants
-                .init(env, "net/janrupf/ultralight/bitmap/UltralightBitmapFormat")) {
+                .init(env, "net/labymedia/ultralight/bitmap/UltralightBitmapFormat")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightBitmap class
         runtime.ultralight_bitmap.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/bitmap/UltralightBitmap")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/bitmap/UltralightBitmap")));
         runtime.ultralight_bitmap.constructor =
-            env->GetMethodID(runtime.ultralight_bitmap.clazz, "<init>", "(Lnet/janrupf/ultralight/ffi/RefPtr;)V");
+            env->GetMethodID(runtime.ultralight_bitmap.clazz, "<init>", "(Lnet/labymedia/ultralight/ffi/RefPtr;)V");
 
         // Register the native methods for the UltralightBitmap class
         env->RegisterNatives(
@@ -217,7 +217,7 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightLoadListener
         runtime.ultralight_load_listener.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/loading/UltralightLoadListener")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/loading/UltralightLoadListener")));
         runtime.ultralight_load_listener.on_begin_loading_method =
             env->GetMethodID(runtime.ultralight_load_listener.clazz, "onBeginLoading", "(JZLjava/lang/String;)V");
         runtime.ultralight_load_listener.on_finish_loading_method =
@@ -235,18 +235,18 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightKey class
         runtime.ultralight_key.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightKey")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightKey")));
         runtime.ultralight_key.id_field = env->GetFieldID(runtime.ultralight_key.clazz, "id", "I");
 
         // Retrieve information about the UltralightKeyEvent class
         runtime.ultralight_key_event.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightKeyEvent")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightKeyEvent")));
         runtime.ultralight_key_event.type_field = env->GetFieldID(
-            runtime.ultralight_key_event.clazz, "type", "Lnet/janrupf/ultralight/input/UltralightKeyEventType;");
+            runtime.ultralight_key_event.clazz, "type", "Lnet/labymedia/ultralight/input/UltralightKeyEventType;");
         runtime.ultralight_key_event
             .modifiers_field = env->GetFieldID(runtime.ultralight_key_event.clazz, "modifiers", "I");
         runtime.ultralight_key_event.virtual_key_code_field = env->GetFieldID(
-            runtime.ultralight_key_event.clazz, "virtualKeyCode", "Lnet/janrupf/ultralight/input/UltralightKey;");
+            runtime.ultralight_key_event.clazz, "virtualKeyCode", "Lnet/labymedia/ultralight/input/UltralightKey;");
         runtime.ultralight_key_event
             .native_key_code_field = env->GetFieldID(runtime.ultralight_key_event.clazz, "nativeKeyCode", "I");
         runtime.ultralight_key_event.key_identifier_field =
@@ -270,45 +270,45 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightKeyEventType enum
         runtime.ultralight_key_event_type.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightKeyEventType")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightKeyEventType")));
         if(!runtime.ultralight_key_event_type.constants
-                .init(env, "net/janrupf/ultralight/input/UltralightKeyEventType")) {
+                .init(env, "net/labymedia/ultralight/input/UltralightKeyEventType")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightMouseEvent class
         runtime.ultralight_mouse_event.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightMouseEvent")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightMouseEvent")));
         runtime.ultralight_mouse_event.type_field = env->GetFieldID(
-            runtime.ultralight_mouse_event.clazz, "type", "Lnet/janrupf/ultralight/input/UltralightMouseEventType;");
+            runtime.ultralight_mouse_event.clazz, "type", "Lnet/labymedia/ultralight/input/UltralightMouseEventType;");
         runtime.ultralight_mouse_event.x_field = env->GetFieldID(runtime.ultralight_mouse_event.clazz, "x", "I");
         runtime.ultralight_mouse_event.y_field = env->GetFieldID(runtime.ultralight_mouse_event.clazz, "y", "I");
         runtime.ultralight_mouse_event.button_field = env->GetFieldID(
             runtime.ultralight_mouse_event.clazz,
             "button",
-            "Lnet/janrupf/ultralight/input/UltralightMouseEventButton;");
+            "Lnet/labymedia/ultralight/input/UltralightMouseEventButton;");
 
         // Retrieve information about the UltralightMouseEventButton enum
         runtime.ultralight_mouse_event_button.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightMouseEventButton")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightMouseEventButton")));
         if(!runtime.ultralight_mouse_event_button.constants
-                .init(env, "net/janrupf/ultralight/input/UltralightMouseEventButton")) {
+                .init(env, "net/labymedia/ultralight/input/UltralightMouseEventButton")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightMouseEventType enum
         runtime.ultralight_mouse_event_type.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightMouseEventType")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightMouseEventType")));
         if(!runtime.ultralight_mouse_event_type.constants
-                .init(env, "net/janrupf/ultralight/input/UltralightMouseEventType")) {
+                .init(env, "net/labymedia/ultralight/input/UltralightMouseEventType")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightScrollEvent class
         runtime.ultralight_scroll_event.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightScrollEvent")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightScrollEvent")));
         runtime.ultralight_scroll_event.type_field = env->GetFieldID(
-            runtime.ultralight_scroll_event.clazz, "type", "Lnet/janrupf/ultralight/input/UltralightScrollEventType;");
+            runtime.ultralight_scroll_event.clazz, "type", "Lnet/labymedia/ultralight/input/UltralightScrollEventType;");
         runtime.ultralight_scroll_event
             .delta_x_field = env->GetFieldID(runtime.ultralight_scroll_event.clazz, "deltaX", "I");
         runtime.ultralight_scroll_event
@@ -316,36 +316,36 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightScrollEventType enum
         runtime.ultralight_scroll_event_type.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightScrollEventType")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightScrollEventType")));
         if(!runtime.ultralight_scroll_event_type.constants
-                .init(env, "net/janrupf/ultralight/input/UltralightScrollEventType")) {
+                .init(env, "net/labymedia/ultralight/input/UltralightScrollEventType")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightCursor enum
         runtime.ultralight_cursor.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/input/UltralightCursor")));
-        if(!runtime.ultralight_cursor.constants.init(env, "net/janrupf/ultralight/input/UltralightCursor")) {
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/input/UltralightCursor")));
+        if(!runtime.ultralight_cursor.constants.init(env, "net/labymedia/ultralight/input/UltralightCursor")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the MessageLevel enum
         runtime.message_level.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/view/MessageLevel")));
-        if(!runtime.message_level.constants.init(env, "net/janrupf/ultralight/plugin/view/MessageLevel")) {
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/view/MessageLevel")));
+        if(!runtime.message_level.constants.init(env, "net/labymedia/ultralight/plugin/view/MessageLevel")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the MessageSource enum
         runtime.message_source.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/view/MessageSource")));
-        if(!runtime.message_source.constants.init(env, "net/janrupf/ultralight/plugin/view/MessageSource")) {
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/view/MessageSource")));
+        if(!runtime.message_source.constants.init(env, "net/labymedia/ultralight/plugin/view/MessageSource")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightViewListener class
         runtime.ultralight_view_listener.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/view/UltralightViewListener")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/view/UltralightViewListener")));
         runtime.ultralight_view_listener.on_change_title_method =
             env->GetMethodID(runtime.ultralight_view_listener.clazz, "onChangeTitle", "(Ljava/lang/String;)V");
         runtime.ultralight_view_listener.on_change_url_method =
@@ -355,13 +355,13 @@ namespace ultralight_java {
         runtime.ultralight_view_listener.on_change_cursor_method = env->GetMethodID(
             runtime.ultralight_view_listener.clazz,
             "onChangeCursor",
-            "(Lnet/janrupf/ultralight/input/UltralightCursor;)V");
+            "(Lnet/labymedia/ultralight/input/UltralightCursor;)V");
         runtime.ultralight_view_listener.on_add_console_message_method = env->GetMethodID(
             runtime.ultralight_view_listener.clazz,
             "onAddConsoleMessage",
             "("
-            "Lnet/janrupf/ultralight/plugin/view/MessageSource;"
-            "Lnet/janrupf/ultralight/plugin/view/MessageLevel;"
+            "Lnet/labymedia/ultralight/plugin/view/MessageSource;"
+            "Lnet/labymedia/ultralight/plugin/view/MessageLevel;"
             "Ljava/lang/String;"
             "J"
             "J"
@@ -374,8 +374,8 @@ namespace ultralight_java {
             "Ljava/lang/String;"
             "Ljava/lang/String;"
             "Z"
-            "Lnet/janrupf/ultralight/math/IntRect;"
-            ")Lnet/janrupf/ultralight/UltralightView;");
+            "Lnet/labymedia/ultralight/math/IntRect;"
+            ")Lnet/labymedia/ultralight/UltralightView;");
 
         // Retrieve information about the Runnable class
         runtime.runnable.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("java/lang/Runnable")));
@@ -383,7 +383,7 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightFileSystem class
         runtime.ultralight_file_system.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/filesystem/UltralightFileSystem")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/filesystem/UltralightFileSystem")));
         runtime.ultralight_file_system.file_exists_method =
             env->GetMethodID(runtime.ultralight_file_system.clazz, "fileExists", "(Ljava/lang/String;)Z");
         runtime.ultralight_file_system
@@ -398,7 +398,7 @@ namespace ultralight_java {
             env->GetMethodID(runtime.ultralight_file_system.clazz, "readFromFile", "(JLjava/nio/ByteBuffer;J)J");
 
         runtime.ultralight_clipboard.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/plugin/clipboard/UltralightClipboard")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/plugin/clipboard/UltralightClipboard")));
         runtime.ultralight_clipboard
             .clear_method = env->GetMethodID(runtime.ultralight_clipboard.clazz, "clear", "()V");
         runtime.ultralight_clipboard.read_plain_text_method =
@@ -408,11 +408,11 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptContext class
         runtime.javascript_context.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptContext")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptContext")));
         runtime.javascript_context.constructor = env->GetMethodID(
             runtime.javascript_context.clazz,
             "<init>",
-            "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
+            "(JLnet/labymedia/ultralight/javascript/JavascriptContextLock;)V");
 
         // Register native methods for the JavascriptContext class
         env->RegisterNatives(
@@ -422,7 +422,7 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptContextLock
         runtime.javascript_context_lock.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptContextLock")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptContextLock")));
         runtime.javascript_context_lock
             .constructor = env->GetMethodID(runtime.javascript_context_lock.clazz, "<init>", "(J)V");
         runtime.javascript_context_lock
@@ -436,11 +436,11 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptGlobalContext class
         runtime.javascript_global_context.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptGlobalContext")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptGlobalContext")));
         runtime.javascript_global_context.constructor = env->GetMethodID(
             runtime.javascript_global_context.clazz,
             "<init>",
-            "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
+            "(JLnet/labymedia/ultralight/javascript/JavascriptContextLock;)V");
 
         // Register native methods for the JavascriptGlobalContext class
         env->RegisterNatives(
@@ -450,11 +450,11 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptLockedObject interface
         runtime.javascript_locked_object.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptLockedObject")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptLockedObject")));
         runtime.javascript_locked_object.get_lock_method = env->GetMethodID(
             runtime.javascript_locked_object.clazz,
             "getLock",
-            "()Lnet/janrupf/ultralight/javascript/JavascriptContextLock;");
+            "()Lnet/labymedia/ultralight/javascript/JavascriptContextLock;");
         runtime.javascript_locked_object.get_context_handle_method =
             env->GetMethodID(runtime.javascript_locked_object.clazz, "getContextHandle", "()J");
         runtime.javascript_locked_object.get_lock_handle_method =
@@ -462,15 +462,15 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptProtectedValue class
         runtime.javascript_protected_value.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptProtectedValue")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptProtectedValue")));
         runtime.javascript_protected_value
             .constructor = env->GetMethodID(runtime.javascript_protected_value.clazz, "<init>", "(J)V");
 
         // Retrieve information about the JavascriptValue class
         runtime.javascript_value.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptValue")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptValue")));
         runtime.javascript_value.constructor = env->GetMethodID(
-            runtime.javascript_value.clazz, "<init>", "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
+            runtime.javascript_value.clazz, "<init>", "(JLnet/labymedia/ultralight/javascript/JavascriptContextLock;)V");
 
         // Register native methods for the JavascriptValue class
         env->RegisterNatives(
@@ -480,9 +480,9 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptObject class
         runtime.javascript_object.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptObject")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptObject")));
         runtime.javascript_object.constructor = env->GetMethodID(
-            runtime.javascript_object.clazz, "<init>", "(JLnet/janrupf/ultralight/javascript/JavascriptContextLock;)V");
+            runtime.javascript_object.clazz, "<init>", "(JLnet/labymedia/ultralight/javascript/JavascriptContextLock;)V");
 
         // Register native methods for the JavascriptObject class
         env->RegisterNatives(
@@ -492,22 +492,22 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptType enum
         runtime.javascript_type.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptType")));
-        if(!runtime.javascript_type.constants.init(env, "net/janrupf/ultralight/javascript/JavascriptType")) {
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptType")));
+        if(!runtime.javascript_type.constants.init(env, "net/labymedia/ultralight/javascript/JavascriptType")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the JavascriptTypedArrayType enum
         runtime.javascript_typed_array_type.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptTypedArrayType")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptTypedArrayType")));
         if(!runtime.javascript_typed_array_type.constants
-                .init(env, "net/janrupf/ultralight/javascript/JavascriptTypedArrayType")) {
+                .init(env, "net/labymedia/ultralight/javascript/JavascriptTypedArrayType")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the JavascriptClass class
         runtime.javascript_class.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptClass")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptClass")));
         runtime.javascript_class.constructor = env->GetMethodID(runtime.javascript_class.clazz, "<init>", "(J)V");
 
         // Register native methods for the JavascriptClass class
@@ -518,7 +518,7 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptClassDefinition class
         runtime.javascript_class_definition.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptClassDefinition")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptClassDefinition")));
 
         // Register native methods for the JavascriptClassDefinition class
         env->RegisterNatives(
@@ -528,131 +528,131 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptObjectConstructor interface
         runtime.javascript_object_constructor.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectConstructor")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectConstructor")));
         runtime.javascript_object_constructor.call_as_javascript_constructor_method = env->GetMethodID(
             runtime.javascript_object_constructor.clazz,
             "callAsJavascriptConstructor",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
-            "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-            ")Lnet/janrupf/ultralight/javascript/JavascriptObject;");
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
+            "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+            ")Lnet/labymedia/ultralight/javascript/JavascriptObject;");
 
         // Retrieve information about the JavascriptObjectFinalizer interface
         runtime.javascript_object_finalizer.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectFinalizer")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectFinalizer")));
         runtime.javascript_object_finalizer.finalize_javascript_object = env->GetMethodID(
             runtime.javascript_object_finalizer.clazz,
             "finalizeJavascriptObject",
-            "(Lnet/janrupf/ultralight/javascript/JavascriptObject;)V");
+            "(Lnet/labymedia/ultralight/javascript/JavascriptObject;)V");
 
         // Retrieve information about the JavascriptObjectFunction interface
         runtime.javascript_object_function.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectFunction")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectFunction")));
         runtime.javascript_object_function.call_as_javascript_function = env->GetMethodID(
             runtime.javascript_object_function.clazz,
             "callAsJavascriptFunction",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
-            "[Lnet/janrupf/ultralight/javascript/JavascriptValue;"
-            ")Lnet/janrupf/ultralight/javascript/JavascriptValue;");
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
+            "[Lnet/labymedia/ultralight/javascript/JavascriptValue;"
+            ")Lnet/labymedia/ultralight/javascript/JavascriptValue;");
 
         // Retrieve information about the JavascriptObjectHasInstanceTester interface
         runtime.javascript_object_has_instance_tester.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectHasInstanceTester")));
+            env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectHasInstanceTester")));
         runtime.javascript_object_has_instance_tester.has_javascript_instance_method = env->GetMethodID(
             runtime.javascript_object_has_instance_tester.clazz,
             "hasJavascriptInstance",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptValue;"
             ")Z");
 
         // Retrieve information about the JavascriptObjectHasPropertyTester interface
         runtime.javascript_object_has_property_tester.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectHasPropertyTester")));
+            env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectHasPropertyTester")));
         runtime.javascript_object_has_property_tester.has_javascript_property_method = env->GetMethodID(
             runtime.javascript_object_has_property_tester.clazz,
             "hasJavascriptProperty",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
             "Ljava/lang/String;"
             ")Z");
 
         // Retrieve information about the JavascriptObjectInitializer interface
         runtime.javascript_object_initializer.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectInitializer")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectInitializer")));
         runtime.javascript_object_initializer.initialize_javascript_object_method = env->GetMethodID(
             runtime.javascript_object_initializer.clazz,
             "initializeJavascriptObject",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
             ")V");
 
         // Retrieve information about the JavascriptObjectPropertyDeleter interface
         runtime.javascript_object_property_deleter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyDeleter")));
+            env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyDeleter")));
         runtime.javascript_object_property_deleter.delete_javascript_property_method = env->GetMethodID(
             runtime.javascript_object_property_deleter.clazz,
             "deleteJavascriptProperty",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
             "Ljava/lang/String;"
             ")Z");
 
         // Retrieve information about the JavascriptObjectPropertyGetter interface
         runtime.javascript_object_property_getter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyGetter")));
+            env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyGetter")));
         runtime.javascript_object_property_getter.get_javascript_property_method = env->GetMethodID(
             runtime.javascript_object_property_getter.clazz,
             "getJavascriptProperty",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
             "Ljava/lang/String;"
-            ")Lnet/janrupf/ultralight/javascript/JavascriptValue;");
+            ")Lnet/labymedia/ultralight/javascript/JavascriptValue;");
 
         // Retrieve information about the JavascriptObjectPropertyNamesCollector interface
         runtime.javascript_object_property_names_collector.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertyNamesCollector")));
+            env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyNamesCollector")));
         runtime.javascript_object_property_names_collector.collect_javascript_property_names_method = env->GetMethodID(
             runtime.javascript_object_property_names_collector.clazz,
             "collectJavascriptPropertyNames",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
             ")[Ljava/lang/String;");
 
         // Retrieve information about the JavascriptObjectPropertySetter interface
         runtime.javascript_object_property_setter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectPropertySetter")));
+            env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectPropertySetter")));
         runtime.javascript_object_property_setter.set_javascript_property_method = env->GetMethodID(
             runtime.javascript_object_property_setter.clazz,
             "setJavascriptProperty",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
             "Ljava/lang/String;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptValue;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptValue;"
             ")Z");
 
         // Retrieve information about the JavascriptObjectToTypeConverter interface
         runtime.javascript_object_to_type_converter.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
-            env->FindClass("net/janrupf/ultralight/javascript/interop/JavascriptObjectToTypeConverter")));
+            env->FindClass("net/labymedia/ultralight/javascript/interop/JavascriptObjectToTypeConverter")));
         runtime.javascript_object_to_type_converter.convert_to_javascript_type_method = env->GetMethodID(
             runtime.javascript_object_to_type_converter.clazz,
             "convertToJavascriptType",
             "("
-            "Lnet/janrupf/ultralight/javascript/JavascriptContext;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptObject;"
-            "Lnet/janrupf/ultralight/javascript/JavascriptType;"
-            ")Lnet/janrupf/ultralight/javascript/JavascriptValue;");
+            "Lnet/labymedia/ultralight/javascript/JavascriptContext;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptObject;"
+            "Lnet/labymedia/ultralight/javascript/JavascriptType;"
+            ")Lnet/labymedia/ultralight/javascript/JavascriptValue;");
 
         // Retrieve information about the Throwable class
         runtime.throwable.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("java/lang/Throwable")));
@@ -661,15 +661,15 @@ namespace ultralight_java {
 
         // Retrieve information about the JavascriptException class
         runtime.javascript_exception.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptException")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptException")));
         runtime.javascript_exception.constructor = env->GetMethodID(
             runtime.javascript_exception.clazz,
             "<init>",
-            "(Ljava/lang/String;Lnet/janrupf/ultralight/javascript/JavascriptValue;)V");
+            "(Ljava/lang/String;Lnet/labymedia/ultralight/javascript/JavascriptValue;)V");
 
         // Retrieve information about the JavascriptEvaluationException class
         runtime.javascript_evaluation_exception.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("net/janrupf/ultralight/javascript/JavascriptEvaluationException")));
+            env->NewGlobalRef(env->FindClass("net/labymedia/ultralight/javascript/JavascriptEvaluationException")));
 
         // Retrieve information about the NullPointerException class
         runtime.null_pointer_exception.clazz = reinterpret_cast<jclass>(
