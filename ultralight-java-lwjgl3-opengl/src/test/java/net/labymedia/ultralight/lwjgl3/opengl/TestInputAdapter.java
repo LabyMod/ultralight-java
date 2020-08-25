@@ -1,7 +1,6 @@
 package net.labymedia.ultralight.lwjgl3.opengl;
 
 import net.labymedia.ultralight.UltralightView;
-import net.janrupf.ultralight.input.*;
 import net.labymedia.ultralight.input.*;
 import org.lwjgl.system.MemoryStack;
 

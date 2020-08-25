@@ -10,7 +10,7 @@ buildscript {
 
 apply plugin: "net.jan.gradle.cmake"
 
-group 'net.janrupf'
+group 'net.labymedia'
 
 def ultralightOsIdentifier = {
     def bitName = (System.getProperty("os.arch", "?").contains("64") ||

@@ -1,7 +1,6 @@
 package net.labymedia.ultralight.lwjgl3.opengl;
 
 import net.labymedia.ultralight.UltralightView;
-import net.janrupf.ultralight.javascript.*;
 import net.labymedia.ultralight.javascript.JavascriptContext;
 import net.labymedia.ultralight.javascript.JavascriptContextLock;
 import net.labymedia.ultralight.javascript.JavascriptGlobalContext;

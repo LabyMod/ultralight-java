@@ -3,7 +3,6 @@ package net.labymedia.ultralight.javascript;
 import net.labymedia.ultralight.annotation.NativeType;
 import net.labymedia.ultralight.ffi.ObjectWithHandle;
 import net.labymedia.ultralight.ffi.gc.DeletableObject;
-import net.janrupf.ultralight.javascript.interop.*;
 import net.labymedia.ultralight.javascript.interop.*;
 
 /**

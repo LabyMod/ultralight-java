@@ -1,6 +1,5 @@
 package net.labymedia.ultralight.lwjgl3.opengl;
 
-import net.janrupf.ultralight.javascript.*;
 import net.labymedia.ultralight.javascript.*;
 
 import java.util.Arrays;

@@ -3,7 +3,7 @@ plugins {
     id 'maven-publish'
 }
 
-group 'net.janrupf'
+group 'net.labymedia'
 
 processResources {
     from(nativeBinaries) {
