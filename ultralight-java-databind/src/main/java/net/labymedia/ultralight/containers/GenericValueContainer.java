@@ -1,4 +1,4 @@
-package net.janrupf.ultralight.containers;
+package net.labymedia.ultralight.containers;
 
 public final class GenericValueContainer<T> {
     private final T value;

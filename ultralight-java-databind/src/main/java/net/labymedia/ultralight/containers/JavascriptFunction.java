@@ -1,6 +1,6 @@
-package net.janrupf.ultralight.containers;
+package net.labymedia.ultralight.containers;
 
-import net.janrupf.ultralight.javascript.JavascriptClass;
+import net.labymedia.ultralight.javascript.JavascriptClass;
 
 import java.lang.invoke.MethodHandle;
 import java.lang.reflect.Method;

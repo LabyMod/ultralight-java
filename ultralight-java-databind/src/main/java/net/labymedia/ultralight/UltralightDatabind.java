@@ -1,7 +1,7 @@
-package net.janrupf.ultralight;
+package net.labymedia.ultralight;
 
-import net.janrupf.ultralight.containers.CustomJavascriptClassDefinition;
-import net.janrupf.ultralight.javascript.*;
+import net.labymedia.ultralight.containers.CustomJavascriptClassDefinition;
+import net.labymedia.ultralight.javascript.*;
 
 public final class UltralightDatabind {
     private final UltralightDatabindConfiguration configuration;

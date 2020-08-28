@@ -1,8 +1,8 @@
-package net.janrupf.ultralight.utils;
+package net.labymedia.ultralight.utils;
 
-import net.janrupf.ultralight.containers.GenericValueContainer;
-import net.janrupf.ultralight.javascript.JavascriptContext;
-import net.janrupf.ultralight.javascript.JavascriptValue;
+import net.labymedia.ultralight.containers.GenericValueContainer;
+import net.labymedia.ultralight.javascript.JavascriptContext;
+import net.labymedia.ultralight.javascript.JavascriptValue;
 
 import java.text.DateFormat;
 import java.text.ParseException;

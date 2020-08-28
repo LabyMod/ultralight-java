@@ -1,4 +1,4 @@
-package net.janrupf.ultralight;
+package net.labymedia.ultralight;
 
 public final class UltralightDatabindConfiguration {
     private boolean automaticPrototype;
