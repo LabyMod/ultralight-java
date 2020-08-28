@@ -1,0 +1,14 @@
+plugins {
+    id 'java-library'
+}
+
+group 'net.janrupf'
+version '0.1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    api project(':ultralight-java-base')
+}

@@ -18,6 +18,7 @@ public class TestJavascriptClass {
             .onCallAsConstructor(TestJavascriptClass::onCallAsConstructor)
             .onHasInstance(TestJavascriptClass::hasInstance)
             .onConvertToType(TestJavascriptClass::toType)
+            .attributes(JavascriptClassAttributes.NO_AUTOMATIC_PROTOTYPE)
             .bake();
 
     private static boolean setStaticValue(JavascriptContext context, JavascriptObject object, String name, JavascriptValue newValue) {

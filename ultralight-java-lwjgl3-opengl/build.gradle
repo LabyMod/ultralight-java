@@ -32,6 +32,7 @@ dependencies {
 
     implementation project(':ultralight-java-base')
 
+    testImplementation project(':ultralight-java-databind')
     testImplementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     testRuntimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
 }

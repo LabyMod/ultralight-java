@@ -58,11 +58,13 @@ namespace ultralight_java {
 
         auto java_cache_path = reinterpret_cast<jstring>(
             env->GetObjectField(java_instance, runtime.ultralight_config.cache_path_field));
+        printf("Cache path = %p\n", java_cache_path);
         if(!java_cache_path) {
             // User has not set the cache path, set it to an empty string
             config.cache_path = "";
         } else {
             config.cache_path = Util::create_utf16_from_jstring(env, java_cache_path);
+            printf("Cache path2 = %p\n", java_cache_path);
             if(env->ExceptionCheck()) {
                 return;
             }

@@ -182,7 +182,7 @@ namespace ultralight_java {
             return nullptr;
         }
 
-        auto object = JSObjectMake(context, clazz, private_data);
+        auto object = JSObjectMake(context, clazz, env->NewGlobalRef(private_data));
 
         return env->NewObject(
             runtime.javascript_object.clazz,

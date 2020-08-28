@@ -627,6 +627,8 @@ namespace ultralight_java {
                     java_constructor.get(),
                     java_arguments.get()));
 
+        printf("After call as constructor, exception = %d, fn = %p\n", env->ExceptionCheck(), class_data->functions.java_call_as_constructor);
+
         if(env->ExceptionCheck()) {
             *exception = Util::create_jssvalue_from_jthrowable(env, env->ExceptionOccurred(), ctx);
             env->ExceptionClear();
