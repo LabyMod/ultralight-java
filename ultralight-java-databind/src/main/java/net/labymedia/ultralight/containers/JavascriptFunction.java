@@ -16,6 +16,11 @@ public final class JavascriptFunction {
         this.functionClass = functionClass;
     }
 
+    public JavascriptFunction(final JavascriptClass functionClass, MethodHandle methodHandle) {
+        //TODO: do something with method handle
+        this.functionClass = functionClass;
+    }
+
     public JavascriptClass functionClass() {
         return functionClass;
     }
@@ -26,5 +31,10 @@ public final class JavascriptFunction {
 
             }
         }
+    }
+
+    public Object methodHandle() {
+        //todo implement
+        return new Object();
     }
 }
