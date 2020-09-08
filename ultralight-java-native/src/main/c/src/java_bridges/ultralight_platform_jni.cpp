@@ -57,7 +57,7 @@ namespace ultralight_java {
         ASSIGN_CONFIG_STRING(resource_path, "resourcePath can't be null");
 
         auto java_cache_path = reinterpret_cast<jstring>(
-            env->GetObjectField(java_instance, runtime.ultralight_config.cache_path_field));
+            env->GetObjectField(java_config, config_type.cache_path_field));
         if(!java_cache_path) {
             // User has not set the cache path, set it to an empty string
             config.cache_path = "";
