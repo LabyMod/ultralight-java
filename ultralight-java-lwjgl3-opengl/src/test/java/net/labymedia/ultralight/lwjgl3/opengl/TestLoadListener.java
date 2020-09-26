@@ -1,6 +1,10 @@
 package net.labymedia.ultralight.lwjgl3.opengl;
 
+import net.labymedia.ultralight.Databind;
+import net.labymedia.ultralight.DatabindConfiguration;
+import net.labymedia.ultralight.DatabindJavascriptClass;
 import net.labymedia.ultralight.UltralightView;
+import net.labymedia.ultralight.api.JavaAPI;
 import net.labymedia.ultralight.javascript.JavascriptContext;
 import net.labymedia.ultralight.javascript.JavascriptContextLock;
 import net.labymedia.ultralight.javascript.JavascriptGlobalContext;
@@ -50,8 +54,10 @@ public class TestLoadListener implements UltralightLoadListener {
             JavascriptGlobalContext globalContext = context.getGlobalContext();
 
             JavascriptObject globalObject = globalContext.getGlobalObject();
-            JavascriptObject testClass = context.makeObject(TestJavascriptClass.INSTANCE);
-            globalObject.setProperty("Test", testClass, 0);
+
+            Databind databind = new Databind(DatabindConfiguration.builder().build());
+            JavascriptObject javaApi = context.makeObject(databind.toJavascript(JavaAPI.class), DatabindJavascriptClass.Data.builder().instance(new JavaAPI(databind)).build());
+            globalObject.setProperty("java", javaApi, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }

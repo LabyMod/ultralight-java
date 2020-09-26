@@ -1,0 +1,10 @@
+plugins {
+  id 'java-library'
+  id 'maven-publish'
+}
+
+group 'net.labymedia'
+
+dependencies {
+  implementation project(':ultralight-java-base')
+}
