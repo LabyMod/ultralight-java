@@ -57,10 +57,28 @@ public class UltralightRenderer implements ObjectWithHandle {
      * @param transparent Whether or not the view background is transparent.
      * @return The created view
      */
-    public native UltralightView createView(
+    public UltralightView createView(
             @NativeType("uint32_t") @Unsigned long width,
             @NativeType("uint32_t") @Unsigned long height,
             boolean transparent
+    ) {
+        return createView(width, height, transparent, false);
+    }
+
+    /**
+     * Create a new View.
+     *
+     * @param width       The initial width, in pixels.
+     * @param height      The initial height, in pixels.
+     * @param transparent Whether or not the view background is transparent.
+     *
+     * @return The created view
+     */
+    public native UltralightView createView(
+            @NativeType("uint32_t") @Unsigned long width,
+            @NativeType("uint32_t") @Unsigned long height,
+            boolean transparent,
+            boolean forceCpuRenderer
     );
 
     /**

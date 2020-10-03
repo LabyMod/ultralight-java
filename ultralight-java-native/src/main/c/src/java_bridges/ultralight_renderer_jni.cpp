@@ -24,8 +24,8 @@ namespace ultralight_java {
         return env->NewObject(runtime.ultralight_renderer.clazz, runtime.ultralight_renderer.constructor, pointer);
     }
 
-    jobject UltralightRendererJNI::createView(
-        JNIEnv *env, jobject instance, jlong width, jlong height, jboolean transparent) {
+    jobject UltralightRendererJNI::create_view(
+        JNIEnv *env, jobject instance, jlong width, jlong height, jboolean transparent, jboolean force_cpu_renderer) {
         auto renderer = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::Renderer>(env, instance);
         if(env->ExceptionCheck()) {
             return nullptr;

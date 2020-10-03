@@ -25,9 +25,16 @@ namespace ultralight_java {
          * @param width The width of the view in pixels
          * @param height The height of the view in pixels
          * @param transparent Whether the view should be transparent
+         * @param force_cpu_renderer Whether this view should always be rendered using the CPU
          * @return The java object wrapping the created view
          */
-        static jobject createView(JNIEnv *env, jobject instance, jlong width, jlong height, jboolean transparent);
+        static jobject create_view(
+            JNIEnv *env,
+            jobject instance,
+            jlong width,
+            jlong height,
+            jboolean transparent,
+            jboolean force_cpu_renderer);
 
         /**
          * Calls the ultralight::Renderer::Update method.
@@ -61,4 +68,4 @@ namespace ultralight_java {
          */
         static void logMemoryUsage(JNIEnv *env, jobject instance);
     };
-}
+} // namespace ultralight_java

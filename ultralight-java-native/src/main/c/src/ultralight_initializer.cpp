@@ -23,25 +23,28 @@
 
 namespace ultralight_java {
     void init_runtime_struct() {
-        runtime.ultralight_platform.native_methods = {
-            NATIVE_METHOD("instance", "()Lnet/labymedia/ultralight/UltralightPlatform;", UltralightPlatformJNI::instance),
-            NATIVE_METHOD(
-                "setConfig", "(Lnet/labymedia/ultralight/config/UltralightConfig;)V", UltralightPlatformJNI::set_config),
-            NATIVE_METHOD("usePlatformFontLoader", "()V", UltralightPlatformJNI::use_platform_font_loader),
-            NATIVE_METHOD(
-                "usePlatformFileSystem", "(Ljava/lang/String;)V", UltralightPlatformJNI::use_platform_file_system),
-            NATIVE_METHOD(
-                "setFileSystem",
-                "(Lnet/labymedia/ultralight/plugin/filesystem/UltralightFileSystem;)V",
-                UltralightPlatformJNI::set_file_system),
-            NATIVE_METHOD(
-                "setClipboard",
-                "(Lnet/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
-                UltralightPlatformJNI::set_clipboard),
-            NATIVE_METHOD(
-                "setLogger",
-                "(Lnet/labymedia/ultralight/plugin/logging/UltralightLogger;)V",
-                UltralightPlatformJNI::set_logger)};
+        runtime.ultralight_platform.native_methods =
+            {NATIVE_METHOD(
+                 "instance", "()Lnet/labymedia/ultralight/UltralightPlatform;", UltralightPlatformJNI::instance),
+             NATIVE_METHOD(
+                 "setConfig",
+                 "(Lnet/labymedia/ultralight/config/UltralightConfig;)V",
+                 UltralightPlatformJNI::set_config),
+             NATIVE_METHOD("usePlatformFontLoader", "()V", UltralightPlatformJNI::use_platform_font_loader),
+             NATIVE_METHOD(
+                 "usePlatformFileSystem", "(Ljava/lang/String;)V", UltralightPlatformJNI::use_platform_file_system),
+             NATIVE_METHOD(
+                 "setFileSystem",
+                 "(Lnet/labymedia/ultralight/plugin/filesystem/UltralightFileSystem;)V",
+                 UltralightPlatformJNI::set_file_system),
+             NATIVE_METHOD(
+                 "setClipboard",
+                 "(Lnet/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
+                 UltralightPlatformJNI::set_clipboard),
+             NATIVE_METHOD(
+                 "setLogger",
+                 "(Lnet/labymedia/ultralight/plugin/logging/UltralightLogger;)V",
+                 UltralightPlatformJNI::set_logger)};
 
         runtime.face_winding.constants = JavaEnum<ultralight::FaceWinding>(
             ultralight::kFaceWinding_Clockwise,
@@ -70,7 +73,7 @@ namespace ultralight_java {
         runtime.ultralight_renderer.native_methods =
             {NATIVE_METHOD("create", "()Lnet/labymedia/ultralight/UltralightRenderer;", UltralightRendererJNI::create),
              NATIVE_METHOD(
-                 "createView", "(JJZ)Lnet/labymedia/ultralight/UltralightView;", UltralightRendererJNI::createView),
+                 "createView", "(JJZZ)Lnet/labymedia/ultralight/UltralightView;", UltralightRendererJNI::create_view),
              NATIVE_METHOD("update", "()V", UltralightRendererJNI::update),
              NATIVE_METHOD("render", "()V", UltralightRendererJNI::render),
              NATIVE_METHOD("purgeMemory", "()V", UltralightRendererJNI::purgeMemory),
@@ -137,7 +140,8 @@ namespace ultralight_java {
              NATIVE_METHOD("resize", "(JJ)V", UltralightSurfaceJNI::resize),
              NATIVE_METHOD(
                  "setDirtyBounds", "(Lnet/labymedia/ultralight/math/IntRect;)V", UltralightSurfaceJNI::setDirtyBounds),
-             NATIVE_METHOD("dirtyBounds", "()Lnet/labymedia/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
+             NATIVE_METHOD(
+                 "dirtyBounds", "()Lnet/labymedia/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
              NATIVE_METHOD("clearDirtyBounds", "()V", UltralightSurfaceJNI::clearDirtyBounds)};
 
         runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
@@ -389,7 +393,9 @@ namespace ultralight_java {
                  "()Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_undefined),
              NATIVE_METHOD(
-                 "makeNull", "()Lnet/labymedia/ultralight/javascript/JavascriptValue;", JavascriptContextJNI::make_null),
+                 "makeNull",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_null),
              NATIVE_METHOD(
                  "makeBoolean",
                  "(Z)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
@@ -503,7 +509,9 @@ namespace ultralight_java {
              NATIVE_METHOD("toNumber", "()D", JavascriptValueJNI::to_number),
              NATIVE_METHOD("toStringCopy", "()Ljava/lang/String;", JavascriptValueJNI::to_string_copy),
              NATIVE_METHOD(
-                 "toObject", "()Lnet/labymedia/ultralight/javascript/JavascriptObject;", JavascriptValueJNI::to_object)};
+                 "toObject",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptObject;",
+                 JavascriptValueJNI::to_object)};
 
         runtime.javascript_object.native_methods =
             {NATIVE_METHOD(
