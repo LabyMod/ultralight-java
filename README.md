@@ -1,4 +1,5 @@
-[Ultralight Discord](https://chat.ultralig.ht) | [Ultralight Upstream](https://github.com/Ultralight-ux/Ultralight)
+[Ultralight Discord](https://chat.ultralig.ht) | [Ultralight Upstream](https://github.com/Ultralight-ux/Ultralight) |
+![CI](https://github.com/LabyMod/ultralight-java/workflows/CI/badge.svg)
 # Ultralight Java
 ###### Java wrapper for the [Ultralight](https://ultralig.ht) web engine
 
