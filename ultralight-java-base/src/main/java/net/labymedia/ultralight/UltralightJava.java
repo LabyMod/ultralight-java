@@ -138,7 +138,7 @@ public class UltralightJava {
 
         if(autoloadDependencies) {
             // Iterate over dependencies, ORDER MATTERS!
-            for(String library : Arrays.asList("UltralightCore", "WebCore", "Ultralight", "AppCore")) {
+            for(String library : new String[] {"UltralightCore", "WebCore", "Ultralight", "AppCore"}) {
                 Path libraryPath = determineLibraryPath(nativesDir, library, operatingSystem, architecture);
                 try {
                     System.load(libraryPath.toAbsolutePath().toString());
