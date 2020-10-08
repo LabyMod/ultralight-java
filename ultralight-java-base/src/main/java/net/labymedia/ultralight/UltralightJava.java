@@ -26,6 +26,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.Arrays;
 
 public class UltralightJava {
     /**
@@ -114,14 +115,39 @@ public class UltralightJava {
     }
 
     /**
-     * Loads the ultralight libraries from the given directory.
+     * Loads the ultralight and its dependencies from the given directory.
      *
      * @param nativesDir The directory to extract the natives to
      * @throws UltralightLoadException If loading ultralight fails
      */
     public static void load(Path nativesDir) throws UltralightLoadException {
+        load(nativesDir, true);
+    }
+
+    /**
+     * Loads the ultralight libraries from the given directory and optionally
+     * also pre-loads dependencies to prevent dynamic linker issues.
+     *
+     * @param nativesDir The directory to load the natives from
+     * @param autoloadDependencies If {@code true}, the library will automatically load dependencies
+     * @throws UltralightLoadException If loading ultralight fails
+     */
+    public static void load(Path nativesDir, boolean autoloadDependencies) throws UltralightLoadException {
         OperatingSystem operatingSystem = OperatingSystem.get();
         Architecture architecture = Architecture.get();
+
+        if(autoloadDependencies) {
+            // Iterate over dependencies, ORDER MATTERS!
+            for(String library : Arrays.asList("Ultralight", "AppCore")) {
+                Path libraryPath = determineLibraryPath(nativesDir, library, operatingSystem, architecture);
+                try {
+                    System.load(libraryPath.toAbsolutePath().toString());
+                } catch (UnsatisfiedLinkError e) {
+                    throw new UltralightLoadException("Failed to load native dependency " + library +
+                            " (tried to load from " + libraryPath + ")", e);
+                }
+            }
+        }
 
         Path ultralightLibrary =
                 determineLibraryPath(nativesDir, "ultralight-java", operatingSystem, architecture);
