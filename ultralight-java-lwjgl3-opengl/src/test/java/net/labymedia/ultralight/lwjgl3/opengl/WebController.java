@@ -1,3 +1,21 @@
+/*
+ * Ultralight Java - Java wrapper for the Ultralight web engine
+ * Copyright (C) 2020 LabyMedia and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package net.labymedia.ultralight.lwjgl3.opengl;
 
 import net.labymedia.ultralight.UltralightPlatform;
@@ -117,26 +135,27 @@ public class WebController {
         if(dirtyBounds.isValid()) {
             ByteBuffer imageData = bitmap.lockPixels();
 
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, (int) bitmap.rowBytes() / 4);
             if(dirtyBounds.width() == width && dirtyBounds.height() == height) {
                 // Update full image
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, imageData);
+                glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
             } else {
                 // Update partial image
                 int x = dirtyBounds.x();
                 int y = dirtyBounds.y();
                 int dirtyWidth = dirtyBounds.width();
                 int dirtyHeight = dirtyBounds.height();
-                int startOffset = (y * width * 4) + x * 4;
+                int startOffset = (int) ((y * bitmap.rowBytes()) + x * 4);
 
-                glPixelStorei(GL_UNPACK_ROW_LENGTH, width);
                 glTexSubImage2D(
                         GL_TEXTURE_2D,
                         0,
                         x, y, dirtyWidth, dirtyHeight,
                         GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV,
                         (ByteBuffer) imageData.position(startOffset));
-                glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
             }
+            glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 
             bitmap.unlockPixels();
             surface.clearDirtyBounds();

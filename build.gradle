@@ -6,10 +6,11 @@ buildscript {
 
 plugins {
     id 'maven-publish'
+    id "net.minecrell.licenser" version "0.4.1" apply false
 }
 
 group 'net.labymedia'
-version '0.1.0'
+version '0.1.2'
 
 apply from: 'ci.gradle'
 
@@ -60,6 +61,17 @@ subprojects {
     }
 
     pluginManager.withPlugin("java") {
+        apply plugin: "net.minecrell.licenser"
+
+        license {
+            header = rootProject.file("LICENSE_HEADER")
+
+            ext {
+                author = "LabyMedia"
+                year = Calendar.getInstance(TimeZone.getTimeZone("UTC")).get(Calendar.YEAR)
+            }
+        }
+
         java {
             withSourcesJar()
             withJavadocJar()

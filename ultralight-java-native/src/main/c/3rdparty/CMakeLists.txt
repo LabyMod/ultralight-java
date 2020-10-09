@@ -28,7 +28,11 @@ endif ()
 # Ultralight
 set(ULTRALIGHT_DIR "${CMAKE_CURRENT_BINARY_DIR}/ultralight-${ULTRALIGHT_OS_NAME}-${ULTRALIGHT_ARCH}")
 set(ULTRALIGHT_ARCHIVE "${ULTRALIGHT_DIR}/ultralight.7z")
-set(ULTRALIGHT_VERSION "latest") # TODO
+# d1b164895859be1fa3dadf4caf0ef017ef21e5a5
+# Fix bug with Bitmap::WritePNG ignoring internal row bytes configuration.
+#
+# https://github.com/ultralight-ux/Ultralight/commit/d1b164895859be1fa3dadf4caf0ef017ef21e5a5
+set(ULTRALIGHT_VERSION "d1b1648")
 
 # Check the version of ultralight
 set(ULTRALIGHT_VERSION_FILE "${ULTRALIGHT_DIR}/.version")

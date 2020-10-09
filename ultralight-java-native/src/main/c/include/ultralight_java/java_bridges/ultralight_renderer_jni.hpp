@@ -1,3 +1,21 @@
+/*
+ * Ultralight Java - Java wrapper for the Ultralight web engine
+ * Copyright (C) 2020 LabyMedia and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #pragma once
 
 #include <jni.h>
@@ -25,9 +43,16 @@ namespace ultralight_java {
          * @param width The width of the view in pixels
          * @param height The height of the view in pixels
          * @param transparent Whether the view should be transparent
+         * @param force_cpu_renderer Whether this view should always be rendered using the CPU
          * @return The java object wrapping the created view
          */
-        static jobject createView(JNIEnv *env, jobject instance, jlong width, jlong height, jboolean transparent);
+        static jobject create_view(
+            JNIEnv *env,
+            jobject instance,
+            jlong width,
+            jlong height,
+            jboolean transparent,
+            jboolean force_cpu_renderer);
 
         /**
          * Calls the ultralight::Renderer::Update method.
@@ -61,4 +86,4 @@ namespace ultralight_java {
          */
         static void logMemoryUsage(JNIEnv *env, jobject instance);
     };
-}
+} // namespace ultralight_java

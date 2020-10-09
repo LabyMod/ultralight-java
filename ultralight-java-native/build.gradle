@@ -9,6 +9,7 @@ buildscript {
 
 
 apply plugin: "net.jan.gradle.cmake"
+apply plugin: "net.minecrell.licenser"
 
 group 'net.labymedia'
 
@@ -59,6 +60,29 @@ task build(type: CMakeBuildTask) {
 
             println "Building using JDK at ${javaHome.absolutePath}"
             variable "JAVA_HOME", javaHome.absolutePath.replace('\\', '/')
+        }
+    }
+}
+
+license {
+    header = rootProject.file("LICENSE_HEADER")
+
+    ext {
+        author = "LabyMedia"
+        year = Calendar.getInstance(TimeZone.getTimeZone("UTC")).get(Calendar.YEAR)
+    }
+
+    style {
+        put "cpp", "BLOCK_COMMENT"
+        put "hpp", "BLOCK_COMMENT"
+        put "c", "BLOCK_COMMENT"
+        put "h", "BLOCK_COMMENT"
+    }
+
+    tasks {
+        directory {
+            files = project.files("src/main/c")
+            include "include/**/*.h", "include/**/*.hpp", "src/**/*.c", "src/**/*.cpp"
         }
     }
 }

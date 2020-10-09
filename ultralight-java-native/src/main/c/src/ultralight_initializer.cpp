@@ -1,3 +1,21 @@
+/*
+ * Ultralight Java - Java wrapper for the Ultralight web engine
+ * Copyright (C) 2020 LabyMedia and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 #include "ultralight_java/ultralight_initializer.hpp"
 
 #include "ultralight_java/java_bridges/javascript_class_definition_jni.hpp"
@@ -23,25 +41,28 @@
 
 namespace ultralight_java {
     void init_runtime_struct() {
-        runtime.ultralight_platform.native_methods = {
-            NATIVE_METHOD("instance", "()Lnet/labymedia/ultralight/UltralightPlatform;", UltralightPlatformJNI::instance),
-            NATIVE_METHOD(
-                "setConfig", "(Lnet/labymedia/ultralight/config/UltralightConfig;)V", UltralightPlatformJNI::set_config),
-            NATIVE_METHOD("usePlatformFontLoader", "()V", UltralightPlatformJNI::use_platform_font_loader),
-            NATIVE_METHOD(
-                "usePlatformFileSystem", "(Ljava/lang/String;)V", UltralightPlatformJNI::use_platform_file_system),
-            NATIVE_METHOD(
-                "setFileSystem",
-                "(Lnet/labymedia/ultralight/plugin/filesystem/UltralightFileSystem;)V",
-                UltralightPlatformJNI::set_file_system),
-            NATIVE_METHOD(
-                "setClipboard",
-                "(Lnet/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
-                UltralightPlatformJNI::set_clipboard),
-            NATIVE_METHOD(
-                "setLogger",
-                "(Lnet/labymedia/ultralight/plugin/logging/UltralightLogger;)V",
-                UltralightPlatformJNI::set_logger)};
+        runtime.ultralight_platform.native_methods =
+            {NATIVE_METHOD(
+                 "instance", "()Lnet/labymedia/ultralight/UltralightPlatform;", UltralightPlatformJNI::instance),
+             NATIVE_METHOD(
+                 "setConfig",
+                 "(Lnet/labymedia/ultralight/config/UltralightConfig;)V",
+                 UltralightPlatformJNI::set_config),
+             NATIVE_METHOD("usePlatformFontLoader", "()V", UltralightPlatformJNI::use_platform_font_loader),
+             NATIVE_METHOD(
+                 "usePlatformFileSystem", "(Ljava/lang/String;)V", UltralightPlatformJNI::use_platform_file_system),
+             NATIVE_METHOD(
+                 "setFileSystem",
+                 "(Lnet/labymedia/ultralight/plugin/filesystem/UltralightFileSystem;)V",
+                 UltralightPlatformJNI::set_file_system),
+             NATIVE_METHOD(
+                 "setClipboard",
+                 "(Lnet/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
+                 UltralightPlatformJNI::set_clipboard),
+             NATIVE_METHOD(
+                 "setLogger",
+                 "(Lnet/labymedia/ultralight/plugin/logging/UltralightLogger;)V",
+                 UltralightPlatformJNI::set_logger)};
 
         runtime.face_winding.constants = JavaEnum<ultralight::FaceWinding>(
             ultralight::kFaceWinding_Clockwise,
@@ -70,7 +91,7 @@ namespace ultralight_java {
         runtime.ultralight_renderer.native_methods =
             {NATIVE_METHOD("create", "()Lnet/labymedia/ultralight/UltralightRenderer;", UltralightRendererJNI::create),
              NATIVE_METHOD(
-                 "createView", "(JJZ)Lnet/labymedia/ultralight/UltralightView;", UltralightRendererJNI::createView),
+                 "createView", "(JJZZ)Lnet/labymedia/ultralight/UltralightView;", UltralightRendererJNI::create_view),
              NATIVE_METHOD("update", "()V", UltralightRendererJNI::update),
              NATIVE_METHOD("render", "()V", UltralightRendererJNI::render),
              NATIVE_METHOD("purgeMemory", "()V", UltralightRendererJNI::purgeMemory),
@@ -137,7 +158,8 @@ namespace ultralight_java {
              NATIVE_METHOD("resize", "(JJ)V", UltralightSurfaceJNI::resize),
              NATIVE_METHOD(
                  "setDirtyBounds", "(Lnet/labymedia/ultralight/math/IntRect;)V", UltralightSurfaceJNI::setDirtyBounds),
-             NATIVE_METHOD("dirtyBounds", "()Lnet/labymedia/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
+             NATIVE_METHOD(
+                 "dirtyBounds", "()Lnet/labymedia/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
              NATIVE_METHOD("clearDirtyBounds", "()V", UltralightSurfaceJNI::clearDirtyBounds)};
 
         runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
@@ -389,7 +411,9 @@ namespace ultralight_java {
                  "()Lnet/labymedia/ultralight/javascript/JavascriptValue;",
                  JavascriptContextJNI::make_undefined),
              NATIVE_METHOD(
-                 "makeNull", "()Lnet/labymedia/ultralight/javascript/JavascriptValue;", JavascriptContextJNI::make_null),
+                 "makeNull",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptValue;",
+                 JavascriptContextJNI::make_null),
              NATIVE_METHOD(
                  "makeBoolean",
                  "(Z)Lnet/labymedia/ultralight/javascript/JavascriptValue;",
@@ -503,7 +527,9 @@ namespace ultralight_java {
              NATIVE_METHOD("toNumber", "()D", JavascriptValueJNI::to_number),
              NATIVE_METHOD("toStringCopy", "()Ljava/lang/String;", JavascriptValueJNI::to_string_copy),
              NATIVE_METHOD(
-                 "toObject", "()Lnet/labymedia/ultralight/javascript/JavascriptObject;", JavascriptValueJNI::to_object)};
+                 "toObject",
+                 "()Lnet/labymedia/ultralight/javascript/JavascriptObject;",
+                 JavascriptValueJNI::to_object)};
 
         runtime.javascript_object.native_methods =
             {NATIVE_METHOD(
