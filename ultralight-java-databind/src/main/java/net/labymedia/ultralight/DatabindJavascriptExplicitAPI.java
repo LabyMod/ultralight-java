@@ -1,8 +1,10 @@
 package net.labymedia.ultralight;
 
 import net.labymedia.ultralight.javascript.*;
+import net.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +30,8 @@ public final class DatabindJavascriptExplicitAPI {
         List<Class<?>> parameterTypes = new ArrayList<>();
 
         for (JavascriptValue value : arguments) {
-            Object object = conversionUtils.fromJavascript(value);
-            System.out.println(object);
-            parameterTypes.add(object == null ? null : object.getClass());
+            Object object = conversionUtils.fromJavascript(value, JavascriptConversionUtils.determineType(value));
+            parameterTypes.add((Class<?>) object);
         }
 
         return context.makeObject(privateData.methodHandler(), DatabindJavascriptMethodHandler.Data.builder()

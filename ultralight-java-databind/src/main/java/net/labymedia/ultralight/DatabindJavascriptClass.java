@@ -66,19 +66,17 @@ public final class DatabindJavascriptClass {
     }
 
     private JavascriptObject onCallAsConstructor(JavascriptContext context, JavascriptObject constructor, JavascriptValue[] arguments) throws JavascriptInteropException {
-        List<Class<?>> parameterTypes = new ArrayList<>();
-        List<Object> parameters = new ArrayList<>();
-
-        for (JavascriptValue value : arguments) {
-            Object object = conversionUtils.fromJavascript(value);
-            parameterTypes.add(object == null ? null : object.getClass());
-            parameters.add(object);
-        }
-
-        Constructor<?> method = (Constructor<?>) methodChooser.choose(constructors, parameterTypes.toArray(new Class[0]));
+        Constructor<?> method = (Constructor<?>) methodChooser.choose(constructors, arguments);
 
         if (method == null) {
             throw new JavascriptInteropException("Unable to determine method");
+        }
+
+        List<Object> parameters = new ArrayList<>();
+
+        for (int i = 0; i < method.getParameterCount(); i++) {
+            Object object = conversionUtils.fromJavascript(arguments[i], method.getParameterTypes()[i]);
+            parameters.add(object);
         }
 
         if (method.isVarArgs()) {
@@ -126,7 +124,7 @@ public final class DatabindJavascriptClass {
 
         if (field != null) {
             try {
-                field.set(object, conversionUtils.fromJavascript(value));
+                field.set(object, conversionUtils.fromJavascript(value, field.getType()));
             } catch (IllegalAccessException exception) {
                 throw new JavascriptInteropException("Unable to access field: " + field.getName(), exception);
             }

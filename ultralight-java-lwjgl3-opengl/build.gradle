@@ -68,7 +68,7 @@ task copyTestResources(type: Copy) {
 task runTest(type: JavaExec, dependsOn: [copyTestResources]) {
     classpath sourceSets.test.runtimeClasspath
     main "net.labymedia.ultralight.lwjgl3.opengl.TestRunner"
-    jvmArgs "-Xmx3M"
+    jvmArgs "-Xmx5M"
     workingDir file("run")
 }
 

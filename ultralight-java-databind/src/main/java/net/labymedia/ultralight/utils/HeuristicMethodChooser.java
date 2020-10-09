@@ -1,9 +1,24 @@
 package net.labymedia.ultralight.utils;
 
+import net.labymedia.ultralight.api.InjectJavascriptContext;
+import net.labymedia.ultralight.javascript.JavascriptContext;
+import net.labymedia.ultralight.javascript.JavascriptValue;
+
 import java.lang.reflect.Executable;
-import java.util.Collection;
+import java.util.*;
 
 public final class HeuristicMethodChooser implements MethodChooser {
+    @Override
+    public Executable choose(Collection<? extends Executable> possibilities, JavascriptValue... javascriptValues) {
+        List<Class<?>> sourceParameterTypes = new ArrayList<>();
+
+        for (JavascriptValue value : javascriptValues) {
+            sourceParameterTypes.add(JavascriptConversionUtils.determineType(value));
+        }
+
+        return choose(possibilities, sourceParameterTypes.toArray(new Class[0]));
+    }
+
     @Override
     public Executable choose(Collection<? extends Executable> possibilities, Class<?>... sourceParameterTypes) {
         int lowestPenalty = Integer.MAX_VALUE;
@@ -12,6 +27,10 @@ public final class HeuristicMethodChooser implements MethodChooser {
         for (Executable possibility : possibilities) {
             Class<?>[] targetParameterTypes = possibility.getParameterTypes();
             int penalty;
+
+            if (possibility.isAnnotationPresent(InjectJavascriptContext.class) && targetParameterTypes[0] == JavascriptContext.class) {
+                targetParameterTypes = Arrays.copyOfRange(targetParameterTypes, 1, targetParameterTypes.length);
+            }
 
             if (possibility.isVarArgs()) {
                 penalty = calculateVarArgsPenalty(targetParameterTypes, sourceParameterTypes);
@@ -30,7 +49,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
         return mostProbableOption;
     }
 
-    private int calculateVarArgsPenalty(Class<?>[] targetParameterTypes, Class<?>... sourceParameterTypes) {
+    private int calculateVarArgsPenalty(Class<?>[] targetParameterTypes, Class<?>[] sourceParameterTypes) {
         if (sourceParameterTypes.length < targetParameterTypes.length - 1) {
             return Integer.MAX_VALUE;
         } else if (sourceParameterTypes.length == targetParameterTypes.length - 1) {
@@ -53,7 +72,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
         return penality;
     }
 
-    private int calculatePenalty(Class<?>[] targetParameterTypes, Class<?>... sourceParameterTypes) {
+    private int calculatePenalty(Class<?>[] targetParameterTypes, Class<?>[] sourceParameterTypes) {
         int penalty = 0;
 
         for (int i = 0; i < sourceParameterTypes.length; i++) {
@@ -64,7 +83,9 @@ public final class HeuristicMethodChooser implements MethodChooser {
     }
 
     private int calculatePenalty(Class<?> target, Class<?> source) {
-        if (!target.isAssignableFrom(source)) {
+        if (source == Number.class) return 0;
+
+        if (source == null || !target.isAssignableFrom(source)) {
             return Integer.MAX_VALUE;
         }
 

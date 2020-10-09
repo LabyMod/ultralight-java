@@ -1,5 +1,6 @@
 package net.labymedia.ultralight;
 
+import net.labymedia.ultralight.api.InjectJavascriptContext;
 import net.labymedia.ultralight.javascript.*;
 import net.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
@@ -9,7 +10,6 @@ import net.labymedia.ultralight.utils.VarArgsUtils;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -20,7 +20,7 @@ public final class DatabindJavascriptMethodHandler {
     private final MethodChooser methodChooser;
     private final JavascriptConversionUtils conversionUtils;
 
-    private Set<Method> methodSet;
+    private final Set<Method> methodSet;
 
     private DatabindJavascriptMethodHandler(DatabindConfiguration configuration, JavascriptConversionUtils conversionUtils, Set<Method> methodSet, String name) {
         this.definition = new JavascriptClassDefinition()
@@ -39,44 +39,41 @@ public final class DatabindJavascriptMethodHandler {
     }
 
     private JavascriptValue onCallAsFunction(JavascriptContext context, JavascriptObject function, JavascriptObject thisObject, JavascriptValue[] arguments) throws JavascriptInteropException {
-
         Data privateData = (Data) function.getPrivate();
+        Method method;
 
-        List<Class<?>> parameterTypes = new ArrayList<>();
-        List<Object> parameters = new ArrayList<>();
-        try {
-            for (JavascriptValue value : arguments) {
-                Object object = conversionUtils.fromJavascript(value);
-
-                if (privateData.parameterTypes() == null) {
-                    parameterTypes.add(object == null ? null : object.getClass());
-                }
-
-                parameters.add(object);
-            }
-
-            System.out.println(name);
-            Method method = (Method) methodChooser.choose(methodSet, privateData.parameterTypes() != null ? privateData.parameterTypes() : parameterTypes.toArray(new Class[0]));
-
-            if (method == null) {
-                throw new JavascriptInteropException("Unable to determine method");
-            }
-
-            if (method.isVarArgs()) {
-                parameters = VarArgsUtils.toVarArgs(parameters, method);
-            }
-
-            try {
-                return conversionUtils.toJavascript(context, method.invoke(privateData.instance(), parameters.toArray()));
-            } catch (IllegalAccessException exception) {
-                throw new JavascriptInteropException("Unable to access method: " + method.getName(), exception);
-            } catch (InvocationTargetException exception) {
-                throw new JavascriptInteropException(method.getName() + " threw an exception", exception);
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
+        if (privateData.parameterTypes() == null) {
+            method = (Method) methodChooser.choose(methodSet, arguments);
+        } else {
+            method = (Method) methodChooser.choose(methodSet, privateData.parameterTypes());
         }
-        return null;
+
+        List<Object> parameters = new ArrayList<>();
+
+        if (method == null) {
+            throw new JavascriptInteropException("Unable to determine method");
+        }
+
+        for (int i = 0; i < arguments.length; i++) {
+            Object object = conversionUtils.fromJavascript(arguments[i], method.isAnnotationPresent(InjectJavascriptContext.class) ? method.getParameterTypes()[i + 1] : method.getParameterTypes()[i]);
+            parameters.add(object);
+        }
+
+        if (method.isAnnotationPresent(InjectJavascriptContext.class)) {
+            parameters.add(0, context);
+        }
+
+        if (method.isVarArgs()) {
+            parameters = VarArgsUtils.toVarArgs(parameters, method);
+        }
+
+        try {
+            return conversionUtils.toJavascript(context, method.invoke(privateData.instance(), parameters.toArray()));
+        } catch (IllegalAccessException exception) {
+            throw new JavascriptInteropException("Unable to access method: " + method.getName(), exception);
+        } catch (InvocationTargetException exception) {
+            throw new JavascriptInteropException(method.getName() + " threw an exception", exception);
+        }
     }
 
     private JavascriptValue onGetProperty(JavascriptContext context, JavascriptObject object, String propertyName) {

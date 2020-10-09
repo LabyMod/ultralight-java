@@ -1,7 +1,15 @@
 package net.labymedia.ultralight.lwjgl3.opengl;
 
 public final class TestJavascriptClass {
-    public void debug(String debug) {
-        System.out.println(debug);
+    public static String[] processArray(String[] array) {
+        return array;
+    }
+
+    public static String[] processVarArgs(String... array) {
+        return array;
+    }
+
+    public static long processNumber(int value) {
+        return value;
     }
 }

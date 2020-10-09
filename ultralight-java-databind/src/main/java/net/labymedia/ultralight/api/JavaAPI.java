@@ -1,9 +1,10 @@
 package net.labymedia.ultralight.api;
 
 import net.labymedia.ultralight.Databind;
-import net.labymedia.ultralight.javascript.JavascriptClass;
+import net.labymedia.ultralight.DatabindJavascriptClass;
+import net.labymedia.ultralight.javascript.JavascriptContext;
+import net.labymedia.ultralight.javascript.JavascriptObject;
 
-// TODO: Rewrite this to meta JavaScript.
 public final class JavaAPI {
     private final Databind databind;
 
@@ -11,13 +12,21 @@ public final class JavaAPI {
         this.databind = databind;
     }
 
-    // Returns JavascriptClass. Cannot pass down the Java class and loses metadata in the JavascriptConversionUtils
-    // class.
-    public JavascriptClass importClass(String name, String className) throws ClassNotFoundException {
-        return databind.toJavascript(name, Class.forName(className));
+    @InjectJavascriptContext
+    public JavascriptObject importClass(JavascriptContext context, String name, String className) throws ClassNotFoundException {
+        Class<?> javaClass = Class.forName(className);
+
+        return context.makeObject(databind.toJavascript(name, javaClass), DatabindJavascriptClass.Data.builder()
+            .javaClass(javaClass)
+            .build());
     }
 
-    public JavascriptClass importClass(String className) throws ClassNotFoundException {
-        return databind.toJavascript(Class.forName(className));
+    @InjectJavascriptContext
+    public JavascriptObject importClass(JavascriptContext context, String className) throws ClassNotFoundException {
+        Class<?> javaClass = Class.forName(className);
+
+        return context.makeObject(databind.toJavascript(javaClass), DatabindJavascriptClass.Data.builder()
+            .javaClass(javaClass)
+            .build());
     }
 }
