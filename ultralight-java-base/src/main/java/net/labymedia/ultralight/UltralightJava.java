@@ -29,15 +29,6 @@ import java.nio.file.StandardCopyOption;
 
 public class UltralightJava {
     /**
-     * Loads the native library from the java native library path.
-     *
-     * @throws UnsatisfiedLinkError If the library fails to load
-     */
-    public static void loadNative() throws UnsatisfiedLinkError {
-        System.loadLibrary("ultralight-java");
-    }
-
-    /**
      * Extracts the native JNI library to the given directory.
      *
      * @param nativesDir The directory to extract the JNI natives to
@@ -114,14 +105,48 @@ public class UltralightJava {
     }
 
     /**
-     * Loads the ultralight libraries from the given directory.
+     * Loads the ultralight and its dependencies from the given directory.
      *
      * @param nativesDir The directory to extract the natives to
      * @throws UltralightLoadException If loading ultralight fails
      */
     public static void load(Path nativesDir) throws UltralightLoadException {
+        load(nativesDir, true);
+    }
+
+    /**
+     * Loads the ultralight libraries from the given directory and optionally
+     * also pre-loads dependencies to prevent dynamic linker issues.
+     *
+     * @param nativesDir The directory to load the natives from
+     * @param autoloadDependencies If {@code true}, the library will automatically load dependencies
+     * @throws UltralightLoadException If loading ultralight fails
+     */
+    public static void load(Path nativesDir, boolean autoloadDependencies) throws UltralightLoadException {
         OperatingSystem operatingSystem = OperatingSystem.get();
         Architecture architecture = Architecture.get();
+
+        if(autoloadDependencies) {
+            // Iterate over dependencies, ORDER MATTERS!
+            //
+            // ultralight-java depends on AppCore and Ultralight
+            // AppCore and Ultralight depend on WebCore, which itself depends on UltralightCore
+            // So the library load order should be:
+            // 1. UltralightCore
+            // 2. WebCore
+            // 3. Ultralight
+            // 4. AppCore
+            // 5. ultralight-java
+            for(String library : new String[] {"UltralightCore", "WebCore", "Ultralight", "AppCore"}) {
+                Path libraryPath = determineLibraryPath(nativesDir, library, operatingSystem, architecture);
+                try {
+                    System.load(libraryPath.toAbsolutePath().toString());
+                } catch (UnsatisfiedLinkError e) {
+                    throw new UltralightLoadException("Failed to load native dependency " + library +
+                            " (tried to load from " + libraryPath + ")", e);
+                }
+            }
+        }
 
         Path ultralightLibrary =
                 determineLibraryPath(nativesDir, "ultralight-java", operatingSystem, architecture);
