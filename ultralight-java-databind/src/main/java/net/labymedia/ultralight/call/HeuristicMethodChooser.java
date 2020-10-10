@@ -9,25 +9,36 @@ import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
+/**
+ * Default implementation of a {@link MethodChooser} selecting methods based on type inference and heuristics.
+ */
 public final class HeuristicMethodChooser implements MethodChooser {
     @Override
-    public <T extends Executable> CallData<T> choose(Collection<? extends T> possibilities, JavascriptValue... javascriptValues) {
+    public <T extends Executable> CallData<T> choose(
+            Collection<? extends T> possibilities, JavascriptValue... javascriptValues) {
+        // Make space for all parameter types
         Class<?>[] parameterTypes = new Class<?>[javascriptValues.length];
 
+        // Try to find out the Java types of all Javascript parameters
         for (int i = 0; i < parameterTypes.length; i++) {
             parameterTypes[i] = JavascriptConversionUtils.determineType(javascriptValues[i]);
         }
 
+        // Hand of the actual selection to the extended call
         return choose(possibilities, parameterTypes, javascriptValues);
     }
 
     @Override
-    public <T extends Executable> CallData<T> choose(Collection<? extends T> possibilities, Class<?>[] sourceParameterTypes, JavascriptValue[] javascriptValues) {
+    public <T extends Executable> CallData<T> choose(
+            Collection<? extends T> possibilities, Class<?>[] sourceParameterTypes, JavascriptValue[] javascriptValues) {
+        // The default penalty needs to be higher than the maximum penalty produced by the selection process
         int penalty = Integer.MAX_VALUE;
         Set<CallData<T>> availableMethods = new HashSet<>();
 
         tryNextMethod:
         for (T executable : possibilities) {
+            // It is required to know if we need to shift parameter selection by one if the method
+            // needs a Javascript context
             boolean injectContext = executable.isAnnotationPresent(InjectJavascriptContext.class);
 
             int currentPenalty = 0;
@@ -35,8 +46,10 @@ public final class HeuristicMethodChooser implements MethodChooser {
 
             Parameter[] parameters = executable.getParameters();
             if (parameters.length != sourceParameterTypes.length + (injectContext ? 1 : 0)) {
+                // Parameter count does not match
                 if (!executable.isVarArgs() || sourceParameterTypes.length < parameters.length - (injectContext ? 0 : 1)) {
-                    // Parameter count is not enough, even if the variable arguments are not filled at all
+                    // The method is either not a var args executable or even when the var args are not filled, the
+                    // amount of arguments is not enough
                     continue;
                 }
             }
@@ -48,22 +61,28 @@ public final class HeuristicMethodChooser implements MethodChooser {
                         // Var args not supplied at all
                         varArgsType = CallData.VarArgsType.NONE;
                     } else if (sourceParameterTypes[i].isArray() && sourceParameterTypes.length == parameters.length) {
-                        if (parameters[i + (injectContext ? 1 : 0)].getType().isAssignableFrom(sourceParameterTypes[i])) {
+                        if (parameters[i + (injectContext ? 1 : 0)].getType()
+                                .isAssignableFrom(sourceParameterTypes[i])) {
                             // Var args array can be passed through as the array types match
                             varArgsType = CallData.VarArgsType.PASS_THROUGH;
                         } else {
-                            if (!parameters[i + (injectContext ? 1 : 0)].getType().getComponentType().isAssignableFrom(sourceParameterTypes[i])) {
+                            if (!parameters[i + (injectContext ? 1 : 0)].getType().getComponentType()
+                                    .isAssignableFrom(sourceParameterTypes[i])) {
                                 // Method parameter can't be compacted down
                                 continue tryNextMethod;
                             }
                             // Compacting the last argument is enough to make it compatible
                             varArgsType = CallData.VarArgsType.COMPACT;
                         }
+
+                        // Apply var args penalty
+                        currentPenalty += 1000;
                     } else {
                         // The arguments need to be compacted
                         varArgsType = CallData.VarArgsType.COMPACT;
 
                         for (int x = i; x < sourceParameterTypes.length; x++) {
+                            // Sum up the penalties for every method parameter
                             int argPenalty = calculatePenalty(
                                     parameters[i + (injectContext ? 1 : 0)].getType().getComponentType(),
                                     sourceParameterTypes[x],
@@ -76,6 +95,9 @@ public final class HeuristicMethodChooser implements MethodChooser {
 
                             currentPenalty += argPenalty;
                         }
+
+                        // Apply var args penalty
+                        currentPenalty += 1000;
                     }
                 } else {
                     int argPenalty = calculatePenalty(
@@ -93,11 +115,11 @@ public final class HeuristicMethodChooser implements MethodChooser {
             }
 
             if (currentPenalty < penalty) {
+                // Found a better matching implementation, clear available ones
                 availableMethods.clear();
-                availableMethods.add(new CallData<>(executable, varArgsType));
-            } else if (currentPenalty == penalty) {
-                availableMethods.add(new CallData<>(executable, varArgsType));
             }
+
+            availableMethods.add(new CallData<>(executable, varArgsType));
         }
 
         if (availableMethods.size() > 1) {
@@ -109,80 +131,70 @@ public final class HeuristicMethodChooser implements MethodChooser {
         return availableMethods.iterator().next();
     }
 
-    // D extends C
-    // C extends B
-    // B extends A
-    //
-    // something(A) => ...
-    // something(B) => ...
-    // something(D) => ...
-    //
-    // something(new D()) => something(A): penalty = 3, something(B): penalty = 2, something(D): penalty = 0
-
     private int calculatePenalty(Class<?> target, Class<?> source, JavascriptValue value) {
         if (target == JavascriptValue.class) {
+            // No casting required at all, as the value can be passed directly
             return 0;
         } else if (target == JavascriptObject.class) {
+            // If the request type is a JavascriptObject, it can only be fulfilled if the value is an object
             return value.isObject() ? 0 : -1;
         } else if (!target.isAssignableFrom(source)) {
+            // Conversion is not possible at all
             return -1;
         } else if (target == source) {
+            // No casting required, fast case to not run through selection
             return 0;
         }
 
-        class ClassWithPrio {
-            Class clazz;
-            int prio;
-
-            public ClassWithPrio(Class clazz, int prio) {
-                this.clazz = clazz;
-                this.prio = prio;
-            }
-        }
-
-        int penalty = 0;
-        HashMap<Class, Integer> dist = new HashMap<>();
-        Queue<ClassWithPrio> queue = new LinkedList<>();
-        queue.add(new ClassWithPrio(source, 0));
+        /*
+         * Dijkstra algorithm:
+         * Used for finding the shortest conversion path of Java classes from one to another.
+         *
+         * Initial setup, use the current source as the starting node
+         */
+        HashMap<Class<?>, Integer> dist = new HashMap<>();
+        Queue<ClassWithPriority> queue = new LinkedList<>();
+        queue.add(new ClassWithPriority(source, 0));
 
         while (!queue.isEmpty()) {
-            ClassWithPrio cwp = queue.remove();
-            List<ClassWithPrio> next = new ArrayList<>();
-            if (target.isAssignableFrom(cwp.clazz.getSuperclass()))
-                next.add(new ClassWithPrio(cwp.clazz.getSuperclass(), cwp.prio + 1));
-            Arrays.stream(cwp.clazz.getInterfaces()).filter(target::isAssignableFrom).map(clazz -> new ClassWithPrio(clazz, cwp.prio + 1)).forEach(next::add);
+            // There are path left, check them
+            ClassWithPriority cwp = queue.remove();
+            List<ClassWithPriority> next = new ArrayList<>();
+
+            if (target.isAssignableFrom(cwp.clazz.getSuperclass())) {
+                // Found a if, increment length of the path and add it
+                next.add(new ClassWithPriority(cwp.clazz.getSuperclass(), cwp.priority + 1));
+            }
+
+            // Also check if for all interfaces, incrementing the length by one for each path
+            Arrays.stream(cwp.clazz.getInterfaces())
+                    .filter(target::isAssignableFrom)
+                    .map(clazz -> new ClassWithPriority(clazz, cwp.priority + 1))
+                    .forEach(next::add);
 
             next.forEach(e -> {
-                if (e.prio < dist.getOrDefault(e.clazz, Integer.MAX_VALUE)) {
-                    dist.put(e.clazz, e.prio);
+                // Check if a path is better
+                if (e.priority < dist.getOrDefault(e.clazz, Integer.MAX_VALUE)) {
+                    // Found a better one, select it and put it into the queue
+                    dist.put(e.clazz, e.priority);
                     queue.add(e);
                 }
             });
         }
 
-        penalty = dist.get(target);
+        return dist.get(target);
+    }
 
-        /*
-        findTarget:
-        while (target != source) {
-            if (target.isAssignableFrom(source.getSuperclass())) {
-                source = source.getSuperclass();
-                penalty++;
-            } else {
-                for (Class<?> iface : source.getInterfaces()) {
-                    if (target.isAssignableFrom(iface)) {
-                        source = iface;
-                        penalty++;
-                        continue findTarget;
-                    }
-                }
+    /**
+     * Helper tuple to combine a class with a priority for the dijkstra algorithm.
+     */
+    private static class ClassWithPriority {
+        Class<?> clazz;
+        int priority;
 
-                throw new AssertionError(
-                        "UNREACHABLE: Class " + source.getName() + " was assignable to " +
-                                target.getName() + ", but no way of conversion was found");
-            }
-        } */
-
-        return penalty;
+        public ClassWithPriority(Class<?> clazz, int priority) {
+            this.clazz = clazz;
+            this.priority = priority;
+        }
     }
 }

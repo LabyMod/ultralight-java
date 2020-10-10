@@ -5,8 +5,18 @@ import net.labymedia.ultralight.javascript.JavascriptClass;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Simple, {@link HashMap} based implementation of a {@link JavascriptClassCache}.
+ */
 public final class NaiveJavascriptClassCache implements JavascriptClassCache {
-    private final Map<String, JavascriptClass> cache = new HashMap<>();
+    private final Map<String, JavascriptClass> cache;
+
+    /**
+     * Constructs a new empty {@link NaiveJavascriptClassCache}.
+     */
+    public NaiveJavascriptClassCache() {
+        this.cache = new HashMap<>();
+    }
 
     @Override
     public JavascriptClass get(String name) {
