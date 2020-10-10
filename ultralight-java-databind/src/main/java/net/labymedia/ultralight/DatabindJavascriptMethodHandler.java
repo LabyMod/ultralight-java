@@ -1,14 +1,16 @@
 package net.labymedia.ultralight;
 
 import net.labymedia.ultralight.api.InjectJavascriptContext;
+import net.labymedia.ultralight.call.CallData;
+import net.labymedia.ultralight.call.MethodChooser;
 import net.labymedia.ultralight.javascript.*;
 import net.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
-import net.labymedia.ultralight.utils.MethodChooser;
-import net.labymedia.ultralight.utils.VarArgsUtils;
 
+import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -40,31 +42,49 @@ public final class DatabindJavascriptMethodHandler {
 
     private JavascriptValue onCallAsFunction(JavascriptContext context, JavascriptObject function, JavascriptObject thisObject, JavascriptValue[] arguments) throws JavascriptInteropException {
         Data privateData = (Data) function.getPrivate();
-        Method method;
+        CallData<Method> callData;
 
         if (privateData.parameterTypes() == null) {
-            method = (Method) methodChooser.choose(methodSet, arguments);
+            callData = methodChooser.choose(methodSet, arguments);
         } else {
-            method = (Method) methodChooser.choose(methodSet, privateData.parameterTypes());
+            callData = methodChooser.choose(methodSet, privateData.parameterTypes(), arguments);
         }
 
+        Method method = callData.getTarget();
+        Parameter[] methodParameters = method.getParameters();
         List<Object> parameters = new ArrayList<>();
 
-        if (method == null) {
-            throw new JavascriptInteropException("Unable to determine method");
-        }
+        boolean injectContext = method.isAnnotationPresent(InjectJavascriptContext.class);
 
-        for (int i = 0; i < arguments.length; i++) {
-            Object object = conversionUtils.fromJavascript(arguments[i], method.isAnnotationPresent(InjectJavascriptContext.class) ? method.getParameterTypes()[i + 1] : method.getParameterTypes()[i]);
-            parameters.add(object);
-        }
+        for(int i = 0; i < methodParameters.length; i++) {
+            if(i == 0 && injectContext) {
+                parameters.add(context);
+            } else if(i == methodParameters.length - 1 && method.isVarArgs()) {
+                switch (callData.getVarArgsType()) {
+                    case NONE:
+                    case EMPTY:
+                        break;
 
-        if (method.isAnnotationPresent(InjectJavascriptContext.class)) {
-            parameters.add(0, context);
-        }
+                    case COMPACT:
+                        int varArgsCount = arguments.length - i;
+                        Class<?> targetType = methodParameters[i].getType().getComponentType();
 
-        if (method.isVarArgs()) {
-            parameters = VarArgsUtils.toVarArgs(parameters, method);
+                        Object args = Array.newInstance(targetType, varArgsCount);
+
+                        for(int x = 0; x < varArgsCount; x++) {
+                            Array.set(args, x, conversionUtils.fromJavascript(arguments[(i + x) - (injectContext ? 1 :0)], targetType));
+                        }
+
+                        parameters.add(args);
+                        break;
+
+                    case PASS_THROUGH:
+                        parameters.add(conversionUtils.fromJavascript(arguments[i - (injectContext ? 1 :0)], methodParameters[i].getType()));
+                        break;
+                }
+            } else {
+                parameters.add(conversionUtils.fromJavascript(arguments[i - (injectContext ? 1 :0)], methodParameters[i].getType()));
+            }
         }
 
         try {

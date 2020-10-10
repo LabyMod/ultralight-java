@@ -1,15 +1,13 @@
 package net.labymedia.ultralight;
 
+import net.labymedia.ultralight.api.InjectJavascriptContext;
+import net.labymedia.ultralight.call.CallData;
 import net.labymedia.ultralight.javascript.*;
 import net.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
-import net.labymedia.ultralight.utils.MethodChooser;
-import net.labymedia.ultralight.utils.VarArgsUtils;
+import net.labymedia.ultralight.call.MethodChooser;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 
 public final class DatabindJavascriptClass {
@@ -66,21 +64,41 @@ public final class DatabindJavascriptClass {
     }
 
     private JavascriptObject onCallAsConstructor(JavascriptContext context, JavascriptObject constructor, JavascriptValue[] arguments) throws JavascriptInteropException {
-        Constructor<?> method = (Constructor<?>) methodChooser.choose(constructors, arguments);
+        CallData<Constructor<?>> callData = methodChooser.choose(constructors, arguments);
 
-        if (method == null) {
-            throw new JavascriptInteropException("Unable to determine method");
-        }
-
+        Constructor<?> method = callData.getTarget();
+        Parameter[] methodParameters = method.getParameters();
         List<Object> parameters = new ArrayList<>();
 
-        for (int i = 0; i < method.getParameterCount(); i++) {
-            Object object = conversionUtils.fromJavascript(arguments[i], method.getParameterTypes()[i]);
-            parameters.add(object);
-        }
+        for(int i = 0; i < methodParameters.length; i++) {
+            if(i == 0 && method.isAnnotationPresent(InjectJavascriptContext.class)) {
+                parameters.add(context);
+            } else if(i == methodParameters.length - 1 && method.isVarArgs()) {
+                switch (callData.getVarArgsType()) {
+                    case NONE:
+                    case EMPTY:
+                        break;
 
-        if (method.isVarArgs()) {
-            parameters = VarArgsUtils.toVarArgs(parameters, method);
+                    case COMPACT:
+                        int varArgsCount = arguments.length - i;
+                        Class<?> targetType = methodParameters[i].getType().getComponentType();
+
+                        Object args = Array.newInstance(targetType, varArgsCount);
+
+                        for(int x = 0; x < varArgsCount; x++) {
+                            Array.set(args, x, conversionUtils.fromJavascript(arguments[i + x], targetType));
+                        }
+
+                        parameters.add(args);
+                        break;
+
+                    case PASS_THROUGH:
+                        parameters.add(conversionUtils.fromJavascript(arguments[i], methodParameters[i].getType()));
+                        break;
+                }
+            } else {
+                parameters.add(conversionUtils.fromJavascript(arguments[i], methodParameters[i].getType()));
+            }
         }
 
         try {

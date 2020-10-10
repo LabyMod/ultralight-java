@@ -1,10 +1,8 @@
 package net.labymedia.ultralight;
 
 import net.labymedia.ultralight.javascript.*;
-import net.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 

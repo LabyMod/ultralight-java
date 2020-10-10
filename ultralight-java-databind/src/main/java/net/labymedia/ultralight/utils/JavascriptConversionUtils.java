@@ -124,10 +124,11 @@ public final class JavascriptConversionUtils {
         if (value.isString()) return String.class;
 
         if (value.isObject()) {
+            JavascriptObject object = value.toObject();
+
             if (value.isDate()) {
                 return Date.class;
             } else if (value.isArray()) {
-                JavascriptObject object = value.toObject();
                 int size = (int) object.getProperty("length").toNumber();
 
                 JavascriptValue[] values = new JavascriptValue[size];
@@ -139,7 +140,11 @@ public final class JavascriptConversionUtils {
                 return Array.newInstance(calculateGCC(values), 0).getClass();
             }
 
-            DatabindJavascriptClass.Data privateData = Objects.requireNonNull((DatabindJavascriptClass.Data) value.toObject().getPrivate(), "Cannot convert arbitrary JavaScript object to Java object");
+            if(object.getPrivate() == null) {
+                return JavascriptObject.class;
+            }
+
+            DatabindJavascriptClass.Data privateData = (DatabindJavascriptClass.Data) object.getPrivate();
 
             if (privateData.instance() == null) {
                 return privateData.javaClass();
@@ -148,7 +153,7 @@ public final class JavascriptConversionUtils {
             }
         }
 
-        throw new IllegalArgumentException("Unable to determine type");
+        throw new AssertionError("UNREACHABLE: Could not convert JavascriptValue to any java class");
     }
 
     private static Class<?> calculateGCC(JavascriptValue... values) {

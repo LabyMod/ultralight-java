@@ -2,8 +2,8 @@ package net.labymedia.ultralight;
 
 import net.labymedia.ultralight.cache.NaiveJavascriptClassCache;
 import net.labymedia.ultralight.cache.JavascriptClassCache;
-import net.labymedia.ultralight.utils.HeuristicMethodChooser;
-import net.labymedia.ultralight.utils.MethodChooser;
+import net.labymedia.ultralight.call.HeuristicMethodChooser;
+import net.labymedia.ultralight.call.MethodChooser;
 
 /**
  * Databind configuration.
