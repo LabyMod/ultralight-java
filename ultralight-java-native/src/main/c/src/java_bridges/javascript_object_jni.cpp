@@ -23,7 +23,6 @@
 #include <ultralight_java/ultralight_java_instance.hpp>
 
 #include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
-#include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {

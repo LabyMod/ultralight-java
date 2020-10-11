@@ -16,18 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package net.labymedia.ultralight.lwjgl3.opengl;
+package net.labymedia.ultralight.api;
 
-public final class TestJavascriptClass {
-    public static String[] processArray(String[] array) {
-        return array;
-    }
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-    public static String[] processVarArgs(String... array) {
-        return array;
-    }
-
-    public static long processNumber(int value) {
-        return value;
-    }
+/**
+ * Marks the method as accepting a {@link net.labymedia.ultralight.javascript.JavascriptContext} as the <b>first</b>
+ * parameter.
+ * <p>
+ * The {@link net.labymedia.ultralight.Databind} instance will then a call the method with the current context.
+ */
+@Target(ElementType.METHOD)
+@Retention(RetentionPolicy.RUNTIME)
+public @interface InjectJavascriptContext {
 }

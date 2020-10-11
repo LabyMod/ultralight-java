@@ -161,6 +161,18 @@ namespace ultralight_java {
         return java_instance;
     }
 
+    jobject JavascriptClassDefinitionJNI::on_has_property(
+        JNIEnv *env, jobject java_instance, jobject has_property_tester) {
+        auto description = reinterpret_cast<TemporaryClassDescription *>(
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
+            return nullptr;
+        }
+
+        DELETE_ASSIGN(env, description->data.functions.java_has_property_tester, has_property_tester);
+        return java_instance;
+    }
+
     jobject JavascriptClassDefinitionJNI::on_get_property(JNIEnv *env, jobject java_instance, jobject java_getter) {
         auto description = reinterpret_cast<TemporaryClassDescription *>(
             env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));

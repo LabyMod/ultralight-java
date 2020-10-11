@@ -31,6 +31,7 @@ dependencies {
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-opengl', version: '3.2.2', classifier: lwjglClassifier()
 
     implementation project(':ultralight-java-base')
+    implementation project(':ultralight-java-databind')
 
     testImplementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     testRuntimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
@@ -67,7 +68,7 @@ task copyTestResources(type: Copy) {
 task runTest(type: JavaExec, dependsOn: [copyTestResources]) {
     classpath sourceSets.test.runtimeClasspath
     main "net.labymedia.ultralight.lwjgl3.opengl.TestRunner"
-    jvmArgs "-Xmx3M"
+    jvmArgs "-Xmx5M"
     workingDir file("run")
 }
 
