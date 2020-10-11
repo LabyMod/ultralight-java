@@ -29,7 +29,7 @@ ext.commonPublish = { Project currentProject, Closure config ->
 
                     licenses {
                         license {
-                            name = "ARR"
+                            name = "GPLv3"
                         }
                     }
 
