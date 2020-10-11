@@ -686,6 +686,12 @@ namespace ultralight_java {
                  ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
                  JavascriptClassDefinitionJNI::on_finalize),
              NATIVE_METHOD(
+                 "onHasProperty",
+                 "("
+                 "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectHasPropertyTester;"
+                 ")Lnet/labymedia/ultralight/javascript/JavascriptClassDefinition;",
+                 JavascriptClassDefinitionJNI::on_has_property),
+             NATIVE_METHOD(
                  "onGetProperty",
                  "("
                  "Lnet/labymedia/ultralight/javascript/interop/JavascriptObjectPropertyGetter;"

@@ -110,6 +110,16 @@ namespace ultralight_java {
         static jobject on_finalize(JNIEnv *env, jobject java_instance, jobject java_finalizer);
 
         /**
+         * Sets the callback determining whether a property exists.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The java instance of this JSClassDefinition
+         * @param has_property_tester The callback to set
+         * @return this
+         */
+        static jobject on_has_property(JNIEnv *env, jobject java_instance, jobject has_property_tester);
+
+        /**
          * Sets the callback to invoke when retrieving properties.
          *
          * @param env The JNI environment to use for accessing java

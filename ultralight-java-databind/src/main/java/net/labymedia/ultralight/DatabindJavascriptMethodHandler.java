@@ -1,17 +1,13 @@
 package net.labymedia.ultralight;
 
-import net.labymedia.ultralight.api.InjectJavascriptContext;
 import net.labymedia.ultralight.call.CallData;
 import net.labymedia.ultralight.call.MethodChooser;
 import net.labymedia.ultralight.javascript.*;
 import net.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
 
-import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -96,7 +92,8 @@ public final class DatabindJavascriptMethodHandler {
 
         try {
             // Invoke method with constructed arguments
-            return conversionUtils.toJavascript(context, method.invoke(privateData.instance(), parameters.toArray()));
+            return conversionUtils.toJavascript(
+                    context, method.invoke(privateData.instance(), parameters.toArray()), method.getReturnType());
         } catch (IllegalAccessException exception) {
             throw new JavascriptInteropException("Unable to access method: " + method.getName(), exception);
         } catch (InvocationTargetException exception) {
@@ -114,7 +111,7 @@ public final class DatabindJavascriptMethodHandler {
      */
     private JavascriptValue onGetProperty(JavascriptContext context, JavascriptObject object, String propertyName) {
         if (!propertyName.equals("signature")) {
-            return null;
+            return context.makeUndefined();
         }
 
         Data privateData = (Data) object.getPrivate();

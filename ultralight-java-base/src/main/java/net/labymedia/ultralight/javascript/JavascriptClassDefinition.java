@@ -106,6 +106,14 @@ public class JavascriptClassDefinition implements ObjectWithHandle {
     public native JavascriptClassDefinition onFinalize(JavascriptObjectFinalizer finalizer);
 
     /**
+     * Sets the callback used when testing for properties on the object.
+     *
+     * @param tester The callback to set
+     * @return this
+     */
+    public native JavascriptClassDefinition onHasProperty(JavascriptObjectHasPropertyTester tester);
+
+    /**
      * Sets the callback used for retrieving values from the object.
      *
      * @param getter The callback for retrieving values

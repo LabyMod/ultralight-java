@@ -650,7 +650,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 18> native_methods;
+            std::array<JNINativeMethod, 19> native_methods;
         } javascript_class_definition;
 
         struct {

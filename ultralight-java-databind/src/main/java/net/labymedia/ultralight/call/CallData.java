@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Executable;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -62,8 +63,12 @@ public class CallData<T extends Executable> {
             } else if (i == methodParameters.length - 1 && target.isVarArgs()) {
                 switch (varArgsType) {
                     case NONE:
-                    case EMPTY:
                         // No special handling required
+                        break;
+
+                    case EMPTY:
+                        // Supply empty array
+                        parameters.add(Array.newInstance(methodParameters[i].getType().getComponentType(), 0));
                         break;
 
                     case COMPACT:

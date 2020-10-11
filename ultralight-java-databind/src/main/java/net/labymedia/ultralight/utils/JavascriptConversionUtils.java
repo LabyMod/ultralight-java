@@ -26,11 +26,12 @@ public final class JavascriptConversionUtils {
     /**
      * Converts a Java object to a Javascript object.
      *
-     * @param context The Javascript context to use for the conversion
-     * @param object  The Java object to convert
+     * @param context   The Javascript context to use for the conversion
+     * @param object    The Java object to convert
+     * @param javaClass The target java class to convert to
      * @return The converted object as a Javascript value
      */
-    public JavascriptValue toJavascript(JavascriptContext context, Object object) {
+    public JavascriptValue toJavascript(JavascriptContext context, Object object, Class<?> javaClass) {
         if (object == null || object == JavascriptType.NULL) {
             // Raw null
             return context.makeNull();
@@ -39,8 +40,9 @@ public final class JavascriptConversionUtils {
             return context.makeUndefined();
         }
 
+        javaClass = toWrapperClass(javaClass);
+
         // Decide based on the object's class
-        Class<?> javaClass = object.getClass();
         if (javaClass == Boolean.class) {
             // Boolean conversion
             return context.makeBoolean((Boolean) object);
@@ -57,7 +59,7 @@ public final class JavascriptConversionUtils {
 
             for (int i = 0; i < array.length; i++) {
                 // Recursive call
-                values[i] = toJavascript(context, array[i]);
+                values[i] = toJavascript(context, array[i], array[i].getClass());
             }
 
             return context.makeArray(values);
@@ -346,5 +348,37 @@ public final class JavascriptConversionUtils {
         }
 
         return source;
+    }
+
+    /**
+     * Converts a Java class to its wrapper variant if required.
+     *
+     * @param source The class to convert
+     * @return The wrapper version of the class, or source, if no wrapper version exists
+     */
+    private static Class<?> toWrapperClass(Class<?> source) {
+        if(!source.isPrimitive()) {
+            return source;
+        }
+
+        if (source == boolean.class) {
+            return Boolean.class;
+        } else if(source == byte.class) {
+            return Byte.class;
+        } else if(source == char.class) {
+            return Character.class;
+        } else if(source == short.class) {
+            return Short.class;
+        } else if(source == int.class) {
+            return Integer.class;
+        } else if(source == long.class) {
+            return Long.class;
+        } else if(source == float.class) {
+            return Float.class;
+        } else if(source == double.class) {
+            return Double.class;
+        }
+
+        throw new AssertionError("UNREACHABLE: Primitive class passed, but no wrapper class known");
     }
 }

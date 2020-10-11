@@ -59,7 +59,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
                     // Last parameter is var args, special handling required
                     if (sourceParameterTypes.length < parameters.length) {
                         // Var args not supplied at all
-                        varArgsType = CallData.VarArgsType.NONE;
+                        varArgsType = CallData.VarArgsType.EMPTY;
                     } else if (sourceParameterTypes[i].isArray() && sourceParameterTypes.length == parameters.length) {
                         if (parameters[i + (injectContext ? 1 : 0)].getType()
                                 .isAssignableFrom(sourceParameterTypes[i])) {
@@ -161,8 +161,8 @@ public final class HeuristicMethodChooser implements MethodChooser {
             ClassWithPriority cwp = queue.remove();
             List<ClassWithPriority> next = new ArrayList<>();
 
-            if (target.isAssignableFrom(cwp.clazz.getSuperclass())) {
-                // Found a if, increment length of the path and add it
+            if (cwp.clazz.getSuperclass() != null && target.isAssignableFrom(cwp.clazz.getSuperclass())) {
+                // Found a path, increment length of the path and add it
                 next.add(new ClassWithPriority(cwp.clazz.getSuperclass(), cwp.priority + 1));
             }
 

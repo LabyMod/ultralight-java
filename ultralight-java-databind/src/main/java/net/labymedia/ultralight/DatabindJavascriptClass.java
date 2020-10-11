@@ -6,10 +6,7 @@ import net.labymedia.ultralight.javascript.*;
 import net.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -49,6 +46,7 @@ public final class DatabindJavascriptClass {
      */
     private void registerCallbacks() {
         definition.onCallAsConstructor(this::onCallAsConstructor);
+        definition.onHasProperty(this::onHasProperty);
         definition.onGetProperty(this::onGetProperty);
         definition.onSetProperty(this::onSetProperty);
     }
@@ -138,6 +136,45 @@ public final class DatabindJavascriptClass {
     }
 
     /**
+     * Determines whether a property exists.
+     *
+     * @param context The context the check is executed in
+     * @param object The object to check for the property on
+     * @param propertyName The name of the property to check for
+     * @return {@code true} if the property could be found, {@code false} otherwise
+     */
+    private boolean onHasProperty(JavascriptContext context, JavascriptObject object, String propertyName) {
+        // Determine whether an instance is available or if the object is static
+        boolean instanceAvailable = ((Data) object.getPrivate()).instance != null;
+
+        Field f = fields.get(propertyName);
+        if(f != null && (Modifier.isStatic(f.getModifiers()) || instanceAvailable)) {
+            // Field found and usable
+            return true;
+        }
+
+        Set<Method> methodsWithName = methods.get(propertyName);
+        if(methodsWithName == null || methodsWithName.isEmpty()) {
+            // No methods available with that name
+            return false;
+        } else if(instanceAvailable) {
+            // There is an instance and methods with this name are available
+            return true;
+        }
+
+        // There are methods with this name available, check if any of them is static
+        for(Method method : methodsWithName) {
+            if(Modifier.isStatic(method.getModifiers())) {
+                // Found a static variant
+                return true;
+            }
+        }
+
+        // No static method available
+        return false;
+    }
+
+    /**
      * Called by Javascript when a property is requested on this class or on an instance of this class.
      *
      * @param context      The context the property is being requested in
@@ -153,7 +190,7 @@ public final class DatabindJavascriptClass {
 
         if (field != null) {
             try {
-                return conversionUtils.toJavascript(context, field.get(privateData.instance));
+                return conversionUtils.toJavascript(context, field.get(privateData.instance), field.getType());
             } catch (IllegalAccessException exception) {
                 throw new JavascriptInteropException("Unable to access field: " + field.getName(), exception);
             }
@@ -162,7 +199,7 @@ public final class DatabindJavascriptClass {
         Set<Method> methodSet = methods.get(propertyName);
         if (methodSet == null) {
             // Property does not exist
-            return null;
+            return context.makeUndefined();
         }
 
         return context.makeObject(
