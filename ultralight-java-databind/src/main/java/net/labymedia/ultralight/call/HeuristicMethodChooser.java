@@ -156,6 +156,9 @@ public final class HeuristicMethodChooser implements MethodChooser {
         } else if (target == JavascriptObject.class) {
             // If the request type is a JavascriptObject, it can only be fulfilled if the value is an object
             return value.isObject() ? 0 : -1;
+        } else if(isZeroCostConversion(target, source)) {
+            // Special zero cost conversion
+            return 0;
         } else if (!target.isAssignableFrom(source)) {
             // Conversion is not possible at all
             return -1;
@@ -201,6 +204,30 @@ public final class HeuristicMethodChooser implements MethodChooser {
         }
 
         return dist.get(target);
+    }
+
+    /**
+     * Catches special cases such as conversions from {@link Number} to {@code int}.
+     *
+     * @param target The class to convert to
+     * @param source The class to convert from
+     * @return {@code true} if a zero cost conversion is possible, {@code false} otherwise
+     */
+    private boolean isZeroCostConversion(Class<?> target, Class<?> source) {
+        // Number to primitive
+        if (source == Number.class && (target == byte.class ||
+                target == short.class ||
+                target == int.class ||
+                target == long.class ||
+                target == float.class ||
+                target == double.class
+        )) {
+            return true;
+        } else if(source == Boolean.class && target == boolean.class) {
+            return true;
+        } else {
+            return source == Character.class && target == char.class;
+        }
     }
 
     /**
