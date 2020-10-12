@@ -8,3 +8,10 @@ group 'net.labymedia'
 dependencies {
   implementation project(':ultralight-java-base')
 }
+
+commonPublish(project) {
+  pom {
+    name = "UltralightJava Databind"
+    description = "Automatic bindings from Java to Javascript for UltralightJava"
+  }
+}
