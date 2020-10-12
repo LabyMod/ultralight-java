@@ -76,4 +76,13 @@ public final class Databind {
 
         return javascriptClass;
     }
+
+    /**
+     * Retrieves the conversion utilities which can  be used to convert single objects.
+     *
+     * @return The conversion utilities
+     */
+    public JavascriptConversionUtils getConversionUtils() {
+        return conversionUtils;
+    }
 }
