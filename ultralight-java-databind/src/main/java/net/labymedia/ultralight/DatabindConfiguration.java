@@ -18,10 +18,11 @@
 
 package net.labymedia.ultralight;
 
-import net.labymedia.ultralight.cache.NaiveJavascriptClassCache;
 import net.labymedia.ultralight.cache.JavascriptClassCache;
+import net.labymedia.ultralight.cache.NaiveJavascriptClassCache;
 import net.labymedia.ultralight.call.HeuristicMethodChooser;
 import net.labymedia.ultralight.call.MethodChooser;
+import net.labymedia.ultralight.context.ContextProviderFactory;
 
 /**
  * Databind configuration.
@@ -30,20 +31,28 @@ public final class DatabindConfiguration {
     private final JavascriptClassCache classCache;
     private final MethodChooser methodChooser;
     private final boolean automaticPrototype;
+    private final ContextProviderFactory contextProviderFactory;
 
     /**
      * Constructs a new {@link DatabindConfiguration}.
      * Use the {@link Builder} for creating instances outside of this class
      *
-     * @param classCache The class cache used by this configuration
-     * @param methodChooser The method chooser used by this configuration
-     * @param automaticPrototype If {@code true}, automatic prototyping is enabled
+     * @param classCache             The class cache used by this configuration
+     * @param methodChooser          The method chooser used by this configuration
+     * @param automaticPrototype     If {@code true}, automatic prototyping is enabled
+     * @param contextProviderFactory The factory for binding context providers, or {@code null}, if this feature
+     *                               is not required
      */
     private DatabindConfiguration(
-            JavascriptClassCache classCache, MethodChooser methodChooser, boolean automaticPrototype) {
+            JavascriptClassCache classCache,
+            MethodChooser methodChooser,
+            boolean automaticPrototype,
+            ContextProviderFactory contextProviderFactory
+    ) {
         this.classCache = classCache;
         this.methodChooser = methodChooser;
         this.automaticPrototype = automaticPrototype;
+        this.contextProviderFactory = contextProviderFactory;
     }
 
     /**
@@ -74,6 +83,15 @@ public final class DatabindConfiguration {
     }
 
     /**
+     * Retrieves the context provider factory instance of this configuration.
+     *
+     * @return The context provider factory instance
+     */
+    public ContextProviderFactory contextProviderFactory() {
+        return contextProviderFactory;
+    }
+
+    /**
      * Creates a new {@link DatabindConfiguration} builder.
      *
      * @return A new {@link DatabindConfiguration} builder
@@ -89,6 +107,7 @@ public final class DatabindConfiguration {
         private JavascriptClassCache classCache;
         private MethodChooser methodChooser;
         private boolean automaticPrototype;
+        private ContextProviderFactory contextProviderFactory;
 
         /**
          * Constructs a new {@link Builder} with a default configuration.
@@ -135,12 +154,23 @@ public final class DatabindConfiguration {
         }
 
         /**
+         * Sets the context provider factory to be used by the configuration being built.
+         *
+         * @param contextProviderFactory The context provider factory, or {@code null}, if this feature is not required
+         * @return this
+         */
+        public Builder contextProviderFactory(ContextProviderFactory contextProviderFactory) {
+            this.contextProviderFactory = contextProviderFactory;
+            return this;
+        }
+
+        /**
          * Builds a {@link DatabindConfiguration}.
          *
          * @return The built {@link DatabindConfiguration}
          */
         public DatabindConfiguration build() {
-            return new DatabindConfiguration(classCache, methodChooser, automaticPrototype);
+            return new DatabindConfiguration(classCache, methodChooser, automaticPrototype, contextProviderFactory);
         }
     }
 }

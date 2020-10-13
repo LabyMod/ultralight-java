@@ -156,7 +156,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
         } else if (target == JavascriptObject.class) {
             // If the request type is a JavascriptObject, it can only be fulfilled if the value is an object
             return value.isObject() ? 0 : -1;
-        } else if(isZeroCostConversion(target, source)) {
+        } else if (isZeroCostConversion(target, source)) {
             // Special zero cost conversion
             return 0;
         } else if (!target.isAssignableFrom(source)) {
@@ -164,6 +164,11 @@ public final class HeuristicMethodChooser implements MethodChooser {
             return -1;
         } else if (target == source) {
             // No casting required, fast case to not run through selection
+            return 0;
+        } else if (source == JavascriptObject.class &&
+                target.isAnnotationPresent(FunctionalInterface.class) &&
+                value.toObject().isFunction()) {
+            // Functional conversion possible
             return 0;
         }
 
@@ -223,7 +228,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
                 target == double.class
         )) {
             return true;
-        } else if(source == Boolean.class && target == boolean.class) {
+        } else if (source == Boolean.class && target == boolean.class) {
             return true;
         } else {
             return source == Character.class && target == char.class;

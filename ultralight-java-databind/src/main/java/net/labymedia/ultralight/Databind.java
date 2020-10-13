@@ -19,6 +19,7 @@
 package net.labymedia.ultralight;
 
 import net.labymedia.ultralight.cache.JavascriptClassCache;
+import net.labymedia.ultralight.context.ContextProviderFactory;
 import net.labymedia.ultralight.javascript.JavascriptClass;
 import net.labymedia.ultralight.utils.JavascriptConversionUtils;
 
@@ -28,6 +29,7 @@ import net.labymedia.ultralight.utils.JavascriptConversionUtils;
 public final class Databind {
     private final DatabindConfiguration configuration;
     private final JavascriptClassCache classCache;
+    private final ContextProviderFactory contextProviderFactory;
 
     private final JavascriptConversionUtils conversionUtils;
 
@@ -39,6 +41,7 @@ public final class Databind {
     public Databind(DatabindConfiguration configuration) {
         this.configuration = configuration;
         this.classCache = configuration.classCache();
+        this.contextProviderFactory = configuration.contextProviderFactory();
         this.conversionUtils = new JavascriptConversionUtils(this);
     }
 
@@ -84,5 +87,25 @@ public final class Databind {
      */
     public JavascriptConversionUtils getConversionUtils() {
         return conversionUtils;
+    }
+
+    /**
+     * Retrieves the context provider factory which can be used to bind object contexts.
+     *
+     * @return The context provider factory
+     */
+    public ContextProviderFactory getContextProviderFactory() {
+        return contextProviderFactory;
+    }
+
+    /**
+     * Determines whether functional conversion is supported (depends on whether a context provider factory
+     * is available).
+     *
+     * @return {@code true} if Javascript functions can be converted to Java functional interfaces, {@code false}
+     * otherwise
+     */
+    public boolean supportsFunctionalConversion() {
+        return contextProviderFactory != null;
     }
 }
