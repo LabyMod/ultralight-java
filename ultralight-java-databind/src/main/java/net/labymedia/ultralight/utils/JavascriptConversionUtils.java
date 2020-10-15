@@ -146,7 +146,7 @@ public final class JavascriptConversionUtils {
 
         if (value.isBoolean()) {
             // Simple boolean conversion
-            if (type != boolean.class) {
+            if (type != boolean.class && type != Object.class) {
                 throw new IllegalArgumentException("Can not convert Javascript boolean to " + type.getName());
             }
 
@@ -155,6 +155,9 @@ public final class JavascriptConversionUtils {
         } else if (value.isNumber()) {
             // Number conversion
             Number number = value.toNumber();
+            if (type == Object.class) {
+                return number;
+            }
 
             if (type == byte.class) {
                 return number.byteValue();
@@ -176,7 +179,7 @@ public final class JavascriptConversionUtils {
         } else if (value.isString()) {
             String str = value.toString();
 
-            if (type.isAssignableFrom(String.class)) {
+            if (type.isAssignableFrom(String.class) || type == Object.class) {
                 // String can be passed on
                 return str;
             } else if (type == char[].class) {
@@ -232,12 +235,16 @@ public final class JavascriptConversionUtils {
             DatabindJavascriptClass.Data privateData = (DatabindJavascriptClass.Data) object.getPrivate();
             if (privateData == null) {
                 // The Javascript object has not been constructed by java
+                if(type == Object.class) {
+                    return value;
+                }
+
                 throw new IllegalArgumentException(
                         "Can not convert a non Java constructed Javascript object to " + type.getName());
             }
 
             if (privateData.instance() == null) {
-                if (!type.isAssignableFrom(Class.class)) {
+                if (!type.isAssignableFrom(Class.class) && type != Object.class) {
                     throw new IllegalArgumentException("Can not convert a Java class to " + type.getName());
                 }
 
@@ -251,6 +258,10 @@ public final class JavascriptConversionUtils {
 
                 return javaInstance;
             }
+        }
+
+        if (type == Object.class) {
+            return value;
         }
 
         throw new IllegalArgumentException("Can not convert Javascript value to " + type.getName());

@@ -159,10 +159,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
         } else if (isZeroCostConversion(target, source)) {
             // Special zero cost conversion
             return 0;
-        } else if (!target.isAssignableFrom(source)) {
-            // Conversion is not possible at all
-            return -1;
-        } else if (target == source) {
+        }  else if (target == source) {
             // No casting required, fast case to not run through selection
             return 0;
         } else if (source == JavascriptObject.class &&
@@ -170,6 +167,9 @@ public final class HeuristicMethodChooser implements MethodChooser {
                 value.toObject().isFunction()) {
             // Functional conversion possible
             return 0;
+        } else if (!target.isAssignableFrom(source)) {
+            // Conversion is not possible at all
+            return -1;
         }
 
         /*

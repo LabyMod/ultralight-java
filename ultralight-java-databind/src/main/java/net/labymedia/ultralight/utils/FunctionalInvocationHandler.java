@@ -62,6 +62,12 @@ class FunctionalInvocationHandler implements InvocationHandler {
             return invokeDefaultMethod(target, method, proxy, args);
         }
 
+        Class<?> methodSource = method.getDeclaringClass();
+        if (methodSource.isInstance(this)) {
+            // Invoke the method on this object
+            return method.invoke(this, args);
+        }
+
         Class<?>[] methodParameterTypes = method.getParameterTypes();
 
         synchronized (lock) {
