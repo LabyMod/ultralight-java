@@ -129,9 +129,9 @@ public final class JavascriptConversionUtils {
             return value instanceof JavascriptObject ? (JavascriptObject) value : value.toObject();
         }
 
-        if (value.isNull() || value.isUndefined()) {
+        if (value.isNull() || value.isUndefined() || type == void.class || type == Void.class) {
             // Special handling of Javascript null and undefined
-            if (type.isPrimitive()) {
+            if (type.isPrimitive() && type != void.class) {
                 // Primitives can not be null in Java
                 throw new IllegalArgumentException(
                         "Can not convert " + (value.isNull() ? "null" : "undefined") + " to " + type.getName());
@@ -146,7 +146,7 @@ public final class JavascriptConversionUtils {
 
         if (value.isBoolean()) {
             // Simple boolean conversion
-            if (type != boolean.class) {
+            if (type != boolean.class && type != Object.class) {
                 throw new IllegalArgumentException("Can not convert Javascript boolean to " + type.getName());
             }
 
@@ -155,6 +155,9 @@ public final class JavascriptConversionUtils {
         } else if (value.isNumber()) {
             // Number conversion
             Number number = value.toNumber();
+            if (type == Object.class) {
+                return number;
+            }
 
             if (type == byte.class) {
                 return number.byteValue();
@@ -176,7 +179,7 @@ public final class JavascriptConversionUtils {
         } else if (value.isString()) {
             String str = value.toString();
 
-            if (type.isAssignableFrom(String.class)) {
+            if (type.isAssignableFrom(String.class) || type == Object.class) {
                 // String can be passed on
                 return str;
             } else if (type == char[].class) {
@@ -194,8 +197,9 @@ public final class JavascriptConversionUtils {
                 return objectArray;
             }
 
-            throw new IllegalArgumentException("Can not convert Javascript string " + type.getName());
+            throw new IllegalArgumentException("Can not convert Javascript string to " + type.getName());
         } else if (value.isObject()) {
+            JavascriptObject object = value.toObject();
             if (value.isDate()) {
                 // Date's are primitives in Javascript
                 if (type.isAssignableFrom(Date.class)) {
@@ -203,7 +207,7 @@ public final class JavascriptConversionUtils {
                 }
 
                 // Convert based on the unix epoch with the help of the getTime method of Javascript
-                long millis = (long) value.toObject().getProperty("getTime")
+                long millis = (long) object.getProperty("getTime")
                         .toObject().callAsFunction(value.toObject()).toNumber();
                 return new Date(millis);
             } else if (value.isArray()) {
@@ -212,7 +216,6 @@ public final class JavascriptConversionUtils {
                 }
 
                 // Prepare an array reflectively
-                JavascriptObject object = value.toObject();
                 int size = (int) object.getProperty("length").toNumber();
                 Object objects = Array.newInstance(type.getComponentType(), size);
 
@@ -222,17 +225,26 @@ public final class JavascriptConversionUtils {
                 }
 
                 return objects;
+            } else if (databind.supportsFunctionalConversion() &&
+                    object.isFunction() &&
+                    type.isInterface() &&
+                    type.isAnnotationPresent(FunctionalInterface.class)) {
+                return FunctionalInterfaceBinder.bind(databind, type, object);
             }
 
-            DatabindJavascriptClass.Data privateData = (DatabindJavascriptClass.Data) value.toObject().getPrivate();
+            DatabindJavascriptClass.Data privateData = (DatabindJavascriptClass.Data) object.getPrivate();
             if (privateData == null) {
                 // The Javascript object has not been constructed by java
+                if(type == Object.class) {
+                    return value;
+                }
+
                 throw new IllegalArgumentException(
                         "Can not convert a non Java constructed Javascript object to " + type.getName());
             }
 
             if (privateData.instance() == null) {
-                if (!type.isAssignableFrom(Class.class)) {
+                if (!type.isAssignableFrom(Class.class) && type != Object.class) {
                     throw new IllegalArgumentException("Can not convert a Java class to " + type.getName());
                 }
 
@@ -246,6 +258,10 @@ public final class JavascriptConversionUtils {
 
                 return javaInstance;
             }
+        }
+
+        if (type == Object.class) {
+            return value;
         }
 
         throw new IllegalArgumentException("Can not convert Javascript value to " + type.getName());
@@ -375,25 +391,25 @@ public final class JavascriptConversionUtils {
      * @return The wrapper version of the class, or source, if no wrapper version exists
      */
     private static Class<?> toWrapperClass(Class<?> source) {
-        if(!source.isPrimitive()) {
+        if (!source.isPrimitive()) {
             return source;
         }
 
         if (source == boolean.class) {
             return Boolean.class;
-        } else if(source == byte.class) {
+        } else if (source == byte.class) {
             return Byte.class;
-        } else if(source == char.class) {
+        } else if (source == char.class) {
             return Character.class;
-        } else if(source == short.class) {
+        } else if (source == short.class) {
             return Short.class;
-        } else if(source == int.class) {
+        } else if (source == int.class) {
             return Integer.class;
-        } else if(source == long.class) {
+        } else if (source == long.class) {
             return Long.class;
-        } else if(source == float.class) {
+        } else if (source == float.class) {
             return Float.class;
-        } else if(source == double.class) {
+        } else if (source == double.class) {
             return Double.class;
         }
 

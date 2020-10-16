@@ -1,0 +1,40 @@
+/*
+ * Ultralight Java - Java wrapper for the Ultralight web engine
+ * Copyright (C) 2020 LabyMedia and contributors
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package net.labymedia.ultralight.context;
+
+import net.labymedia.ultralight.javascript.JavascriptValue;
+
+/**
+ * Interface to be implemented by the user for binding values in callbacks to contexts.
+ * <p>
+ * This is required for translating Javascript methods to functional interfaces and invoking them, as the context
+ * gets lost in the process of binding the interface. The library will then invoke the context provider factory
+ * to re-acquire the context.
+ * <p>
+ * @see net.labymedia.ultralight.DatabindConfiguration.Builder#contextProviderFactory(ContextProviderFactory)
+ */
+public interface ContextProviderFactory {
+    /**
+     * Binds a provider for the specified Javascript value.
+     *
+     * @param value The value to bind a provider for
+     * @return The bound provider
+     */
+    ContextProvider bindProvider(JavascriptValue value);
+}

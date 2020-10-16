@@ -73,7 +73,8 @@ public class TestLoadListener implements UltralightLoadListener {
 
             JavascriptObject globalObject = globalContext.getGlobalObject();
 
-            Databind databind = new Databind(DatabindConfiguration.builder().build());
+            Databind databind = new Databind(DatabindConfiguration.builder()
+                    .contextProviderFactory(new TestContextProvider.Factory(view)).build());
             JavascriptObject javaApi = context.makeObject(databind.toJavascript(JavaAPI.class),
                     new DatabindJavascriptClass.Data(new JavaAPI(databind), null));
             globalObject.setProperty("java", javaApi, 0);
