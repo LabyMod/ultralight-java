@@ -9,8 +9,8 @@ plugins {
     id "net.minecrell.licenser" version "0.4.1" apply false
 }
 
-group 'net.labymedia'
-version '0.2.2'
+group 'com.labymedia'
+version '0.3.0'
 
 apply from: 'ci.gradle'
 

@@ -25,7 +25,7 @@
 
 namespace ultralight_java {
     /**
-     * Bridge for net/labymedia/ultralight/plugin/clipboard/UltralightClipboard to ultralight::Clipboard
+     * Bridge for com/labymedia/ultralight/plugin/clipboard/UltralightClipboard to ultralight::Clipboard
      */
     class BridgedClipboard : public ultralight::Clipboard, public JNIReferenceWrapper {
     public:

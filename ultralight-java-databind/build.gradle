@@ -3,7 +3,7 @@ plugins {
   id 'maven-publish'
 }
 
-group 'net.labymedia'
+group 'com.labymedia'
 
 dependencies {
   implementation project(':ultralight-java-base')

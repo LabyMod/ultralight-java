@@ -24,7 +24,7 @@
 
 namespace ultralight_java {
     /**
-     * Bridge for net/labymedia/ultralight/plugin/logging/Logger to ultralight::Logger
+     * Bridge for com/labymedia/ultralight/plugin/logging/Logger to ultralight::Logger
      */
     class BridgedLogger : public ultralight::Logger, public JNIReferenceWrapper {
     public:

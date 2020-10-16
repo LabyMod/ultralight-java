@@ -5,7 +5,7 @@ plugins {
     id 'maven-publish'
 }
 
-group 'net.labymedia'
+group 'com.labymedia'
 
 def lwjglClassifier = {
     if(Os.isFamily(Os.FAMILY_WINDOWS)) {
@@ -67,7 +67,7 @@ task copyTestResources(type: Copy) {
 
 task runTest(type: JavaExec, dependsOn: [copyTestResources]) {
     classpath sourceSets.test.runtimeClasspath
-    main "net.labymedia.ultralight.lwjgl3.opengl.TestRunner"
+    main "com.labymedia.ultralight.lwjgl3.opengl.TestRunner"
     jvmArgs "-Xmx5M"
     workingDir file("run")
 }
@@ -95,7 +95,7 @@ task testJar(type: Jar) {
 
     manifest {
         attributes(
-                "Main-Class": "net.labymedia.ultralight.lwjgl3.opengl.TestRunner"
+                "Main-Class": "com.labymedia.ultralight.lwjgl3.opengl.TestRunner"
         )
     }
 }

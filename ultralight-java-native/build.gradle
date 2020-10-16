@@ -11,7 +11,7 @@ buildscript {
 apply plugin: "net.jan.gradle.cmake"
 apply plugin: "net.minecrell.licenser"
 
-group 'net.labymedia'
+group 'com.labymedia'
 
 def ultralightOsIdentifier = {
     def bitName = (System.getProperty("os.arch", "?").contains("64") ||

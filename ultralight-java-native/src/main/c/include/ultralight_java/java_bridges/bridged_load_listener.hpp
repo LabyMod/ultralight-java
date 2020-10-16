@@ -25,7 +25,7 @@
 
 namespace ultralight_java {
     /**
-     * Bridge for net/labymedia/ultralight/plugin/loading/UltralightViewLoadListener to ultralight::LoadListener
+     * Bridge for com/labymedia/ultralight/plugin/loading/UltralightViewLoadListener to ultralight::LoadListener
      */
     class BridgedLoadListener : public ultralight::LoadListener, public JNIReferenceWrapper {
     public:
