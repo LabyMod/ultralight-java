@@ -87,9 +87,10 @@ public class UltralightRenderer implements ObjectWithHandle {
     /**
      * Create a new View.
      *
-     * @param width       The initial width, in pixels.
-     * @param height      The initial height, in pixels.
-     * @param transparent Whether or not the view background is transparent.
+     * @param width            The initial width, in pixels.
+     * @param height           The initial height, in pixels.
+     * @param transparent      Whether or not the view background is transparent.
+     * @param forceCpuRenderer Whether or not the view should always use the CPU renderer.
      *
      * @return The created view
      */

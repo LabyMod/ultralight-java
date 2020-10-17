@@ -28,7 +28,7 @@ import com.labymedia.ultralight.javascript.JavascriptValue;
  * This is required for translating Javascript methods to functional interfaces and invoking them, as the context
  * gets lost in the process of binding the interface. The library will then invoke the context provider factory
  * to re-acquire the context.
- * <p>
+ *
  * @see DatabindConfiguration.Builder#contextProviderFactory(ContextProviderFactory)
  */
 public interface ContextProviderFactory {

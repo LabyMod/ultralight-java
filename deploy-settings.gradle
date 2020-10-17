@@ -1,7 +1,0 @@
-repositories {
-    jcenter()
-}
-
-dependencies {
-    classpath "org.jfrog.buildinfo:build-info-extractor-gradle:4+"
-}

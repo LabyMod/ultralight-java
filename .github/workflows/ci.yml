@@ -96,15 +96,12 @@ jobs:
         run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries ultralight-java-lwjgl3-opengl:build"
       - name: Check license
         run: "./gradlew licenseCheck"
-      - name: Deploy to artifactory
-        if: github.ref == 'refs/heads/master'
-        run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries :artifactoryPublish"
-        env:
-          artifactory_deploy: true
-          artifactory_repoKey: ${{ secrets.artifactory_repoKey }}
-          artifactory_contextUrl: ${{ secrets.artifactory_contextUrl }}
-          artifactory_user: ${{ secrets.artifactory_user }}
-          artifactory_password: ${{ secrets.artifactory_password }}
+      # - name: Deploy to maven central
+      #   if: github.ref == 'refs/heads/master'
+      #   run: "./gradlew -PCI=true -PenableSigning -PnativeBinaryExternalDir=native-binaries :publish"
+      #   env:
+      #     SIGNING_KEY: ${{ secrets.signingKey }}
+      #     SIGNING_PASSWORD: ${{ secrets.signingPassword }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:

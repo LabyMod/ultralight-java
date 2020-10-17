@@ -1,18 +1,17 @@
-buildscript {
-    if(System.getenv("artifactory_deploy") || project.hasProperty("artifactory_deploy")) {
-        apply from: file("deploy-settings.gradle"), to: it
-    }
-}
-
 plugins {
     id 'maven-publish'
     id "net.minecrell.licenser" version "0.4.1" apply false
+    id "signing"
 }
 
 group 'com.labymedia'
 version '0.3.0'
 
 apply from: 'ci.gradle'
+
+def getSigningProperty(String name) {
+    return System.getenv("SIGNING_${name}")
+}
 
 ext.commonPublish = { Project currentProject, Closure config ->
     currentProject.publishing {
@@ -29,7 +28,9 @@ ext.commonPublish = { Project currentProject, Closure config ->
 
                     licenses {
                         license {
-                            name = "GPLv3"
+                            name = "LGPLv3"
+                            url = "https://www.gnu.org/licenses/lgpl-3.0.txt"
+                            distribution = "repo"
                         }
                     }
 
@@ -49,10 +50,17 @@ ext.commonPublish = { Project currentProject, Closure config ->
             }
         }
     }
-}
 
-if(System.getenv("artifactory_deploy") || project.hasProperty("artifactory_deploy")) {
-    apply from: file("deploy.gradle")
+    if(rootProject.hasProperty("enableSigning")) {
+        currentProject.signing {
+            def signingKey = getSigningProperty("KEY")
+            def signingPassword = getSigningProperty("PASSWORD")
+
+            useInMemoryPgpKeys(signingKey, signingPassword)
+
+            sign currentProject.publishing.publications.mavenJava
+        }
+    }
 }
 
 subprojects {
@@ -62,6 +70,7 @@ subprojects {
 
     pluginManager.withPlugin("java") {
         apply plugin: "net.minecrell.licenser"
+        apply plugin: "signing"
 
         license {
             header = rootProject.file("LICENSE_HEADER")
