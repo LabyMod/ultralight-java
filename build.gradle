@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.labymedia'
-version '0.3.0'
+apply from: 'version.gradle'
 
 apply from: 'ci.gradle'
 

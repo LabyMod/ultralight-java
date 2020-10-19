@@ -1,0 +1,79 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+import java.nio.charset.StandardCharsets
+
+def versionFromFile = file("VERSION").text.trim()
+
+static String getGithubVar(String name) {
+    return System.getenv("GITHUB_${name}")
+}
+
+static boolean isWindows() {
+    return Os.isFamily(Os.FAMILY_WINDOWS)
+}
+
+File getGitExecutable() {
+    String gitExe = isWindows() ? "git.exe" : "git"
+    return System.getenv("PATH")?.split(File.pathSeparator)?.collect {file("${it}/${gitExe}") }?.find {it.canExecute() }
+}
+
+String getBranchName() {
+    File gitExe = getGitExecutable()
+
+    if (gitExe == null) {
+        logger.warn("Git not found on path")
+        return "unknown"
+    }
+
+    return new ByteArrayOutputStream().withStream { out ->
+        String githubActionsRef = getGithubVar("REF")
+        if (githubActionsRef != null) {
+            return githubActionsRef.substring(9).replace('/', '_')
+        }
+
+        exec {
+            executable gitExe
+            workingDir rootDir
+            args "rev-parse", "--abbrev-ref", "HEAD"
+            standardOutput out
+        }
+
+        return out.toString("UTF-8")
+    }
+}
+
+String getCommit() {
+    File gitExe = getGitExecutable()
+
+    if (gitExe == null) {
+        logger.warn("Git not found on path")
+        return "unknown"
+    }
+
+    return new ByteArrayOutputStream().withStream { out ->
+        exec {
+            executable gitExe
+            workingDir rootDir
+            args "rev-parse", "--short", "HEAD"
+            standardOutput out
+        }
+
+        return out.toString("UTF-8")
+    }
+}
+
+
+String branchName = getBranchName()
+switch(branchName) {
+    case "master":
+        version = versionFromFile
+        break
+
+    case "develop":
+        version = "${versionFromFile}-SNAPSHOT"
+        break
+
+    default:
+        version = "${versionFromFile}-${getCommit()}-UNSTABLE"
+        break
+}
