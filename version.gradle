@@ -28,7 +28,7 @@ String getBranchName() {
     return new ByteArrayOutputStream().withStream { out ->
         String githubActionsRef = getGithubVar("REF")
         if (githubActionsRef != null) {
-            return githubActionsRef.substring(9).replace('/', '_')
+            return githubActionsRef.substring(11).replace('/', '_')
         }
 
         exec {
@@ -70,6 +70,7 @@ switch(branchName) {
         break
 
     case "develop":
+    case "osshr-preparation":
         version = "${versionFromFile}-SNAPSHOT"
         break
 

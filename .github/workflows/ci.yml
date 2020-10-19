@@ -96,12 +96,14 @@ jobs:
         run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries ultralight-java-lwjgl3-opengl:build"
       - name: Check license
         run: "./gradlew licenseCheck"
-      # - name: Deploy to maven central
-      #   if: github.ref == 'refs/heads/master'
-      #   run: "./gradlew -PCI=true -PenableSigning -PnativeBinaryExternalDir=native-binaries :publish"
-      #   env:
-      #     SIGNING_KEY: ${{ secrets.signingKey }}
-      #     SIGNING_PASSWORD: ${{ secrets.signingPassword }}
+      - name: Deploy to OSSHR
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/osshr-preparation'
+        run: "./gradlew -PCI=true -PenableSigning -PnativeBinaryExternalDir=native-binaries :publish"
+        env:
+          SIGNING_KEY: ${{ secrets.signingKey }}
+          SIGNING_PASSWORD: ${{ secrets.signingPassword }}
+          OSSHR_USER: ${{ secrets.osshrUser }}
+          OSSHR_PASSWORD: ${{ secrets.osshrPassword }}
       - name: Upload artifacts
         uses: actions/upload-artifact@v2
         with:
