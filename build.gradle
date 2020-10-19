@@ -5,16 +5,37 @@ plugins {
 }
 
 group 'com.labymedia'
-version '0.3.0'
+apply from: 'version.gradle'
 
 apply from: 'ci.gradle'
 
-def getSigningProperty(String name) {
+static String getSigningProperty(String name) {
     return System.getenv("SIGNING_${name}")
+}
+
+String getAuthenticationProperty(String propName, String envName) {
+    return project.hasProperty(propName) ? project.properties.get(propName) : System.getenv(envName)
 }
 
 ext.commonPublish = { Project currentProject, Closure config ->
     currentProject.publishing {
+        repositories {
+            def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
+
+            if(!version.endsWith("-UNSTABLE")) {
+                maven {
+                    url version.endsWith("-SNAPSHOT") ? snapshotRepo : releaseRepo
+                    name "OSS${version.endsWith("-SNAPSHOT") ? "Snapshots" : "Release"}HostingRepository"
+
+                    credentials {
+                        username getAuthenticationProperty("osshrUser", "OSSHR_USER")
+                        password getAuthenticationProperty("osshrPassword", "OSSHR_PASSWORD")
+                    }
+                }
+            }
+        }
+
         publications {
             mavenJava(MavenPublication) {
                 from currentProject.components.java
