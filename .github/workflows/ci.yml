@@ -97,7 +97,7 @@ jobs:
       - name: Check license
         run: "./gradlew licenseCheck"
       - name: Deploy to OSSHR
-        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop' || github.ref == 'refs/heads/osshr-preparation'
+        if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/develop'
         run: "./gradlew -PCI=true -PenableSigning -PnativeBinaryExternalDir=native-binaries :publish"
         env:
           SIGNING_KEY: ${{ secrets.signingKey }}
