@@ -1,7 +1,5 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 
-import java.nio.charset.StandardCharsets
-
 def versionFromFile = file("VERSION").text.trim()
 
 static String getGithubVar(String name) {
@@ -28,7 +26,7 @@ String getBranchName() {
     return new ByteArrayOutputStream().withStream { out ->
         String githubActionsRef = getGithubVar("REF")
         if (githubActionsRef != null) {
-            return githubActionsRef.substring(11).replace('/', '_')
+            return githubActionsRef.trim().substring(11).replace('/', '_')
         }
 
         exec {
@@ -38,7 +36,7 @@ String getBranchName() {
             standardOutput out
         }
 
-        return out.toString("UTF-8")
+        return out.toString("UTF-8").trim()
     }
 }
 
@@ -58,7 +56,7 @@ String getCommit() {
             standardOutput out
         }
 
-        return out.toString("UTF-8")
+        return out.toString("UTF-8").trim()
     }
 }
 

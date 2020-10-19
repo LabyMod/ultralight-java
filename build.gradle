@@ -26,9 +26,9 @@ ext.commonPublish = { Project currentProject, Closure config ->
             if(!version.endsWith("-UNSTABLE")) {
                 maven {
                     url version.endsWith("-SNAPSHOT") ? snapshotRepo : releaseRepo
-                    name "OSSHR ${version.endsWith("-SNAPSHOT") ? "snapshots" : "release"} repository"
+                    name "OSSHR-${version.endsWith("-SNAPSHOT") ? "snapshots" : "release"}-repository"
 
-                    authentication {
+                    credentials {
                         username getAuthenticationProperty("osshrUser", "OSSHR_USER")
                         password getAuthenticationProperty("osshrPassword", "OSSHR_PASSWORD")
                     }
