@@ -27,7 +27,7 @@ Moreover, the databind API is capable of translating Java objects directly to Ja
 calls directly from within your JavaScript code, making integration with the UI even easier.
 
 # Licensing
-For Ultralight Java [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html) is being used, however, Ultralight itself is
+For Ultralight Java [LGPLv3](https://www.gnu.org/licenses/lgpl-3.0.en.html) is being used, however, Ultralight itself is
 licensed under a custom proprietary license. See
 [Ultralight licensing](https://github.com/ultralight-ux/Ultralight/blob/master/README.md#licensing) for further 
 information.
