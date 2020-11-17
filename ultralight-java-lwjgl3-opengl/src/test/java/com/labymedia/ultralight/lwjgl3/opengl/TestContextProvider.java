@@ -36,9 +36,9 @@ public class TestContextProvider implements ContextProvider {
     }
 
     @Override
-    public void syncWithJavascript(Consumer<JavascriptContext> callback) {
+    public void syncWithJavascript(Consumer<JavascriptContextLock> callback) {
         try(JavascriptContextLock lock = view.lockJavascriptContext()) {
-            callback.accept(lock.getContext());
+            callback.accept(lock);
         }
     }
 
