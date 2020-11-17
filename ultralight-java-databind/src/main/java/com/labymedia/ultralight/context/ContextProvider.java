@@ -21,15 +21,16 @@ package com.labymedia.ultralight.context;
 
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
 
+import java.util.function.Consumer;
+
 /**
  * Interface to be implemented by the user.
  */
 public interface ContextProvider {
     /**
-     * Retrieves the bound Javascript context with a lock. The lock will be unlocked by the consumer automatically
-     * after it finished using it.
+     * Executes the callback later on a thread which is synchronized with the Javascript engine.
      *
-     * @return The bound Javascript context lock, or {@code null}, if the context is not available anymore
+     * @param callback The callback to execute
      */
-    JavascriptContextLock getContext();
+    void syncWithJavascript(Consumer<JavascriptContextLock> callback);
 }

@@ -22,8 +22,11 @@ package com.labymedia.ultralight.lwjgl3.opengl;
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.context.ContextProviderFactory;
 import com.labymedia.ultralight.context.ContextProvider;
+import com.labymedia.ultralight.javascript.JavascriptContext;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
 import com.labymedia.ultralight.javascript.JavascriptValue;
+
+import java.util.function.Consumer;
 
 public class TestContextProvider implements ContextProvider {
     private final UltralightView view;
@@ -33,8 +36,10 @@ public class TestContextProvider implements ContextProvider {
     }
 
     @Override
-    public JavascriptContextLock getContext() {
-        return view.lockJavascriptContext();
+    public void syncWithJavascript(Consumer<JavascriptContextLock> callback) {
+        try(JavascriptContextLock lock = view.lockJavascriptContext()) {
+            callback.accept(lock);
+        }
     }
 
     public static class Factory implements ContextProviderFactory {

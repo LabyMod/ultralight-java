@@ -28,6 +28,8 @@ import com.labymedia.ultralight.javascript.*;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Invocation handler for Javascript functions bound to functional interfaces.
@@ -90,16 +92,15 @@ class FunctionalInvocationHandler implements InvocationHandler {
 
         Class<?>[] methodParameterTypes = method.getParameterTypes();
 
-        synchronized (lock) {
-            try (JavascriptContextLock lock = contextProvider.getContext()) {
-                if (lock == null) {
-                    throw new IllegalStateException("Context required for callback does not exist anymore");
-                }
+        CountDownLatch awaiter = new CountDownLatch(1);
+        AtomicReference<Object> out = new AtomicReference<>();
 
-                JavascriptContext context = lock.getContext();
+        contextProvider.syncWithJavascript((contextLock) -> {
+            synchronized (lock) {
+                JavascriptContext context = contextLock.getContext();
 
                 // Revive the Javascript value, this will effectively invalidate the protected value
-                JavascriptObject object = protectedValue.get().value.revive(lock).toObject();
+                JavascriptObject object = protectedValue.get().value.revive(contextLock).toObject();
 
                 // Convert all Java arguments to Javascript values
                 JavascriptValue[] arguments = new JavascriptValue[args.length];
@@ -112,9 +113,15 @@ class FunctionalInvocationHandler implements InvocationHandler {
                 protectedValue.get().value = object.protect();
 
                 JavascriptValue returnValue = object.callAsFunction(null, arguments);
-                return databind.getConversionUtils().fromJavascript(returnValue, method.getReturnType());
+                Object ret = databind.getConversionUtils().fromJavascript(returnValue, method.getReturnType());
+                out.set(ret);
+                awaiter.countDown();
             }
-        }
+        });
+
+        awaiter.await();
+
+        return out.get();
     }
 
     /**
@@ -142,8 +149,8 @@ class FunctionalInvocationHandler implements InvocationHandler {
      * @param valueWrapper The wrapper to delete
      */
     private static void delete(ValueWrapper valueWrapper) {
-        try (JavascriptContextLock lock = valueWrapper.contextProvider.getContext()) {
-            valueWrapper.value.revive(lock);
-        }
+        valueWrapper.contextProvider.syncWithJavascript((contextLock) -> {
+            valueWrapper.value.revive(contextLock);
+        });
     }
 }
