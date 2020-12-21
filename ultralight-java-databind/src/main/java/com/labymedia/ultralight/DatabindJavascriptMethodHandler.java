@@ -114,7 +114,7 @@ public final class DatabindJavascriptMethodHandler {
             Object ret = method.invoke(privateData.instance(), parameters.toArray());
             Class<?> suggestedReturnType = method.getReturnType();
 
-            if(ret != null) {
+            if (ret != null) {
                suggestedReturnType = ret.getClass();
             }
 

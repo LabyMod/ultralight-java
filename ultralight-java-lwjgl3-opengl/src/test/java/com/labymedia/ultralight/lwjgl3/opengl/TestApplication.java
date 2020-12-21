@@ -262,7 +262,6 @@ public class TestApplication {
      * @param height The new height of the viewport
      */
     private void updateSize(long window, int width, int height) {
-        System.out.println("Resizing to " + width + "x" + height);
         glViewport(0, 0, width, height);
         webController.resize(width, height);
     }
