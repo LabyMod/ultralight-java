@@ -19,13 +19,14 @@
 
 package com.labymedia.ultralight;
 
+import com.labymedia.ultralight.cache.JavascriptClassCache;
 import com.labymedia.ultralight.call.CallData;
 import com.labymedia.ultralight.javascript.*;
 import com.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import com.labymedia.ultralight.call.MethodChooser;
-import com.labymedia.ultralight.javascript.*;
 import com.labymedia.ultralight.utils.JavascriptConversionUtils;
 
+import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -51,9 +52,14 @@ public final class DatabindJavascriptClass {
      * @param className       The name of the Javascript class
      */
     private DatabindJavascriptClass(
-            DatabindConfiguration configuration, JavascriptConversionUtils conversionUtils, String className) {
+            DatabindConfiguration configuration,
+            JavascriptConversionUtils conversionUtils,
+            String className,
+            JavascriptClass parentClass
+    ) {
         this.definition = new JavascriptClassDefinition()
                 .name(className)
+                .parentClass(parentClass)
                 .attributes(JavascriptClassAttributes.NO_AUTOMATIC_PROTOTYPE);
 
         this.configuration = configuration;
@@ -76,8 +82,8 @@ public final class DatabindJavascriptClass {
      *
      * @param constructors The constructors to index
      */
-    private void addConstructors(Constructor<?>... constructors) {
-        this.constructors.addAll(Arrays.asList(constructors));
+    private void addConstructors(Collection<Constructor<?>> constructors) {
+        this.constructors.addAll(constructors);
     }
 
     /**
@@ -85,7 +91,7 @@ public final class DatabindJavascriptClass {
      *
      * @param methods The methods to index
      */
-    private void addMethods(Method... methods) {
+    private void addMethods(Collection<Method> methods) {
         for (Method method : methods) {
             String name = method.getName();
 
@@ -108,7 +114,7 @@ public final class DatabindJavascriptClass {
      *
      * @param fields The fields to index
      */
-    private void addFields(Field... fields) {
+    private void addFields(Collection<Field> fields) {
         for (Field field : fields) {
             this.fields.put(field.getName(), field);
         }
@@ -146,11 +152,11 @@ public final class DatabindJavascriptClass {
         try {
             // Invoke constructor with constructed arguments
             return context.makeObject(bake(), new Data(method.newInstance(parameters.toArray()), null));
-        } catch (IllegalAccessException exception) {
+        } catch(IllegalAccessException exception) {
             throw new JavascriptInteropException("Unable to access constructor: " + method.getName(), exception);
-        } catch (InvocationTargetException exception) {
+        } catch(InvocationTargetException exception) {
             throw new JavascriptInteropException("Constructor threw an exception", exception);
-        } catch (InstantiationException exception) {
+        } catch(InstantiationException exception) {
             throw new JavascriptInteropException("Unable to create instance", exception);
         }
     }
@@ -158,8 +164,8 @@ public final class DatabindJavascriptClass {
     /**
      * Determines whether a property exists.
      *
-     * @param context The context the check is executed in
-     * @param object The object to check for the property on
+     * @param context      The context the check is executed in
+     * @param object       The object to check for the property on
      * @param propertyName The name of the property to check for
      * @return {@code true} if the property could be found, {@code false} otherwise
      */
@@ -168,23 +174,23 @@ public final class DatabindJavascriptClass {
         boolean instanceAvailable = ((Data) object.getPrivate()).instance != null;
 
         Field f = fields.get(propertyName);
-        if(f != null && (Modifier.isStatic(f.getModifiers()) || instanceAvailable)) {
+        if (f != null && (Modifier.isStatic(f.getModifiers()) || instanceAvailable)) {
             // Field found and usable
             return true;
         }
 
         Set<Method> methodsWithName = methods.get(propertyName);
-        if(methodsWithName == null || methodsWithName.isEmpty()) {
+        if (methodsWithName == null || methodsWithName.isEmpty()) {
             // No methods available with that name
             return false;
-        } else if(instanceAvailable) {
+        } else if (instanceAvailable) {
             // There is an instance and methods with this name are available
             return true;
         }
 
         // There are methods with this name available, check if any of them is static
-        for(Method method : methodsWithName) {
-            if(Modifier.isStatic(method.getModifiers())) {
+        for (Method method : methodsWithName) {
+            if (Modifier.isStatic(method.getModifiers())) {
                 // Found a static variant
                 return true;
             }
@@ -211,15 +217,15 @@ public final class DatabindJavascriptClass {
         if (field != null) {
             try {
                 return conversionUtils.toJavascript(context, field.get(privateData.instance), field.getType());
-            } catch (IllegalAccessException exception) {
+            } catch(IllegalAccessException exception) {
                 throw new JavascriptInteropException("Unable to access field: " + field.getName(), exception);
             }
         }
 
         Set<Method> methodSet = methods.get(propertyName);
         if (methodSet == null) {
-            // Property does not exist
-            return context.makeUndefined();
+            // Property does not exist, delegate to parent
+            return null;
         }
 
         return context.makeObject(
@@ -253,8 +259,10 @@ public final class DatabindJavascriptClass {
         if (field != null) {
             try {
                 field.set(privateData.instance, conversionUtils.fromJavascript(value, field.getType()));
-            } catch (IllegalAccessException exception) {
-                throw new JavascriptInteropException("Unable to access field: " + field.getName(), exception);
+                return true;
+            } catch(IllegalAccessException exception) {
+                throw new JavascriptInteropException("Unable to access field: " + field.getName() +
+                        " (" + exception.getMessage() + ")", exception);
             }
         }
 
@@ -280,17 +288,43 @@ public final class DatabindJavascriptClass {
      * @param configuration   The configuration to use
      * @param conversionUtils The conversion utilities to use for converting objects
      * @param javaClass       The java class to create a binding for
+     * @param classCache      The class cache to retrieve or cache parent classes with
      * @return The created binding
      */
     static DatabindJavascriptClass create(
-            DatabindConfiguration configuration, JavascriptConversionUtils conversionUtils, Class<?> javaClass) {
+            DatabindConfiguration configuration,
+            JavascriptConversionUtils conversionUtils,
+            Class<?> javaClass,
+            JavascriptClassCache classCache
+    ) {
+        Class<?> superClass = javaClass.getSuperclass();
+
+        JavascriptClass parentClass = null;
+        if (superClass != null && javaClass != Object.class) {
+            String parentClassName = superClass.getName();
+
+            if (!classCache.contains(parentClassName)) {
+                DatabindJavascriptClass databindParent = create(
+                        configuration,
+                        conversionUtils,
+                        superClass,
+                        classCache
+                );
+
+                parentClass = classCache.put(parentClassName, databindParent.bake());
+            } else {
+                parentClass = classCache.get(parentClassName);
+            }
+        }
+
         DatabindJavascriptClass javascriptClass = new DatabindJavascriptClass(
-                configuration, conversionUtils, javaClass.getName());
+                configuration, conversionUtils, javaClass.getName(), parentClass);
 
         javascriptClass.registerCallbacks();
-        javascriptClass.addConstructors(javaClass.getDeclaredConstructors());
-        javascriptClass.addMethods(javaClass.getDeclaredMethods());
-        javascriptClass.addFields(javaClass.getDeclaredFields());
+
+        javascriptClass.addConstructors(filterAccessible(javaClass.getConstructors(), javaClass));
+        javascriptClass.addMethods(filterAccessible(javaClass.getMethods(), javaClass));
+        javascriptClass.addFields(filterAccessible(javaClass.getFields(), javaClass));
 
         // Iteratively scan all interfaces
         Queue<Class<?>> toAdd = new LinkedList<>(Arrays.asList(javaClass.getInterfaces()));
@@ -298,10 +332,64 @@ public final class DatabindJavascriptClass {
             Class<?> iface = toAdd.remove();
             toAdd.addAll(Arrays.asList(iface.getInterfaces()));
 
-            javascriptClass.addMethods(iface.getMethods());
+            javascriptClass.addMethods(filterAccessible(iface.getMethods(), iface));
+            javascriptClass.addFields(filterAccessible(iface.getFields(), iface));
         }
 
         return javascriptClass;
+    }
+
+    /**
+     * Filters an array of reflection objects by their accessibility.
+     *
+     * @param objects The objects to filter
+     * @param owner   The wanted owner class
+     * @param <T>     The type of the objects
+     * @return The filtered objects
+     */
+    private static <T extends AccessibleObject & Member> Set<T> filterAccessible(T[] objects, Class<?> owner) {
+        Set<T> accessible = new HashSet<>();
+
+        for (T object : objects) {
+            if (object.getDeclaringClass() != owner || !allPublic(object)) {
+                continue;
+            }
+
+            accessible.add(object);
+        }
+
+        return accessible;
+    }
+
+    /**
+     * Determines if a members is accessible by checking if everything is public.
+     *
+     * @param member The member to check
+     * @return {@code true} if the member is accessible using a public path, {@code false} otherwise
+     */
+    private static boolean allPublic(Member member) {
+        Class<?> classToCheck = null;
+
+        do {
+            if (classToCheck == null) {
+                if ((member.getModifiers() & Modifier.PUBLIC) == 0) {
+                    return false;
+                }
+
+                classToCheck = member.getDeclaringClass();
+            } else {
+                if((classToCheck.getModifiers() & Modifier.PUBLIC) == 0) {
+                    return false;
+                }
+
+                classToCheck = classToCheck.getSuperclass();
+                if(classToCheck == Object.class) {
+                    return true;
+                }
+            }
+        } while (classToCheck != null);
+
+        return true;
     }
 
     /**

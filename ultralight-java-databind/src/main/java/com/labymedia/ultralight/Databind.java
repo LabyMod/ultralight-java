@@ -74,7 +74,7 @@ public final class Databind {
 
             javascriptClass = classCache.put(
                     javaClass.getName(),
-                    DatabindJavascriptClass.create(configuration, conversionUtils, javaClass)
+                    DatabindJavascriptClass.create(configuration, conversionUtils, javaClass, classCache)
                             .bake());
         }
 
