@@ -111,9 +111,15 @@ public final class DatabindJavascriptMethodHandler {
         );
 
         try {
+            Object ret = method.invoke(privateData.instance(), parameters.toArray());
+            Class<?> suggestedReturnType = method.getReturnType();
+
+            if(ret != null) {
+               suggestedReturnType = ret.getClass();
+            }
+
             // Invoke method with constructed arguments
-            return conversionUtils.toJavascript(
-                    context, method.invoke(privateData.instance(), parameters.toArray()), method.getReturnType());
+            return conversionUtils.toJavascript(context, ret, suggestedReturnType);
         } catch (IllegalAccessException exception) {
             throw new JavascriptInteropException("Unable to access method: " + method.getName(), exception);
         } catch (InvocationTargetException exception) {

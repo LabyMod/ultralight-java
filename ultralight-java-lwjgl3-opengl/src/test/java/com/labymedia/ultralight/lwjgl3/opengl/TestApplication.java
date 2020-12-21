@@ -177,15 +177,40 @@ public class TestApplication {
             // Update the size
             updateSize(window, sizeBuffer.get(0), sizeBuffer.get(1));
 
+            /*
+             * Following snippet disabled due to GLFW bug, glfwGetWindowContentScale returns invalid values!
+             *
+             * On a test system
+             */
             // Update scale for the first time
-            FloatBuffer scaleBuffer = stack.callocFloat(2);
+            // FloatBuffer scaleBuffer = stack.callocFloat(2);
 
-            // Retrieve the size into the float buffer
-            glfwGetWindowContentScale(window,
-                    (FloatBuffer) scaleBuffer.slice().position(0), (FloatBuffer) scaleBuffer.slice().position(1));
+            // Retrieve the scale into the float buffer
+            // glfwGetWindowContentScale(window,
+            //        (FloatBuffer) scaleBuffer.slice().position(0), (FloatBuffer) scaleBuffer.slice().position(1));
+
+            // Retrieve framebuffer size for scale calculation
+            IntBuffer framebufferSizeBuffer = stack.callocInt(2);
+
+            // Retrieve the size into the int buffer
+            glfwGetFramebufferSize(window,
+                (IntBuffer) framebufferSizeBuffer.slice().position(0), (IntBuffer) sizeBuffer.slice().position(1));
+
+            // Calculate scale
+            float xScale = ((float) (framebufferSizeBuffer.get(0))) / ((float) (sizeBuffer.get(0)));
+            float yScale = ((float) (framebufferSizeBuffer.get(1))) / ((float) (sizeBuffer.get(1)));
+
+            // Fix up scale in case it gets corrupted... somehow
+            if(xScale == 0.0f) {
+                xScale = 1.0f;
+            }
+
+            if(yScale == 0.0f) {
+                yScale = 1.0f;
+            }
 
             // Update the scale
-            inputAdapter.windowContentScaleCallback(window, scaleBuffer.get(0), scaleBuffer.get(1));
+            inputAdapter.windowContentScaleCallback(window, xScale, yScale);
         }
 
         glEnable(GL_MULTISAMPLE);
@@ -237,6 +262,7 @@ public class TestApplication {
      * @param height The new height of the viewport
      */
     private void updateSize(long window, int width, int height) {
+        System.out.println("Resizing to " + width + "x" + height);
         glViewport(0, 0, width, height);
         webController.resize(width, height);
     }
