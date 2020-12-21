@@ -198,7 +198,6 @@ namespace ultralight_java {
 
         if(!ret) {
             env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
-            *exception = Util::create_jserror(ctx, "Java function returned null");
             return nullptr;
         }
 
@@ -245,9 +244,8 @@ namespace ultralight_java {
                     java_property_name.get()));
             
         } else {
-            env->ThrowNew(
-                runtime.illegal_argument_exception.clazz,
-                ("Tried to get non existent static property " + getter_index).c_str());
+            env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            return nullptr;
         }
 
         if(env->ExceptionCheck()) {
@@ -259,7 +257,6 @@ namespace ultralight_java {
 
         if(!ret) {
             env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
-            *exception = Util::create_jserror(ctx, "Java function returned null");
             return nullptr;
         }
 
@@ -356,9 +353,8 @@ namespace ultralight_java {
                 java_property_name.get(),
                 java_value.get());
         } else {
-            env->ThrowNew(
-                runtime.illegal_state_exception.clazz,
-                ("Tried to set non existent static property " + setter_index).c_str());
+            env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            return false;
         }
 
         if(env->ExceptionCheck()) {
