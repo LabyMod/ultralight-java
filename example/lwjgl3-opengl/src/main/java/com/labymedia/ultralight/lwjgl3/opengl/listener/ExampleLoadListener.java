@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.listener;
 
 import com.labymedia.ultralight.Databind;
 import com.labymedia.ultralight.DatabindConfiguration;
@@ -28,15 +28,16 @@ import com.labymedia.ultralight.javascript.JavascriptContext;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
 import com.labymedia.ultralight.javascript.JavascriptGlobalContext;
 import com.labymedia.ultralight.javascript.JavascriptObject;
+import com.labymedia.ultralight.lwjgl3.opengl.support.ViewContextProvider;
 import com.labymedia.ultralight.plugin.loading.UltralightLoadListener;
 
 /**
  * Test load listener for the main view.
  */
-public class TestLoadListener implements UltralightLoadListener {
+public class ExampleLoadListener implements UltralightLoadListener {
     private final UltralightView view;
 
-    public TestLoadListener(UltralightView view) {
+    public ExampleLoadListener(UltralightView view) {
         this.view = view;
     }
 
@@ -75,7 +76,7 @@ public class TestLoadListener implements UltralightLoadListener {
             JavascriptObject globalObject = globalContext.getGlobalObject();
 
             Databind databind = new Databind(DatabindConfiguration.builder()
-                    .contextProviderFactory(new TestContextProvider.Factory(view)).build());
+                    .contextProviderFactory(new ViewContextProvider.Factory(view)).build());
             JavascriptObject javaApi = context.makeObject(databind.toJavascript(JavaAPI.class),
                     new DatabindJavascriptClass.Data(new JavaAPI(databind), null));
             globalObject.setProperty("java", javaApi, 0);

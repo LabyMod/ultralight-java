@@ -17,12 +17,29 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.support;
 
-import java.util.function.Function;
+import com.labymedia.ultralight.plugin.logging.UltralightLogLevel;
+import com.labymedia.ultralight.plugin.logging.UltralightLogger;
 
-public final class TestJavascriptClass {
-    public static Class<?> takeFunctionalInterface(Function<String, Class<?>> fn) {
-        return fn.apply("ABC");
+/**
+ * Test implementation of a logger
+ */
+public class ExampleLogger implements UltralightLogger {
+    @Override
+    public void logMessage(UltralightLogLevel level, String message) {
+        switch (level) {
+            case ERROR:
+                System.err.println("[Ultralight/ERR] " + message);
+                break;
+
+            case WARNING:
+                System.err.println("[Ultralight/WARN] " + message);
+                break;
+
+            case INFO:
+                System.out.println("[Ultralight/INFO] " + message);
+                break;
+        }
     }
 }

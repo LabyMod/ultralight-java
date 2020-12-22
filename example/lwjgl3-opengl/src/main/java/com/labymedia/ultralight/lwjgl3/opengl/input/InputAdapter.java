@@ -17,10 +17,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.input;
 
 import com.labymedia.ultralight.UltralightView;
-import com.labymedia.ultralight.input.*;
 import com.labymedia.ultralight.input.*;
 import org.lwjgl.system.MemoryStack;
 
@@ -31,18 +30,18 @@ import static org.lwjgl.glfw.GLFW.*;
 /**
  * Class for converting GLFW events into Ultralight events.
  */
-public class TestInputAdapter {
+public class InputAdapter {
     private final UltralightView view;
 
     private float xScale;
     private float yScale;
 
     /**
-     * Constructs a new {@link TestInputAdapter} for the specified view.
+     * Constructs a new {@link InputAdapter} for the specified view.
      *
      * @param view The view to send events to
      */
-    public TestInputAdapter(UltralightView view) {
+    public InputAdapter(UltralightView view) {
         this.view = view;
     }
 

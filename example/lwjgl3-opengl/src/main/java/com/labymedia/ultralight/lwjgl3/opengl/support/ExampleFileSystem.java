@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.support;
 
 import com.labymedia.ultralight.plugin.filesystem.UltralightFileSystem;
 
@@ -35,7 +35,7 @@ import java.util.Map;
  * <p>
  * For debugging purposes this implementation contains verbose logging.
  */
-public class TestFileSystem implements UltralightFileSystem {
+public class ExampleFileSystem implements UltralightFileSystem {
     private long nextFileHandle;
     private final Map<Long, FileChannel> openFiles = new HashMap<>();
 

@@ -17,28 +17,39 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.drawing;
 
-import com.labymedia.ultralight.plugin.clipboard.UltralightClipboard;
-
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.opengl.GL21.*;
 
 /**
- * Test clipboard using GLFW as backend.
+ * Class used for drawing something on the OpenGL context for testing.
  */
-public class TestClipboard implements UltralightClipboard {
-    @Override
-    public void clear() {
-        glfwSetClipboardString(0, "");
-    }
+public class OpenGLDrawer {
+    private float rotation;
 
-    @Override
-    public String readPlainText() {
-        return glfwGetClipboardString(0);
-    }
+    /**
+     * Draws something on the context for testing.
+     */
+    public void draw() {
+        glDisable(GL_DEPTH_TEST);
+        glEnable(GL_ALPHA_TEST);
 
-    @Override
-    public void writePlainText(String text) {
-        glfwSetClipboardString(0, text);
+        glPushMatrix();
+        glRotatef(rotation++, 0, 0, 1);
+        glBegin(GL_TRIANGLES);
+
+
+        glColor3f(1.0f, 0.0f, 0.0f);
+        glVertex2f(-1.0f, -1.0f);
+
+        glColor3f(0.0f, 1.0f, 0.0f);
+        glVertex2f(1.0f, -1.0f);
+
+        glColor3f(0.0f, 0.0f, 1.0f);
+        glVertex2f(0.0f, 1.0f);
+
+        glEnd();
+        glPopMatrix();
+
     }
 }

@@ -19,6 +19,10 @@
 
 package com.labymedia.ultralight.lwjgl3.opengl;
 
+import com.labymedia.ultralight.lwjgl3.opengl.drawing.OpenGLDrawer;
+import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
+import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
+import com.labymedia.ultralight.lwjgl3.opengl.support.WebController;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -26,7 +30,6 @@ import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -37,13 +40,13 @@ import static org.lwjgl.opengl.GL20.*;
 /**
  * Test application class using GLFW windows.
  */
-public class TestApplication {
+public class ExampleApplication {
     private final long window;
-    private final TestInputAdapter inputAdapter;
-    private final TestCursorManager cursorManager;
+    private final InputAdapter inputAdapter;
+    private final CursorAdapter cursorManager;
     private final WebController webController;
 
-    public TestApplication() {
+    public ExampleApplication() {
         // Set up an error callback
         setCallback(GLFW::glfwSetErrorCallback, this::onGLFWError);
 
@@ -63,7 +66,7 @@ public class TestApplication {
         // Make sure to update the framebuffer size when resizing
         setCallback(GLFW::glfwSetFramebufferSizeCallback, this::updateSize);
 
-        this.cursorManager = new TestCursorManager(window);
+        this.cursorManager = new CursorAdapter(window);
         this.webController = new WebController(cursorManager);
 
         this.inputAdapter = webController.getInputAdapter();

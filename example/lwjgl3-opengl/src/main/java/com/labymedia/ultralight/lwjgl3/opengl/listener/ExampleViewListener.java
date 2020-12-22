@@ -17,10 +17,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.listener;
 
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.input.UltralightCursor;
+import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.math.IntRect;
 import com.labymedia.ultralight.plugin.view.MessageLevel;
 import com.labymedia.ultralight.plugin.view.MessageSource;
@@ -29,10 +30,10 @@ import com.labymedia.ultralight.plugin.view.UltralightViewListener;
 /**
  * Test view listener for the main view
  */
-public class TestViewListener implements UltralightViewListener {
-    private final TestCursorManager cursorManager;
+public class ExampleViewListener implements UltralightViewListener {
+    private final CursorAdapter cursorManager;
 
-    public TestViewListener(TestCursorManager cursorManager) {
+    public ExampleViewListener(CursorAdapter cursorManager) {
         this.cursorManager = cursorManager;
     }
 

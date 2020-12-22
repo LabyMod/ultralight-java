@@ -57,7 +57,7 @@ def ultralightOsIdentifier = {
 }
 
 application {
-    mainClassName = "com.labymedia.ultralight.lwjgl3.opengl.TestRunner"
+    mainClassName = "com.labymedia.ultralight.lwjgl3.opengl.ExampleMain"
 }
 
 run {

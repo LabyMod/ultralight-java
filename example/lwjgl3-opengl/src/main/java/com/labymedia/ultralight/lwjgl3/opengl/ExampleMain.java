@@ -30,7 +30,7 @@ import java.util.concurrent.CountDownLatch;
 /**
  * Entry pointer and controller for the test application.
  */
-public class TestRunner {
+public class ExampleMain {
     public static void main(String[] args) throws UltralightLoadException, InterruptedException {
         // Get a directory to put natives into
         Path nativesDir = Paths.get(".");
@@ -55,7 +55,7 @@ public class TestRunner {
         CountDownLatch shutdownLatch = new CountDownLatch(1);
 
         // Create and run a simple test application
-        TestApplication application = new TestApplication();
+        ExampleApplication application = new ExampleApplication();
         application.centerWindow();
         application.run();
 

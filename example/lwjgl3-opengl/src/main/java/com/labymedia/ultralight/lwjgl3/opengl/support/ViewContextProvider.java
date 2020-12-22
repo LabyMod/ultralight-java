@@ -17,21 +17,20 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.support;
 
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.context.ContextProviderFactory;
 import com.labymedia.ultralight.context.ContextProvider;
-import com.labymedia.ultralight.javascript.JavascriptContext;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
 import com.labymedia.ultralight.javascript.JavascriptValue;
 
 import java.util.function.Consumer;
 
-public class TestContextProvider implements ContextProvider {
+public class ViewContextProvider implements ContextProvider {
     private final UltralightView view;
 
-    private TestContextProvider(UltralightView view) {
+    private ViewContextProvider(UltralightView view) {
         this.view = view;
     }
 
@@ -52,7 +51,7 @@ public class TestContextProvider implements ContextProvider {
         @Override
         public ContextProvider bindProvider(JavascriptValue value) {
             // We only have one view, ignore the value
-            return new TestContextProvider(view);
+            return new ViewContextProvider(view);
         }
     }
 }
