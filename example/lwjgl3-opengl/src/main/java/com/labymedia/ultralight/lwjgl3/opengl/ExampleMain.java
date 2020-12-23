@@ -23,15 +23,21 @@ import com.labymedia.ultralight.UltralightJava;
 import com.labymedia.ultralight.UltralightLoadException;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Entry pointer and controller for the example application.
+ * Entry pointer for the example application.
  */
 public class ExampleMain {
-    public static void main(String[] args) throws UltralightLoadException, InterruptedException {
+    public static void main(String[] args) throws UltralightLoadException {
+        // Example resources
+        extractResources();
+
         // Get a directory to put natives into
         Path nativesDir = Paths.get(".");
 
@@ -48,8 +54,15 @@ public class ExampleMain {
         // Set the path back
         System.setProperty("java.library.path", libraryPath);
 
-        // Extract and load the natives
+        // Extract the natives
+        //
+        // This only extracts the native library for ultralight-java-base, but not the other Ultralight libraries.
+        // It is your task to get them into the run directory, possibly by extracting them on your own.
         UltralightJava.extractNativeLibrary(nativesDir);
+
+        // Load the native libraries from the given directory. This method makes sure everything is loaded in the
+        // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as
+        // the second parameter.
         UltralightJava.load(nativesDir);
 
         // Create and run a simple test application
@@ -59,5 +72,26 @@ public class ExampleMain {
 
         // The user has requested the application to stop
         application.stop();
+    }
+
+    /**
+     * Helper function to set up the run directory with jar resources.
+     */
+    public static void extractResources() {
+        try {
+            Files.copy(
+                    ExampleMain.class.getResourceAsStream("/example.html"),
+                    Paths.get("./example.html"),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+            Files.copy(
+                    ExampleMain.class.getResourceAsStream("/style.css"),
+                    Paths.get("./style.css"),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+        } catch(IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
