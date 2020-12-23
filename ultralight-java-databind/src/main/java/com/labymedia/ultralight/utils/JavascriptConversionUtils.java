@@ -48,6 +48,17 @@ public final class JavascriptConversionUtils {
      *
      * @param context   The Javascript context to use for the conversion
      * @param object    The Java object to convert
+     * @return The converted object as a Javascript value
+     */
+    public JavascriptValue toJavascript(JavascriptContext context, Object object) {
+        return toJavascript(context, object, object.getClass());
+    }
+
+    /**
+     * Converts a Java object to a Javascript object.
+     *
+     * @param context   The Javascript context to use for the conversion
+     * @param object    The Java object to convert
      * @param javaClass The target java class to convert to
      * @return The converted object as a Javascript value
      */

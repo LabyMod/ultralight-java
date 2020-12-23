@@ -19,13 +19,27 @@
 
 package com.labymedia.ultralight.lwjgl3.opengl.support;
 
+import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
 import com.labymedia.ultralight.plugin.logging.UltralightLogLevel;
 import com.labymedia.ultralight.plugin.logging.UltralightLogger;
+import com.labymedia.ultralight.plugin.view.MessageLevel;
+import com.labymedia.ultralight.plugin.view.MessageSource;
 
 /**
- * Test implementation of a logger
+ * Example implementation of a logger
  */
 public class ExampleLogger implements UltralightLogger {
+    /**
+     * This is called by Ultralight every time a message needs to be logged. Note that Ultralight messages may include
+     * new lines, so if you want really pretty log output reformat the string accordingly.
+     * <p>
+     * This logger is <b>NOT</b> called for {@code console.log} messages, see {@link
+     * ExampleViewListener#onAddConsoleMessage(MessageSource, MessageLevel, String, long, long, String)} for that
+     * instead.
+     *
+     * @param level   The level of the message
+     * @param message The message to log
+     */
     @Override
     public void logMessage(UltralightLogLevel level, String message) {
         switch (level) {

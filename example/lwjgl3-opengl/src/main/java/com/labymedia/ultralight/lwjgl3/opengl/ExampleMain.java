@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 import java.util.concurrent.CountDownLatch;
 
 /**
- * Entry pointer and controller for the test application.
+ * Entry pointer and controller for the example application.
  */
 public class ExampleMain {
     public static void main(String[] args) throws UltralightLoadException, InterruptedException {
@@ -52,8 +52,6 @@ public class ExampleMain {
         UltralightJava.extractNativeLibrary(nativesDir);
         UltralightJava.load(nativesDir);
 
-        CountDownLatch shutdownLatch = new CountDownLatch(1);
-
         // Create and run a simple test application
         ExampleApplication application = new ExampleApplication();
         application.centerWindow();
@@ -61,9 +59,5 @@ public class ExampleMain {
 
         // The user has requested the application to stop
         application.stop();
-
-        shutdownLatch.countDown();
-
-        shutdownLatch.await();
     }
 }

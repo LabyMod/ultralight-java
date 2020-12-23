@@ -22,13 +22,13 @@ package com.labymedia.ultralight.lwjgl3.opengl.drawing;
 import static org.lwjgl.opengl.GL21.*;
 
 /**
- * Class used for drawing something on the OpenGL context for testing.
+ * This class just draws a simple, colored rotating triangle in the background for demonstration.
  */
 public class OpenGLDrawer {
     private float rotation;
 
     /**
-     * Draws something on the context for testing.
+     * Draw a rotating triangle.
      */
     public void draw() {
         glDisable(GL_DEPTH_TEST);
@@ -50,6 +50,5 @@ public class OpenGLDrawer {
 
         glEnd();
         glPopMatrix();
-
     }
 }

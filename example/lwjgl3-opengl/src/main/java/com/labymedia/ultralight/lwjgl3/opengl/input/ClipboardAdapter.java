@@ -24,19 +24,32 @@ import com.labymedia.ultralight.plugin.clipboard.UltralightClipboard;
 import static org.lwjgl.glfw.GLFW.*;
 
 /**
- * Test clipboard using GLFW as backend.
+ * Example clipboard using GLFW as backend.
  */
 public class ClipboardAdapter implements UltralightClipboard {
+    /**
+     * This is called by Ultralight when the clipboard should be cleared.
+     */
     @Override
     public void clear() {
         glfwSetClipboardString(0, "");
     }
 
+    /**
+     * This is called by Ultralight when the clipboard is requested as a string.
+     *
+     * @return The clipboard content as a string
+     */
     @Override
     public String readPlainText() {
         return glfwGetClipboardString(0);
     }
 
+    /**
+     * This is called by Ultralight when the clipboard content should be overwritten.
+     *
+     * @param text The plain text to write to the clipboard
+     */
     @Override
     public void writePlainText(String text) {
         glfwSetClipboardString(0, text);

@@ -126,6 +126,7 @@ public class WebController {
             createGLTexture();
         }
 
+        // As we are using the CPU renderer, draw with a bitmap (we did not set a custom surface)
         UltralightBitmapSurface surface = (UltralightBitmapSurface) this.view.surface();
         UltralightBitmap bitmap = surface.bitmap();
 
