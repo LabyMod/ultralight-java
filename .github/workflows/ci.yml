@@ -92,8 +92,8 @@ jobs:
         run: "chmod +x gradlew"
       - name: Build base with gradle
         run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries ultralight-java-base:build"
-      - name: Build lwjgl3-opengl with gradle
-        run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries ultralight-java-lwjgl3-opengl:build"
+      - name: Build lwjgl3-opengl example with gradle
+        run: "./gradlew -PCI=true -PnativeBinaryExternalDir=native-binaries example:lwjgl3-opengl:build"
       - name: Check license
         run: "./gradlew licenseCheck"
       - name: Deploy to OSSHR
