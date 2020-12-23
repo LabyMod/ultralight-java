@@ -86,6 +86,12 @@ public class ExampleMain {
             );
 
             Files.copy(
+                    ExampleMain.class.getResourceAsStream("/example.js"),
+                    Paths.get("./example.js"),
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+            Files.copy(
                     ExampleMain.class.getResourceAsStream("/style.css"),
                     Paths.get("./style.css"),
                     StandardCopyOption.REPLACE_EXISTING
