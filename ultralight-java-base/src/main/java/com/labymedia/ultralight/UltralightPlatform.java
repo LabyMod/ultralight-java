@@ -27,7 +27,7 @@ import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.plugin.clipboard.UltralightClipboard;
 import com.labymedia.ultralight.plugin.filesystem.UltralightFileSystem;
 import com.labymedia.ultralight.plugin.logging.UltralightLogger;
-import net.janrupf.ultralight.plugin.render.UltralightGPUDriver;
+import com.labymedia.ultralight.plugin.render.UltralightGPUDriver;
 
 /**
  * Platform singleton to configure Ultralight and provide user-defined implementations for various platform operations.
