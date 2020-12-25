@@ -17,39 +17,41 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.js;
 
-import static org.lwjgl.opengl.GL21.*;
+import java.util.Arrays;
+import java.util.List;
 
 /**
- * Class used for drawing something on the OpenGL context for testing.
+ * Example class containing methods which Javascript can interact with.
  */
-public class OpenGLDrawer {
-    private float rotation;
+public class JSInteraction {
+    private final String[] messages;
 
     /**
-     * Draws something on the context for testing.
+     * Javascript can call varargs method as if they would be native.
+     *
+     * @param messages The message to store
      */
-    public void draw() {
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_ALPHA_TEST);
+    public JSInteraction(String... messages) {
+        this.messages = messages;
+    }
 
-        glPushMatrix();
-        glRotatef(rotation++, 0, 0, 1);
-        glBegin(GL_TRIANGLES);
+    /**
+     * Javascript can work on interface types without any issues.
+     *
+     * @return The stored messages as a list
+     */
+    public List<String> getMessageList() {
+        return Arrays.asList(messages);
+    }
 
-
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2f(-1.0f, -1.0f);
-
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex2f(1.0f, -1.0f);
-
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex2f(0.0f, 1.0f);
-
-        glEnd();
-        glPopMatrix();
-
+    /**
+     * Java arrays are translated to Javascript arrays automatically.
+     *
+     * @return The stored messages
+     */
+    public String[] getMessageArray() {
+        return messages;
     }
 }

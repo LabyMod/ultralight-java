@@ -136,7 +136,7 @@ public class UltralightJava {
             // 1. UltralightCore
             // 2. WebCore
             // 3. Ultralight
-            // 4. AppCore
+            // 4. AppCore <-- TODO: remove
             // 5. ultralight-java
             for(String library : new String[] {"UltralightCore", "WebCore", "Ultralight", "AppCore"}) {
                 Path libraryPath = determineLibraryPath(nativesDir, library, operatingSystem, architecture);

@@ -19,6 +19,10 @@
 
 package com.labymedia.ultralight.lwjgl3.opengl;
 
+import com.labymedia.ultralight.lwjgl3.opengl.drawing.OpenGLDrawer;
+import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
+import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
+import com.labymedia.ultralight.lwjgl3.opengl.support.WebController;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.glfw.GLFWVidMode;
 import org.lwjgl.opengl.GL;
@@ -26,7 +30,6 @@ import org.lwjgl.system.Callback;
 import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 
-import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -35,15 +38,15 @@ import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL20.*;
 
 /**
- * Test application class using GLFW windows.
+ * Example application class using GLFW windows.
  */
-public class TestApplication {
+public class ExampleApplication {
     private final long window;
-    private final TestInputAdapter inputAdapter;
-    private final TestCursorManager cursorManager;
+    private final InputAdapter inputAdapter;
+    private final CursorAdapter cursorManager;
     private final WebController webController;
 
-    public TestApplication() {
+    public ExampleApplication() {
         // Set up an error callback
         setCallback(GLFW::glfwSetErrorCallback, this::onGLFWError);
 
@@ -63,11 +66,12 @@ public class TestApplication {
         // Make sure to update the framebuffer size when resizing
         setCallback(GLFW::glfwSetFramebufferSizeCallback, this::updateSize);
 
-        this.cursorManager = new TestCursorManager(window);
+        // Set up various internal controllers
+        this.cursorManager = new CursorAdapter(window);
         this.webController = new WebController(cursorManager);
-
         this.inputAdapter = webController.getInputAdapter();
 
+        // Register all the GLFW callbacks required by this application
         setCallback(GLFW::glfwSetWindowContentScaleCallback, inputAdapter::windowContentScaleCallback);
         setCallback(GLFW::glfwSetKeyCallback, inputAdapter::keyCallback);
         setCallback(GLFW::glfwSetCharCallback, inputAdapter::charCallback);
@@ -78,7 +82,7 @@ public class TestApplication {
     }
 
     /**
-     * Centers the window on screen
+     * Centers the window on screen.
      */
     public void centerWindow() {
         // Create a memory stack so we don't have to worry about free's
@@ -180,7 +184,7 @@ public class TestApplication {
             /*
              * Following snippet disabled due to GLFW bug, glfwGetWindowContentScale returns invalid values!
              *
-             * On a test system
+             * See https://github.com/glfw/glfw/issues/1811.
              */
             // Update scale for the first time
             // FloatBuffer scaleBuffer = stack.callocFloat(2);
@@ -218,11 +222,13 @@ public class TestApplication {
         // Set opaque black as the clear color
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
-        webController.loadURL("file:///test.html");
+        // Load a local test file
+        webController.loadURL("file:///example.html");
 
         double lastTime = glfwGetTime();
         int frameCount = 0;
 
+        // Create the drawing helper, used to keep state for drawing the rotating triangle
         OpenGLDrawer drawer = new OpenGLDrawer();
 
         // Keep running until a window close is requested
@@ -230,14 +236,17 @@ public class TestApplication {
             // Poll events to keep the window responsive
             glfwPollEvents();
 
+            // Make sure to update the window
             webController.update();
 
             // Clear the color and depth buffer and then draw
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+            // Draw the triangle and then Ultralight on top of it
             drawer.draw();
             webController.render();
 
+            // Super bad implementation of FPS display...
             double currentTime = glfwGetTime();
             frameCount++;
             if(currentTime - lastTime >= 1.0) {
@@ -251,6 +260,7 @@ public class TestApplication {
             glfwSwapBuffers(window);
         }
 
+        // User requested window exit, shut down
         stop();
     }
 
