@@ -17,45 +17,89 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.listener;
 
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.input.UltralightCursor;
+import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.math.IntRect;
 import com.labymedia.ultralight.plugin.view.MessageLevel;
 import com.labymedia.ultralight.plugin.view.MessageSource;
 import com.labymedia.ultralight.plugin.view.UltralightViewListener;
 
 /**
- * Test view listener for the main view
+ * Example view listener for the main view.
+ * <p>
+ * Instances of view listeners receive view bound events and can be used to update visual aspects such as the cursor and
+ * the tooltip.
+ * <p>
+ * A view listener is registered using {@link UltralightView#setViewListener(UltralightViewListener)}.
  */
-public class TestViewListener implements UltralightViewListener {
-    private final TestCursorManager cursorManager;
+public class ExampleViewListener implements UltralightViewListener {
+    private final CursorAdapter cursorManager;
 
-    public TestViewListener(TestCursorManager cursorManager) {
+    /**
+     * Constructs a new {@link ExampleViewListener} and used the given cursor manager for changing the displayed
+     * cursor.
+     *
+     * @param cursorManager The cursor manager to use for changing the displayed cursor.
+     */
+    public ExampleViewListener(CursorAdapter cursorManager) {
         this.cursorManager = cursorManager;
     }
 
+    /**
+     * Called by Ultralight when the page title changes.
+     *
+     * @param title The new page title
+     */
     @Override
     public void onChangeTitle(String title) {
         System.out.println("View title has changed: " + title);
     }
 
+    /**
+     * Called by Ultralight when the view URL changes.
+     *
+     * @param url The new page url
+     */
     @Override
     public void onChangeURL(String url) {
         System.out.println("View url has changed: " + url);
     }
 
+    /**
+     * Called by Ultralight when the displayed tooltip changes.
+     *
+     * @param tooltip The new page tooltip
+     */
     @Override
     public void onChangeTooltip(String tooltip) {
         // System.out.println("View tooltip has changed: " + tooltip);
     }
 
+    /**
+     * Called by Ultralight when the cursor changes. Ultralight supports a lot of cursors, but currently not a custom
+     * one.
+     *
+     * @param cursor The new page cursor
+     */
     @Override
     public void onChangeCursor(UltralightCursor cursor) {
         this.cursorManager.notifyCursorUpdated(cursor);
     }
 
+    /**
+     * Called when a message is added to the console. This includes, but is not limited to, {@code console.log} and
+     * friends.
+     *
+     * @param source       The source the message originated from
+     * @param level        The severity of the message
+     * @param message      The message itself
+     * @param lineNumber   The line the message originated from
+     * @param columnNumber The column the message originated from
+     * @param sourceId     The id of the source
+     */
     @Override
     public void onAddConsoleMessage(
             MessageSource source,
@@ -71,19 +115,33 @@ public class TestViewListener implements UltralightViewListener {
                         + sourceId + ":" + lineNumber + ":" + columnNumber + ": " + message);
     }
 
+    /**
+     * Called by Ultralight when a new view is requested. This is your chance to either open the view in an external
+     * browser, in a new application internal tab, or, if desired, to just ignore it entirely.
+     *
+     * @param openerUrl The URL of the page that initiated this request
+     * @param targetUrl The URL that the new View will navigate to
+     * @param isPopup   Whether or not this was triggered by window.open()
+     * @param popupRect Popups can optionally request certain dimensions and coordinates via window.open(). You can
+     *                  choose to respect these or not by resizing/moving the View to this rect.
+     * @return The view to display the new URL in, or {@code null}, if the request should not be further handled by
+     *         Ultralight
+     */
     @Override
     public UltralightView onCreateChildView(String openerUrl, String targetUrl, boolean isPopup, IntRect popupRect) {
         System.out.println("View wants child: ");
         System.out.println("\tFrom: " + openerUrl);
         System.out.println("\tTo: " + targetUrl);
         System.out.println("\tIs popup: " + isPopup);
-        if(popupRect.isValid()) {
+        if (popupRect.isValid()) {
             System.out.println("\tTarget rect: (" +
                     popupRect.x() + "," + popupRect.y() + " -> " + popupRect.width() + "," + popupRect.height() + ")");
         } else {
             System.out.println("\tTarget rect: NONE");
         }
         System.out.println("Cancelling request, multi view not implemented");
+
+        // Returning null will stop Ultralight from further handling the request, ignoring it altogether
         return null;
     }
 }

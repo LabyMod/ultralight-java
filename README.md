@@ -26,13 +26,54 @@ based UI, while staying with the Java platform.
 Moreover, the databind API is capable of translating Java objects directly to JavaScript, allowing interop and Java 
 calls directly from within your JavaScript code, making integration with the UI even easier.
 
+# Using the library
+The library requires the Ultralight SDK, which can be downloaded 
+[here](https://github.com/ultralight-ux/Ultralight/blob/master/README.md#getting-the-latest-sdk). The native binaries of
+the SDK need to be available at runtime and can be loaded using the provided Java methods.
+
+### Maven
+Using the library with maven:
+```xml
+<dependency>
+  <groupId>com.labymedia</groupId>
+  <artifactId>ultralight-java-base</artifactId>
+  <!-- Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-base !-->
+  <version>0.3.4</version>
+</dependency>
+```
+
+If you need Javascript interop:
+```xml
+<dependency>
+  <groupId>com.labymedia</groupId>
+  <artifactId>ultralight-java-databind</artifactId>
+  <!-- Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-databind !-->
+  <version>0.3.4</version>
+</dependency>
+```
+
+### Gradle
+```kotlin
+dependencies {
+  // Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-base
+  implementation("com.labymedia", "ultralight-java-base", "0.3.4")
+
+  // // Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-databind
+  // Remove the comments if you need Javascript interop
+  // implementation("com.labymedia", "ultralight-java-databind", "0.3.4")
+}
+```
+
+The latest version can usually also be found in the 
+[VERSION file on the master branch](https://github.com/LabyMod/ultralight-java/blob/master/VERSION).
+
+**You will also need to download the Ultralight SDK and extract the `bin` folder into a directory given to
+the Library in order to provide the natives!**
+
+See [Examples](https://github.com/LabyMod/ultralight-java/tree/develop/example) for more info.
+
 # Licensing
 For Ultralight Java [LGPLv3](https://www.gnu.org/licenses/lgpl-3.0.en.html) is being used, however, Ultralight itself is
 licensed under a custom proprietary license. See
 [Ultralight licensing](https://github.com/ultralight-ux/Ultralight/blob/master/README.md#licensing) for further 
 information.
-
-# Using the library
-The library requires the Ultralight SDK, which can be downloaded 
-[here](https://github.com/ultralight-ux/Ultralight/blob/master/README.md#getting-the-latest-sdk). The native binaries of
-the SDK need to be available at runtime and can be loaded using the provided Java methods.
