@@ -21,19 +21,15 @@ package com.labymedia.ultralight.plugin.render;
 
 import com.labymedia.ultralight.annotation.NativeType;
 
-import java.util.ArrayList;
-
 @NativeType("ultralight::VertexBuffer")
-public class UltralightVertexBuffer extends ArrayList<Short> {
-
-    private @NativeType("ultralight::VertexBufferFormat") UltralightVertexBufferFormat format;
-
-    public void setFormat(UltralightVertexBufferFormat format) {
+public class UltralightVertexBuffer {
+    public UltralightVertexBuffer(UltralightVertexBufferFormat format, short[] data) {
         this.format = format;
+        this.data = data;
     }
 
-    public UltralightVertexBufferFormat getFormat() {
-        return this.format;
-    }
-
+    public @NativeType("ultralight::VertexBufferFormat")
+    UltralightVertexBufferFormat format;
+    public @NativeType("uint8_t[]")
+    short[] data;
 }

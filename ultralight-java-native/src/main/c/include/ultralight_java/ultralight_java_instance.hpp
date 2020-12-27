@@ -255,15 +255,97 @@ namespace ultralight_java {
             /**
              * The java class itself
              */
-             jclass clazz;
+            jclass clazz;
 
-             /**
-              * Constructor
-              */
-              jmethodID constructor;
-
-              jmethodID add_method;
+            /**
+             * Constructor
+             */
+            jmethodID constructor;
         } ultralight_commandlist;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor
+             */
+            jmethodID constructor;
+        } ultralight_command;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor
+             */
+            jmethodID constructor;
+        } ultralight_gpustate;
+
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor
+             */
+            jmethodID constructor;
+
+        } ultralight_indexbuffer;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor
+             */
+            jmethodID constructor;
+
+        } ultralight_vertexbuffer;
+
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::VertexBufferFormat> constants;
+        } ultralight_vertexbuffer_format;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+            * Constructor
+            */
+            jmethodID constructor;
+
+        } ultralight_render_buffer;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+        } float_array;
 
         struct {
             /**
@@ -488,22 +570,22 @@ namespace ultralight_java {
             /**
              * The java class itself
              */
-             jclass clazz;
+            jclass clazz;
 
-             jmethodID begin_synchronize_method;
-             jmethodID end_synchronize_method;
-             jmethodID next_texture_id_method;
-             jmethodID create_texture_method;
-             jmethodID update_texture_method;
-             jmethodID destroy_texture_method;
-             jmethodID next_render_buffer_id_method;
-             jmethodID create_render_buffer_method;
-             jmethodID destroy_render_buffer_method;
-             jmethodID next_geometry_id_method;
-             jmethodID create_geometry_method;
-             jmethodID update_geometry_method;
-             jmethodID destroy_geometry_method;
-             jmethodID update_command_list_method;
+            jmethodID begin_synchronize_method;
+            jmethodID end_synchronize_method;
+            jmethodID next_texture_id_method;
+            jmethodID create_texture_method;
+            jmethodID update_texture_method;
+            jmethodID destroy_texture_method;
+            jmethodID next_render_buffer_id_method;
+            jmethodID create_render_buffer_method;
+            jmethodID destroy_render_buffer_method;
+            jmethodID next_geometry_id_method;
+            jmethodID create_geometry_method;
+            jmethodID update_geometry_method;
+            jmethodID destroy_geometry_method;
+            jmethodID update_command_list_method;
         } ultralight_gpu_driver;
 
         struct {

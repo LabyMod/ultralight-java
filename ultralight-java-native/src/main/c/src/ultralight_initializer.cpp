@@ -402,6 +402,13 @@ namespace ultralight_java {
             ultralight::kMessageSource_Other,
             "OTHER");
 
+        runtime.ultralight_vertexbuffer_format.constants = JavaEnum<ultralight::VertexBufferFormat>(
+                ultralight::kVertexBufferFormat_2f_4ub_2f,
+                "FORMAT_2F_4UB_2F",
+                ultralight::kVertexBufferFormat_2f_4ub_2f_2f_28f,
+                "FORMAT_2F_4UB_2F_2F_28F"
+        );
+
         runtime.javascript_context.native_methods =
             {NATIVE_METHOD(
                  "getGlobalContext",

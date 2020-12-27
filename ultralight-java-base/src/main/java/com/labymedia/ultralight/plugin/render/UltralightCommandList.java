@@ -21,7 +21,12 @@ package com.labymedia.ultralight.plugin.render;
 
 import com.labymedia.ultralight.annotation.NativeType;
 
-import java.util.ArrayList;
-
 @NativeType("ultralight::CommandList")
-public class UltralightCommandList extends ArrayList<UltralightCommand> {}
+public class UltralightCommandList {
+    public UltralightCommandList(UltralightCommand[] data) {
+        this.data = data;
+    }
+
+    public final @NativeType("ultralight::Command")
+    UltralightCommand[] data;
+}

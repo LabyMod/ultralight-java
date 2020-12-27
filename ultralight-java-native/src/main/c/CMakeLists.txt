@@ -61,7 +61,6 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/proxied_java_exception.cpp
         src/java_bridges/ultralight_bitmap_jni.cpp
         src/java_bridges/ultralight_bitmap_surface_jni.cpp
-        src/java_bridges/ultralight_commandlist_jni.cpp
         src/java_bridges/ultralight_key_event_jni.cpp
         src/java_bridges/ultralight_platform_jni.cpp
         src/java_bridges/ultralight_ref_ptr_jni.cpp

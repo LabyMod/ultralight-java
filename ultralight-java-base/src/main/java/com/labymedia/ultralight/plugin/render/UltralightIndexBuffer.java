@@ -21,8 +21,12 @@ package com.labymedia.ultralight.plugin.render;
 
 import com.labymedia.ultralight.annotation.NativeType;
 
-import java.util.ArrayList;
-
 @NativeType("ultralight::IndexBuffer")
-public class UltralightIndexBuffer extends ArrayList<Short> {
+public class UltralightIndexBuffer {
+    public UltralightIndexBuffer(short[] data) {
+        this.data = data;
+    }
+
+    public @NativeType("uint8_t[]")
+    short[] data;
 }

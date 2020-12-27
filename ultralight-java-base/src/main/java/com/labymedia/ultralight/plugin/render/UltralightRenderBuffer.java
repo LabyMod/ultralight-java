@@ -23,4 +23,16 @@ import com.labymedia.ultralight.annotation.NativeType;
 
 @NativeType("ultralight::RenderBuffer")
 public class UltralightRenderBuffer {
+    public UltralightRenderBuffer(long textureId, long width, long height, boolean hasStencilBuffer, boolean hasDepthBuffer) {
+        this.textureId = textureId;
+        this.width = width;
+        this.height = height;
+        this.hasStencilBuffer = hasStencilBuffer;
+        this.hasDepthBuffer = hasDepthBuffer;
+    }
+
+    public @NativeType("uint32_t")
+    long textureId, width, height;
+    public @NativeType("bool")
+    boolean hasStencilBuffer, hasDepthBuffer;
 }

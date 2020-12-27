@@ -22,54 +22,42 @@ package com.labymedia.ultralight.plugin.render;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.math.IntRect;
 
-
 @NativeType("ultralight::GPUState")
 public class UltralightGPUState {
+    public final @NativeType("uint32_t")
+    long viewportWidth, viewportHeight;
 
-    private final @NativeType("uint32_t") long viewportWidth;
-    private final @NativeType("uint32_t") long viewportHeight;
+    public final @NativeType("ultralight::Matrix4x4")
+    float[] transformMatrix;
 
-    private final @NativeType("ultralight::Matrix4x4 []") float[][] transform;
+    public final @NativeType("bool")
+    boolean enableTexturing, enableBlend;
 
-    private final @NativeType("bool") boolean enableTexturing;
-    private final @NativeType("bool") boolean enableBlend;
+    public final @NativeType("uint8_t")
+    short shaderType;
 
-    private final @NativeType("uint8_t") short shaderType;
+    public final @NativeType("uint32_t")
+    long renderBufferId, texture1Id, texture2Id, texture3Id;
 
-    private final @NativeType("uint32_t") long renderBufferId;
-    private final @NativeType("uint32_t") long texture1Id;
-    private final @NativeType("uint32_t") long texture2Id;
-    private final @NativeType("uint32_t") long texture3Id;
+    public final @NativeType("float[]")
+    float[] uniformScalar;
+    public final @NativeType("ultralight::vec4[]")
+    float[][] uniformVector;
+    public final @NativeType("uint8_t")
+    short clipSize;
+    public final @NativeType("ultralight::Matrix4x4[]")
+    float[][] clip;
 
-    private final @NativeType("float []") float[] uniformScalar;
-    private final @NativeType("ultralight::vec4 []") float[][] uniformVector;
-    private final @NativeType("uint8_t") short clipSize;
-    private final @NativeType("ultralight::Matrix4x4 []") float[][] clip;
+    public final @NativeType("bool")
+    boolean enableScissor;
 
-    private final @NativeType("bool") boolean enableScissor;
-
-    private final @NativeType("IntRect")
+    public final @NativeType("IntRect")
     IntRect scissorRect;
 
-    public UltralightGPUState(long viewportWidth,
-                              long viewportHeight,
-                              float[][] transform,
-                              boolean enableTexturing,
-                              boolean enableBlend,
-                              short shaderType,
-                              long renderBufferId,
-                              long texture1Id,
-                              long texture2Id,
-                              long texture3Id,
-                              float[] uniformScalar,
-                              float[][] uniformVector,
-                              short clipSize,
-                              float[][] clip,
-                              boolean enableScissor,
-                              IntRect scissorRect) {
+    public UltralightGPUState(long viewportWidth, long viewportHeight, float[] transformMatrix, boolean enableTexturing, boolean enableBlend, short shaderType, long renderBufferId, long texture1Id, long texture2Id, long texture3Id, float[] uniformScalar, float[][] uniformVector, short clipSize, float[][] clip, boolean enableScissor, IntRect scissorRect) {
         this.viewportWidth = viewportWidth;
         this.viewportHeight = viewportHeight;
-        this.transform = transform;
+        this.transformMatrix = transformMatrix;
         this.enableTexturing = enableTexturing;
         this.enableBlend = enableBlend;
         this.shaderType = shaderType;
@@ -83,69 +71,5 @@ public class UltralightGPUState {
         this.clip = clip;
         this.enableScissor = enableScissor;
         this.scissorRect = scissorRect;
-    }
-
-    public long getViewportWidth() {
-        return viewportWidth;
-    }
-
-    public long getViewportHeight() {
-        return viewportHeight;
-    }
-
-    public float[][] getTransform() {
-        return transform;
-    }
-
-    public boolean isEnableTexturing() {
-        return enableTexturing;
-    }
-
-    public boolean isEnableBlend() {
-        return enableBlend;
-    }
-
-    public short getShaderType() {
-        return shaderType;
-    }
-
-    public long getRenderBufferId() {
-        return renderBufferId;
-    }
-
-    public long getTexture1Id() {
-        return texture1Id;
-    }
-
-    public long getTexture2Id() {
-        return texture2Id;
-    }
-
-    public long getTexture3Id() {
-        return texture3Id;
-    }
-
-    public float[] getUniformScalar() {
-        return uniformScalar;
-    }
-
-    public float[][] getUniformVector() {
-        return uniformVector;
-    }
-
-    public short getClipSize() {
-        return clipSize;
-    }
-
-    public float[][] getClip() {
-        return clip;
-    }
-
-    public boolean isEnableScissor() {
-        return enableScissor;
-    }
-
-    public IntRect getScissorRect() {
-        return scissorRect;
     }
 }
