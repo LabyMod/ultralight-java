@@ -235,6 +235,13 @@ namespace ultralight_java {
             runtime.ultralight_bitmap.native_methods.size());
 
         // Retrieve information about the UltralightCommandList class
+        runtime.ultralight_render_target.clazz = reinterpret_cast<jclass>(
+                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightRenderTarget")));
+        runtime.ultralight_render_target.constructor =
+                env->GetMethodID(runtime.ultralight_render_target.clazz, "<init>",
+                                 "(JJ[F)V");
+
+        // Retrieve information about the UltralightCommandList class
         runtime.ultralight_commandlist.clazz = reinterpret_cast<jclass>(
                 env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightCommandList")));
         runtime.ultralight_commandlist.constructor =
@@ -864,6 +871,7 @@ namespace ultralight_java {
         env->UnregisterNatives(runtime.ultralight_key_event.clazz);
         env->DeleteGlobalRef(runtime.ultralight_key_event.clazz);
         env->DeleteGlobalRef(runtime.ultralight_key.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_render_target.clazz);
         env->DeleteGlobalRef(runtime.ultralight_commandlist.clazz);
         env->DeleteGlobalRef(runtime.ultralight_command.clazz);
         env->DeleteGlobalRef(runtime.ultralight_gpustate.clazz);

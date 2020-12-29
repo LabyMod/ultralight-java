@@ -312,5 +312,7 @@ namespace ultralight_java {
          * @return The java object for inspector view of this view
          */
         static jobject inspector(JNIEnv *env, jobject instance);
+
+        static jobject renderTarget(JNIEnv *env, jobject instance);
     };
 }

@@ -1,6 +1,3 @@
-//
-// Created by leo on 18.08.20.
-//
 #pragma once
 
 #include <Ultralight/Ultralight.h>

@@ -389,4 +389,20 @@ namespace ultralight_java {
         auto inspector = view->inspector();
         return UltralightRefPtrJNI::create(env, std::move(ultralight::RefPtr<ultralight::View>(std::move(inspector))));
     }
+
+    jobject UltralightViewJNI::renderTarget(JNIEnv *env, jobject instance) {
+        auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
+
+        auto uv_coords = env->NewFloatArray(4);
+
+        env->SetFloatArrayRegion(uv_coords, 0, 4, view->render_target().uv_coords.value);
+
+        auto target = env->NewObject(runtime.ultralight_render_target.clazz,
+                                     runtime.ultralight_render_target.constructor,
+                                     view->render_target().texture_id,
+                                     view->render_target().render_buffer_id,
+                                     uv_coords);
+
+        return target;
+    }
 } // namespace ultralight_java

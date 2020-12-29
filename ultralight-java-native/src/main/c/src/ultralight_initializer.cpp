@@ -151,7 +151,8 @@ namespace ultralight_java {
                  UltralightViewJNI::set_load_listener),
              NATIVE_METHOD("setNeedsPaint", "(Z)V", UltralightViewJNI::set_needs_paint),
              NATIVE_METHOD("needsPaint", "()Z", UltralightViewJNI::needs_paint),
-             NATIVE_METHOD("inspector", "()Lcom/labymedia/ultralight/UltralightView;", UltralightViewJNI::inspector)};
+             NATIVE_METHOD("inspector", "()Lcom/labymedia/ultralight/UltralightView;", UltralightViewJNI::inspector),
+             NATIVE_METHOD("renderTarget", "()Lcom/labymedia/ultralight/plugin/render/UltralightRenderTarget;", UltralightViewJNI::renderTarget)};
 
         runtime.ultralight_surface.native_methods =
             {NATIVE_METHOD("width", "()J", UltralightSurfaceJNI::width),

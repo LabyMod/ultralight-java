@@ -197,7 +197,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 30> native_methods;
+            std::array<JNINativeMethod, 31> native_methods;
         } ultralight_view;
 
         struct {
@@ -250,6 +250,18 @@ namespace ultralight_java {
              */
             std::array<JNINativeMethod, 1> native_methods;
         } ultralight_bitmap_surface;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * Constructor
+             */
+            jmethodID constructor;
+        } ultralight_render_target;
 
         struct {
             /**
