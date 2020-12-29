@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.support;
 
 import com.labymedia.ultralight.UltralightPlatform;
 import com.labymedia.ultralight.UltralightRenderer;
@@ -26,6 +26,11 @@ import com.labymedia.ultralight.bitmap.UltralightBitmap;
 import com.labymedia.ultralight.bitmap.UltralightBitmapSurface;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
+import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
+import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
+import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
+import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
+import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
 import com.labymedia.ultralight.math.IntRect;
 
 import java.nio.ByteBuffer;
@@ -39,9 +44,9 @@ public class WebController {
     private final UltralightPlatform platform;
     private final UltralightRenderer renderer;
     private final UltralightView view;
-    private final TestViewListener viewListener;
-    private final TestLoadListener loadListener;
-    private final TestInputAdapter inputAdapter;
+    private final ExampleViewListener viewListener;
+    private final ExampleLoadListener loadListener;
+    private final InputAdapter inputAdapter;
 
     private int glTexture;
 
@@ -50,7 +55,7 @@ public class WebController {
      *
      * @param cursorManager Cursor manager for callbacks on cursor changes
      */
-    public WebController(TestCursorManager cursorManager) {
+    public WebController(CursorAdapter cursorManager) {
         this.platform = UltralightPlatform.instance();
 
         this.platform.setConfig(
@@ -60,21 +65,21 @@ public class WebController {
                         .deviceScale(1.0)
         );
         this.platform.usePlatformFontLoader();
-        this.platform.setFileSystem(new TestFileSystem());
-        this.platform.setLogger(new TestLogger());
-        this.platform.setClipboard(new TestClipboard());
+        this.platform.setFileSystem(new ExampleFileSystem());
+        this.platform.setLogger(new ExampleLogger());
+        this.platform.setClipboard(new ClipboardAdapter());
 
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
 
         this.view = renderer.createView(300, 300, true);
-        this.viewListener = new TestViewListener(cursorManager);
+        this.viewListener = new ExampleViewListener(cursorManager);
         this.view.setViewListener(viewListener);
-        this.loadListener = new TestLoadListener(view);
+        this.loadListener = new ExampleLoadListener(view);
         this.view.setLoadListener(loadListener);
         this.glTexture = -1;
 
-        this.inputAdapter = new TestInputAdapter(view);
+        this.inputAdapter = new InputAdapter(view);
     }
 
     /**
@@ -82,7 +87,7 @@ public class WebController {
      *
      * @return The input adapter of this web controller
      */
-    public TestInputAdapter getInputAdapter() {
+    public InputAdapter getInputAdapter() {
         return inputAdapter;
     }
 
@@ -121,6 +126,7 @@ public class WebController {
             createGLTexture();
         }
 
+        // As we are using the CPU renderer, draw with a bitmap (we did not set a custom surface)
         UltralightBitmapSurface surface = (UltralightBitmapSurface) this.view.surface();
         UltralightBitmap bitmap = surface.bitmap();
 

@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.input;
 
 import com.labymedia.ultralight.input.UltralightCursor;
 
@@ -26,7 +26,7 @@ import static org.lwjgl.glfw.GLFW.*;
 /**
  * Utility class for controlling GLFW cursors.
  */
-public class TestCursorManager {
+public class CursorAdapter {
     private final long window;
 
     private final long iBeamCursor;
@@ -36,11 +36,11 @@ public class TestCursorManager {
     private final long vresizeCursor;
 
     /**
-     * Creates a new {@link TestCursorManager} for the given window.
+     * Creates a new {@link CursorAdapter} for the given window.
      *
      * @param window The window to manage cursors on
      */
-    public TestCursorManager(long window) {
+    public CursorAdapter(long window) {
         this.window = window;
 
         this.iBeamCursor = glfwCreateStandardCursor(GLFW_IBEAM_CURSOR);
@@ -51,7 +51,7 @@ public class TestCursorManager {
     }
 
     /**
-     * Signals this {@link TestCursorManager} that the cursor has been updated and needs to be updated on the GLFW side
+     * Signals this {@link CursorAdapter} that the cursor has been updated and needs to be updated on the GLFW side
      * too.
      *
      * @param cursor The new {@link UltralightCursor} to display
@@ -86,7 +86,7 @@ public class TestCursorManager {
     }
 
     /**
-     * Frees GLFW resources allocated by this {@link TestCursorManager}.
+     * Frees GLFW resources allocated by this {@link CursorAdapter}.
      */
     public void cleanup() {
         glfwDestroyCursor(vresizeCursor);

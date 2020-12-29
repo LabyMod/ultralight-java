@@ -26,7 +26,6 @@ import com.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import com.labymedia.ultralight.call.MethodChooser;
 import com.labymedia.ultralight.utils.JavascriptConversionUtils;
 
-import java.lang.invoke.MethodHandles;
 import java.lang.reflect.*;
 import java.util.*;
 
@@ -322,9 +321,9 @@ public final class DatabindJavascriptClass {
 
         javascriptClass.registerCallbacks();
 
-        javascriptClass.addConstructors(filterAccessible(javaClass.getConstructors(), javaClass));
-        javascriptClass.addMethods(filterAccessible(javaClass.getMethods(), javaClass));
-        javascriptClass.addFields(filterAccessible(javaClass.getFields(), javaClass));
+        javascriptClass.addConstructors(filterAccessible(javaClass.getConstructors()));
+        javascriptClass.addMethods(filterAccessible(javaClass.getMethods()));
+        javascriptClass.addFields(filterAccessible(javaClass.getFields()));
 
         // Iteratively scan all interfaces
         Queue<Class<?>> toAdd = new LinkedList<>(Arrays.asList(javaClass.getInterfaces()));
@@ -332,8 +331,8 @@ public final class DatabindJavascriptClass {
             Class<?> iface = toAdd.remove();
             toAdd.addAll(Arrays.asList(iface.getInterfaces()));
 
-            javascriptClass.addMethods(filterAccessible(iface.getMethods(), iface));
-            javascriptClass.addFields(filterAccessible(iface.getFields(), iface));
+            javascriptClass.addMethods(filterAccessible(iface.getMethods()));
+            javascriptClass.addFields(filterAccessible(iface.getFields()));
         }
 
         return javascriptClass;
@@ -343,15 +342,14 @@ public final class DatabindJavascriptClass {
      * Filters an array of reflection objects by their accessibility.
      *
      * @param objects The objects to filter
-     * @param owner   The wanted owner class
      * @param <T>     The type of the objects
      * @return The filtered objects
      */
-    private static <T extends AccessibleObject & Member> Set<T> filterAccessible(T[] objects, Class<?> owner) {
+    private static <T extends AccessibleObject & Member> Set<T> filterAccessible(T[] objects) {
         Set<T> accessible = new HashSet<>();
 
         for (T object : objects) {
-            if (object.getDeclaringClass() != owner || !allPublic(object)) {
+            if (!allPublic(object)) {
                 continue;
             }
 
