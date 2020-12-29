@@ -22,7 +22,6 @@ package com.labymedia.ultralight.utils;
 import com.labymedia.ultralight.Databind;
 import com.labymedia.ultralight.DatabindJavascriptClass;
 import com.labymedia.ultralight.javascript.*;
-import com.labymedia.ultralight.javascript.*;
 
 import java.lang.reflect.Array;
 import java.util.Date;
@@ -41,6 +40,17 @@ public final class JavascriptConversionUtils {
      */
     public JavascriptConversionUtils(Databind databind) {
         this.databind = databind;
+    }
+
+    /**
+     * Converts a Java object to a Javascript object.
+     *
+     * @param context   The Javascript context to use for the conversion
+     * @param object    The Java object to convert
+     * @return The converted object as a Javascript value
+     */
+    public JavascriptValue toJavascript(JavascriptContext context, Object object) {
+        return toJavascript(context, object, object != null ? object.getClass() : null);
     }
 
     /**

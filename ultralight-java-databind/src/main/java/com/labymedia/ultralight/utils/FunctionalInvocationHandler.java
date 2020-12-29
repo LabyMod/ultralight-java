@@ -22,14 +22,15 @@ package com.labymedia.ultralight.utils;
 import com.labymedia.ultralight.Databind;
 import com.labymedia.ultralight.context.ContextProvider;
 import com.labymedia.ultralight.ffi.gc.DeletableObject;
-import com.labymedia.ultralight.javascript.*;
-import com.labymedia.ultralight.javascript.*;
+import com.labymedia.ultralight.javascript.JavascriptContext;
+import com.labymedia.ultralight.javascript.JavascriptObject;
+import com.labymedia.ultralight.javascript.JavascriptProtectedValue;
+import com.labymedia.ultralight.javascript.JavascriptValue;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Invocation handler for Javascript functions bound to functional interfaces.
@@ -90,8 +91,6 @@ class FunctionalInvocationHandler implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-        Class<?>[] methodParameterTypes = method.getParameterTypes();
-
         CountDownLatch awaiter = new CountDownLatch(1);
         GuardedInvocationResult result = new GuardedInvocationResult();
 
@@ -106,15 +105,17 @@ class FunctionalInvocationHandler implements InvocationHandler {
                     // Convert all Java arguments to Javascript values
                     JavascriptValue[] arguments = new JavascriptValue[args.length];
                     for (int i = 0; i < arguments.length; i++) {
-                        arguments[i] = databind.getConversionUtils()
-                                .toJavascript(context, args[i], methodParameterTypes[i]);
+                        arguments[i] = databind.getConversionUtils().toJavascript(context, args[i]);
                     }
 
                     // Protect the value again
                     protectedValue.get().value = object.protect();
 
                     JavascriptValue returnValue = object.callAsFunction(null, arguments);
-                    result.returnValue = databind.getConversionUtils().fromJavascript(returnValue, method.getReturnType());
+                    result.returnValue = databind.getConversionUtils().fromJavascript(
+                            returnValue,
+                            returnValue != null ? returnValue.getClass() : method.getReturnType()
+                    );
                 }
             } catch(Throwable t) {
                 // Capture exceptions to prevent deadlocking
@@ -124,17 +125,17 @@ class FunctionalInvocationHandler implements InvocationHandler {
         });
         awaiter.await();
 
-        if(result.throwable != null) {
+        if (result.throwable != null) {
             Throwable t = result.throwable;
 
-            if(t instanceof RuntimeException || t instanceof Error) {
+            if (t instanceof RuntimeException || t instanceof Error) {
                 // Unchecked, rethrow as is
                 throw t;
             }
 
             Class<?> throwableClass = t.getClass();
-            for(Class<?> exceptionType : method.getExceptionTypes()) {
-                if(exceptionType.isAssignableFrom(throwableClass)) {
+            for (Class<?> exceptionType : method.getExceptionTypes()) {
+                if (exceptionType.isAssignableFrom(throwableClass)) {
                     // Declared to be thrown by the interface method
                     throw t;
                 }
