@@ -25,6 +25,7 @@ import com.labymedia.ultralight.javascript.JavascriptValue;
 import com.labymedia.ultralight.utils.JavascriptConversionUtils;
 
 import java.lang.reflect.Executable;
+import java.lang.reflect.Modifier;
 import java.lang.reflect.Parameter;
 import java.util.*;
 
@@ -142,12 +143,72 @@ public final class HeuristicMethodChooser implements MethodChooser {
         }
 
         if (availableMethods.size() > 1) {
-            throw new IllegalStateException("Ambiguous argument types, could not determine methods");
+            throw new IllegalStateException(formatErrorMessage(
+                    "Ambiguous argument types, could not determine methods",
+                    possibilities,
+                    sourceParameterTypes
+            ));
         } else if (availableMethods.isEmpty()) {
-            throw new IllegalStateException("No matching method found");
+            throw new IllegalStateException(formatErrorMessage(
+                    "No matching method found",
+                    possibilities,
+                    sourceParameterTypes
+            ));
         }
 
         return availableMethods.iterator().next();
+    }
+
+    /**
+     * Formats the given error message so it contains all the required information for debugging.
+     *
+     * @param header   The header of the error message
+     * @param searched The methods which have been searched
+     * @param types    The types of the passed arguments
+     * @param <T>      The type this method chooser is operating on
+     * @return The formatted error message
+     */
+    private <T extends Executable> String formatErrorMessage(String header, Collection<T> searched, Class<?>[] types) {
+        StringBuilder message = new StringBuilder(header);
+        message.append('\n');
+        message.append("Arguments: [").append(formatClasses(types)).append("]\n");
+        message.append("Tried ").append(searched.size()).append(" methods:\n");
+
+        Iterator<T> it = searched.iterator();
+        while (it.hasNext()) {
+            T t = it.next();
+            message
+                    .append("- ")
+                    .append(Modifier.toString(t.getModifiers()))
+                    .append(" ")
+                    .append(t.getDeclaringClass().getName())
+                    .append('#')
+                    .append(t.getName())
+                    .append('(')
+                    .append(formatClasses(t.getParameterTypes()))
+                    .append(")")
+                    .append(it.hasNext() ? "\n" : "");
+        }
+
+        return message.toString();
+    }
+
+    /**
+     * Formats an array of classes nicely.
+     *
+     * @param classes The array of classes to format
+     * @return The formatted string
+     */
+    private String formatClasses(Class<?>[] classes) {
+        StringBuilder builder = new StringBuilder();
+        for (int i = 0; i < classes.length; i++) {
+            Class<?> type = classes[i];
+            builder.append(type.getName());
+            if (i + 1 != classes.length) {
+                builder.append(", ");
+            }
+        }
+        return builder.toString();
     }
 
     private int calculatePenalty(Class<?> target, Class<?> source, JavascriptValue value) {
@@ -160,7 +221,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
         } else if (isZeroCostConversion(target, source)) {
             // Special zero cost conversion
             return 0;
-        }  else if (target == source) {
+        } else if (target == source) {
             // No casting required, fast case to not run through selection
             return 0;
         } else if (source == JavascriptObject.class &&

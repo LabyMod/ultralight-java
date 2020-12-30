@@ -21,6 +21,7 @@ package com.labymedia.ultralight.lwjgl3.opengl.js;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.function.Consumer;
 
 /**
  * Example class containing methods which Javascript can interact with.
@@ -53,5 +54,15 @@ public class JSInteraction {
      */
     public String[] getMessageArray() {
         return messages;
+    }
+
+    /**
+     * Javascript methods can be automatically convert to Java functional interfaces as long as they are annotated with
+     * {@link FunctionalInterface}.
+     *
+     * @param consumer The consumer to pass the messages to
+     */
+    public void useConsumer(Consumer<String[]> consumer) {
+        consumer.accept(messages);
     }
 }

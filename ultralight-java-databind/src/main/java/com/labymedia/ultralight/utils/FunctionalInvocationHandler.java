@@ -22,14 +22,15 @@ package com.labymedia.ultralight.utils;
 import com.labymedia.ultralight.Databind;
 import com.labymedia.ultralight.context.ContextProvider;
 import com.labymedia.ultralight.ffi.gc.DeletableObject;
-import com.labymedia.ultralight.javascript.*;
-import com.labymedia.ultralight.javascript.*;
+import com.labymedia.ultralight.javascript.JavascriptContext;
+import com.labymedia.ultralight.javascript.JavascriptObject;
+import com.labymedia.ultralight.javascript.JavascriptProtectedValue;
+import com.labymedia.ultralight.javascript.JavascriptValue;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Invocation handler for Javascript functions bound to functional interfaces.
@@ -90,38 +91,61 @@ class FunctionalInvocationHandler implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-        Class<?>[] methodParameterTypes = method.getParameterTypes();
-
         CountDownLatch awaiter = new CountDownLatch(1);
-        AtomicReference<Object> out = new AtomicReference<>();
+        GuardedInvocationResult result = new GuardedInvocationResult();
 
         contextProvider.syncWithJavascript((contextLock) -> {
-            synchronized (lock) {
-                JavascriptContext context = contextLock.getContext();
+            try {
+                synchronized(lock) {
+                    JavascriptContext context = contextLock.getContext();
 
-                // Revive the Javascript value, this will effectively invalidate the protected value
-                JavascriptObject object = protectedValue.get().value.revive(contextLock).toObject();
+                    // Revive the Javascript value, this will effectively invalidate the protected value
+                    JavascriptObject object = protectedValue.get().value.revive(contextLock).toObject();
 
-                // Convert all Java arguments to Javascript values
-                JavascriptValue[] arguments = new JavascriptValue[args.length];
-                for (int i = 0; i < arguments.length; i++) {
-                    arguments[i] = databind.getConversionUtils()
-                            .toJavascript(context, args[i], methodParameterTypes[i]);
+                    // Convert all Java arguments to Javascript values
+                    JavascriptValue[] arguments = new JavascriptValue[args.length];
+                    for (int i = 0; i < arguments.length; i++) {
+                        arguments[i] = databind.getConversionUtils().toJavascript(context, args[i]);
+                    }
+
+                    // Protect the value again
+                    protectedValue.get().value = object.protect();
+
+                    JavascriptValue returnValue = object.callAsFunction(null, arguments);
+                    result.returnValue = databind.getConversionUtils().fromJavascript(
+                            returnValue,
+                            returnValue != null ? returnValue.getClass() : method.getReturnType()
+                    );
                 }
-
-                // Protect the value again
-                protectedValue.get().value = object.protect();
-
-                JavascriptValue returnValue = object.callAsFunction(null, arguments);
-                Object ret = databind.getConversionUtils().fromJavascript(returnValue, method.getReturnType());
-                out.set(ret);
-                awaiter.countDown();
+            } catch(Throwable t) {
+                // Capture exceptions to prevent deadlocking
+                result.throwable = t;
             }
+            awaiter.countDown();
         });
-
         awaiter.await();
 
-        return out.get();
+        if (result.throwable != null) {
+            Throwable t = result.throwable;
+
+            if (t instanceof RuntimeException || t instanceof Error) {
+                // Unchecked, rethrow as is
+                throw t;
+            }
+
+            Class<?> throwableClass = t.getClass();
+            for (Class<?> exceptionType : method.getExceptionTypes()) {
+                if (exceptionType.isAssignableFrom(throwableClass)) {
+                    // Declared to be thrown by the interface method
+                    throw t;
+                }
+            }
+
+            // Checked exception which has not been declared as thrown by the interface method
+            throw new RuntimeException("Exception thrown while invoking Javascript method", t);
+        }
+
+        return result.returnValue;
     }
 
     /**
@@ -144,13 +168,19 @@ class FunctionalInvocationHandler implements InvocationHandler {
     }
 
     /**
+     * Helper class for handling the results of asynchronous method invocations including exceptions.
+     */
+    private static class GuardedInvocationResult {
+        private Throwable throwable;
+        private Object returnValue;
+    }
+
+    /**
      * Deletes a value wrapper when it is not required anymore.
      *
      * @param valueWrapper The wrapper to delete
      */
     private static void delete(ValueWrapper valueWrapper) {
-        valueWrapper.contextProvider.syncWithJavascript((contextLock) -> {
-            valueWrapper.value.revive(contextLock);
-        });
+        valueWrapper.contextProvider.syncWithJavascript((contextLock) -> valueWrapper.value.revive(contextLock));
     }
 }
