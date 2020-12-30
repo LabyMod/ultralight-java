@@ -97,3 +97,9 @@ for(let i = 0; i < messageList.size(); i++) {
 for(const message of messageArray) {
     console.log(`messageArray[@] = ${message}`)
 }
+
+// Methods will automatically be translated to functional interfaces if the interface is annotated
+// with @FunctionalInterface
+interaction.useConsumer((messages) => {
+    console.log(`Messages in consumer lambda: messages = [${messages.join(", ")}]`)
+});
