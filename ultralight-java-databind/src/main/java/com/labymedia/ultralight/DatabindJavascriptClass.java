@@ -94,6 +94,11 @@ public final class DatabindJavascriptClass {
         for (Method method : methods) {
             String name = method.getName();
 
+            if(method.getName().equals("valueOf") && method.getDeclaringClass().isEnum()) {
+                // Skip the valueOf method of enums because it breaks Javascript internals
+                continue;
+            }
+
             if (this.methods.containsKey(name)) {
                 // Overloaded method, add it to the set of methods with the same name
                 this.methods.get(name).add(method);
