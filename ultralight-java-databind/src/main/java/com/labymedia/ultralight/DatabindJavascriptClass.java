@@ -371,28 +371,8 @@ public final class DatabindJavascriptClass {
      * @return {@code true} if the member is accessible using a public path, {@code false} otherwise
      */
     private static boolean allPublic(Member member) {
-        Class<?> classToCheck = null;
-
-        do {
-            if (classToCheck == null) {
-                if ((member.getModifiers() & Modifier.PUBLIC) == 0) {
-                    return false;
-                }
-
-                classToCheck = member.getDeclaringClass();
-            } else {
-                if((classToCheck.getModifiers() & Modifier.PUBLIC) == 0) {
-                    return false;
-                }
-
-                classToCheck = classToCheck.getSuperclass();
-                if(classToCheck == Object.class) {
-                    return true;
-                }
-            }
-        } while (classToCheck != null);
-
-        return true;
+        Class<?> classToCheck = member.getDeclaringClass();
+        return Modifier.isPublic(classToCheck.getModifiers()) && Modifier.isPublic(member.getModifiers());
     }
 
     /**
