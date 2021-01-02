@@ -98,7 +98,7 @@ subprojects {
 
             ext {
                 author = "LabyMedia"
-                year = Calendar.getInstance(TimeZone.getTimeZone("UTC")).get(Calendar.YEAR)
+                year = "2020 - " + Calendar.getInstance(TimeZone.getTimeZone("UTC")).get(Calendar.YEAR)
             }
         }
 
