@@ -260,20 +260,20 @@ namespace ultralight_java {
                 env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightGPUState")));
         runtime.ultralight_gpustate.constructor =
                 env->GetMethodID(runtime.ultralight_gpustate.clazz, "<init>",
-                                 "(JJ[FZZSJJJJ[F[[FS[[FZLcom/labymedia/ultralight/math/IntRect;)V");
+                                 "(JJLjava/nio/ByteBuffer;ZZSJJJJLjava/nio/ByteBuffer;Ljava/nio/ByteBuffer;SLjava/nio/ByteBuffer;ZLcom/labymedia/ultralight/math/IntRect;)V");
 
         // Retrieve information about the UltralightIndexBuffer class
         runtime.ultralight_indexbuffer.clazz = reinterpret_cast<jclass>(
                 env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightIndexBuffer")));
         runtime.ultralight_indexbuffer.constructor =
-                env->GetMethodID(runtime.ultralight_indexbuffer.clazz, "<init>", "([S)V");
+                env->GetMethodID(runtime.ultralight_indexbuffer.clazz, "<init>", "(Ljava/nio/ByteBuffer;)V");
 
         // Retrieve information about the UltralightVertexBuffer class
         runtime.ultralight_vertexbuffer.clazz = reinterpret_cast<jclass>(
                 env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightVertexBuffer")));
         runtime.ultralight_vertexbuffer.constructor =
                 env->GetMethodID(runtime.ultralight_vertexbuffer.clazz, "<init>",
-                                 "(Lcom/labymedia/ultralight/plugin/render/UltralightVertexBufferFormat;[S)V");
+                                 "(Lcom/labymedia/ultralight/plugin/render/UltralightVertexBufferFormat;Ljava/nio/ByteBuffer;)V");
 
         // Retrieve information about the UltralightVertexBufferFormat enum
         runtime.ultralight_vertexbuffer_format.clazz = reinterpret_cast<jclass>(

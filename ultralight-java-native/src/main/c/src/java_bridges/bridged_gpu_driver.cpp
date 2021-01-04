@@ -126,30 +126,13 @@ namespace ultralight_java {
                                           const ultralight::IndexBuffer &indices) {
         TemporaryJNI env;
 
-        auto ind = env->NewShortArray(indices.size);
-        auto arr = env->GetShortArrayElements(ind, NULL);
-
-        for (int i = 0; i < indices.size; i++) {
-            arr[i] = indices.data[i];
-        }
-
-        env->ReleaseShortArrayElements(ind, arr, JNI_COMMIT);
-
-        auto vert = env->NewShortArray(vertices.size);
-        auto vertArr = env->GetShortArrayElements(vert, NULL);
-
-        for (int i = 0; i < vertices.size; i++) {
-            vertArr[i] = vertices.data[i];
-        }
-
-        env->ReleaseShortArrayElements(vert, vertArr, JNI_COMMIT);
-
         auto javaIndices = env->NewObject(runtime.ultralight_indexbuffer.clazz,
-                                          runtime.ultralight_indexbuffer.constructor, ind);
+                                          runtime.ultralight_indexbuffer.constructor,
+                                          env->NewDirectByteBuffer(indices.data, indices.size));
         auto javaVert = env->NewObject(runtime.ultralight_vertexbuffer.clazz,
                                        runtime.ultralight_vertexbuffer.constructor,
                                        runtime.ultralight_vertexbuffer_format.constants.to_java(env, vertices.format),
-                                       vert);
+                                       env->NewDirectByteBuffer(vertices.data, vertices.size));
 
         env->CallVoidMethod(reference,
                             runtime.ultralight_gpu_driver.create_geometry_method,
@@ -162,31 +145,13 @@ namespace ultralight_java {
                                           const ultralight::IndexBuffer &indices) {
         TemporaryJNI env;
 
-        auto ind = env->NewShortArray(indices.size);
-        auto arr = env->GetShortArrayElements(ind, NULL);
-
-        for (int i = 0; i < indices.size; i++) {
-            arr[i] = indices.data[i];
-        }
-
-        env->ReleaseShortArrayElements(ind, arr, JNI_COMMIT);
-
-        auto vert = env->NewShortArray(vertices.size);
-        auto vertArr = env->GetShortArrayElements(vert, NULL);
-
-        for (int i = 0; i < vertices.size; i++) {
-            vertArr[i] = vertices.data[i];
-        }
-
-        env->ReleaseShortArrayElements(vert, vertArr, JNI_COMMIT);
-
         auto javaIndices = env->NewObject(runtime.ultralight_indexbuffer.clazz,
                                           runtime.ultralight_indexbuffer.constructor,
-                                          ind);
+                                          env->NewDirectByteBuffer(indices.data, indices.size));
         auto javaVert = env->NewObject(runtime.ultralight_vertexbuffer.clazz,
                                        runtime.ultralight_vertexbuffer.constructor,
                                        runtime.ultralight_vertexbuffer_format.constants.to_java(env, vertices.format),
-                                       vert);
+                                       env->NewDirectByteBuffer(vertices.data, vertices.size));
 
         env->CallVoidMethod(reference,
                             runtime.ultralight_gpu_driver.update_geometry_method,
@@ -205,36 +170,16 @@ namespace ultralight_java {
 
     void BridgedGPUDriver::UpdateCommandList(const ultralight::CommandList &list) {
         TemporaryJNI env;
-        auto commands = env->NewObjectArray(list.size, runtime.ultralight_command.clazz, NULL);
+        auto commands = env->NewObjectArray(list.size, runtime.ultralight_command.clazz, nullptr);
 
         for (int i = 0; i < list.size; i++) {
-            auto command = list.commands[i];
-
-            auto transformMatrix = env->NewFloatArray(16);
-            auto uniformScalar = env->NewFloatArray(8);
-
-            env->SetFloatArrayRegion(transformMatrix, 0, 16, command.gpu_state.transform.data);
-            env->SetFloatArrayRegion(uniformScalar, 0, 8, command.gpu_state.uniform_scalar);
-
-            auto uniformVector = env->NewObjectArray(8, runtime.float_array.clazz, NULL);
-            auto clipMatrix = env->NewObjectArray(8, runtime.float_array.clazz, NULL);
-
-            for (int j = 0; j < 8; j++) {
-                auto vector = env->NewFloatArray(4);
-                auto matrix = env->NewFloatArray(16);
-
-                env->SetFloatArrayRegion(vector, 0, 4, command.gpu_state.uniform_vector->value);
-                env->SetFloatArrayRegion(matrix, 0, 16, command.gpu_state.clip->data);
-
-                env->SetObjectArrayElement(uniformVector, j, vector);
-                env->SetObjectArrayElement(clipMatrix, j, matrix);
-            }
+            auto& command = list.commands[i];
 
             auto gpuState = env->NewObject(runtime.ultralight_gpustate.clazz,
                                            runtime.ultralight_gpustate.constructor,
                                            static_cast<jlong>(command.gpu_state.viewport_width),
                                            static_cast<jlong>(command.gpu_state.viewport_height),
-                                           transformMatrix,
+                                           env->NewDirectByteBuffer(command.gpu_state.transform.data, 64),
                                            static_cast<jboolean>(command.gpu_state.enable_texturing),
                                            static_cast<jboolean>(command.gpu_state.enable_blend),
                                            static_cast<jshort>(command.gpu_state.shader_type),
@@ -242,10 +187,10 @@ namespace ultralight_java {
                                            static_cast<jlong>(command.gpu_state.texture_1_id),
                                            static_cast<jlong>(command.gpu_state.texture_2_id),
                                            static_cast<jlong>(command.gpu_state.texture_3_id),
-                                           uniformScalar,
-                                           uniformVector,
+                                           env->NewDirectByteBuffer(&command.gpu_state.uniform_scalar[0], 32),
+                                           env->NewDirectByteBuffer(&command.gpu_state.uniform_vector->value[0], 128),
                                            static_cast<jshort>(command.gpu_state.clip_size),
-                                           clipMatrix,
+                                           env->NewDirectByteBuffer(&command.gpu_state.clip->data[0], 512),
                                            static_cast<jboolean>(command.gpu_state.enable_scissor),
                                            env->NewObject(runtime.int_rect.clazz,
                                                           runtime.int_rect.bounds_constructor,

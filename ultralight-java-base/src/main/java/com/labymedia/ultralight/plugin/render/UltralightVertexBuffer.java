@@ -21,9 +21,11 @@ package com.labymedia.ultralight.plugin.render;
 
 import com.labymedia.ultralight.annotation.NativeType;
 
+import java.nio.ByteBuffer;
+
 @NativeType("ultralight::VertexBuffer")
 public class UltralightVertexBuffer {
-    public UltralightVertexBuffer(UltralightVertexBufferFormat format, short[] data) {
+    public UltralightVertexBuffer(UltralightVertexBufferFormat format, ByteBuffer data) {
         this.format = format;
         this.data = data;
     }
@@ -31,5 +33,5 @@ public class UltralightVertexBuffer {
     public @NativeType("ultralight::VertexBufferFormat")
     UltralightVertexBufferFormat format;
     public @NativeType("uint8_t[]")
-    short[] data;
+    ByteBuffer data;
 }

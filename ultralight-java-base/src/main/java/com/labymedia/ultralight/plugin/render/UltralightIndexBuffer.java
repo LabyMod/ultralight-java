@@ -21,12 +21,14 @@ package com.labymedia.ultralight.plugin.render;
 
 import com.labymedia.ultralight.annotation.NativeType;
 
+import java.nio.ByteBuffer;
+
 @NativeType("ultralight::IndexBuffer")
 public class UltralightIndexBuffer {
-    public UltralightIndexBuffer(short[] data) {
+    public UltralightIndexBuffer(ByteBuffer data) {
         this.data = data;
     }
 
     public @NativeType("uint8_t[]")
-    short[] data;
+    ByteBuffer data;
 }

@@ -22,13 +22,15 @@ package com.labymedia.ultralight.plugin.render;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.math.IntRect;
 
+import java.nio.ByteBuffer;
+
 @NativeType("ultralight::GPUState")
 public class UltralightGPUState {
     public final @NativeType("uint32_t")
     long viewportWidth, viewportHeight;
 
     public final @NativeType("ultralight::Matrix4x4")
-    float[] transformMatrix;
+    ByteBuffer transformMatrix;
 
     public final @NativeType("bool")
     boolean enableTexturing, enableBlend;
@@ -40,13 +42,13 @@ public class UltralightGPUState {
     long renderBufferId, texture1Id, texture2Id, texture3Id;
 
     public final @NativeType("float[]")
-    float[] uniformScalar;
+    ByteBuffer uniformScalar;
     public final @NativeType("ultralight::vec4[]")
-    float[][] uniformVector;
+    ByteBuffer uniformVector;
     public final @NativeType("uint8_t")
     short clipSize;
     public final @NativeType("ultralight::Matrix4x4[]")
-    float[][] clip;
+    ByteBuffer clip;
 
     public final @NativeType("bool")
     boolean enableScissor;
@@ -54,7 +56,7 @@ public class UltralightGPUState {
     public final @NativeType("IntRect")
     IntRect scissorRect;
 
-    public UltralightGPUState(long viewportWidth, long viewportHeight, float[] transformMatrix, boolean enableTexturing, boolean enableBlend, short shaderType, long renderBufferId, long texture1Id, long texture2Id, long texture3Id, float[] uniformScalar, float[][] uniformVector, short clipSize, float[][] clip, boolean enableScissor, IntRect scissorRect) {
+    public UltralightGPUState(long viewportWidth, long viewportHeight, ByteBuffer transformMatrix, boolean enableTexturing, boolean enableBlend, short shaderType, long renderBufferId, long texture1Id, long texture2Id, long texture3Id, ByteBuffer uniformScalar, ByteBuffer uniformVector, short clipSize, ByteBuffer clip, boolean enableScissor, IntRect scissorRect) {
         this.viewportWidth = viewportWidth;
         this.viewportHeight = viewportHeight;
         this.transformMatrix = transformMatrix;
