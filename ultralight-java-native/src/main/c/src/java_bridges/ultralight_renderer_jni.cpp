@@ -51,7 +51,7 @@ namespace ultralight_java {
         }
 
         // Create the view RefPtr
-        auto view = renderer->CreateView(width, height, transparent, nullptr);
+        auto view = renderer->CreateView(width, height, transparent, nullptr, force_cpu_renderer);
 
         // Convert the RefPtr to a java object
         jobject pointer = UltralightRefPtrJNI::create(env, ultralight::RefPtr<ultralight::View>(std::move(view)));

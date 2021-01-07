@@ -162,7 +162,7 @@ public class ExampleApplication {
     public void run() {
         // Make the window's OpenGL context the current one
         glfwMakeContextCurrent(window);
-        glfwSwapInterval(1);
+        glfwSwapInterval(0);
 
         // Initialize OpenGL capabilities
         GL.createCapabilities();

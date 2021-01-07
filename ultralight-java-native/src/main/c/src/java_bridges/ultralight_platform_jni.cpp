@@ -24,6 +24,7 @@
 
 #include "ultralight_java/java_bridges/bridegd_clipboard.hpp"
 #include "ultralight_java/java_bridges/bridged_file_system.hpp"
+#include "ultralight_java/java_bridges/bridged_gpu_driver.hpp"
 #include "ultralight_java/java_bridges/bridged_logger.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
@@ -198,6 +199,32 @@ namespace ultralight_java {
         }
     }
 
+    void UltralightPlatformJNI::set_gpu_driver(JNIEnv *env, jobject java_instance, jobject java_gpu_driver) {
+        // Retrieve the native platform pointer from the java object
+        auto *platform = reinterpret_cast<ultralight::Platform *>(
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+
+        // Check if any exception occurred while doing so
+        if (env->ExceptionCheck())
+            return;
+
+        // Remove the existing gpu driver
+        platform->set_gpu_driver(nullptr);
+
+        // Get rid of the existing gpu driver
+        delete runtime.bridged_gpu_driver;
+
+        if (java_gpu_driver) {
+            // Create and set the new gpu driver
+            runtime.bridged_gpu_driver = new BridgedGPUDriver(env, java_gpu_driver);
+            platform->set_gpu_driver(runtime.bridged_gpu_driver);
+        } else {
+            // NUll out the gpu driver
+            runtime.bridged_gpu_driver = nullptr;
+        }
+
+    }
+
     void UltralightPlatformJNI::set_clipboard(JNIEnv *env, jobject java_instance, jobject java_clipboard) {
         // Retrieve the native platform pointer from the java object
         auto *platform = reinterpret_cast<ultralight::Platform *>(
@@ -249,4 +276,5 @@ namespace ultralight_java {
             runtime.bridged_logger = nullptr;
         }
     }
+
 } // namespace ultralight_java

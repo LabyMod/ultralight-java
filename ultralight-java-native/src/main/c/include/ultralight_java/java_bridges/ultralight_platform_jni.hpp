@@ -77,6 +77,15 @@ namespace ultralight_java {
         static void set_file_system(JNIEnv *env, jobject java_instance, jobject java_file_system);
 
         /**
+         * Sets the GPU driver to the provided java one.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The instance of the platform as a java object
+         * @param java_gpu_driver The java gpu driver object
+         */
+         static void set_gpu_driver(JNIEnv *env, jobject java_instance, jobject java_gpu_driver);
+
+        /**
          * Sets the internal clipboard to the provided java one
          *
          * @param env The JNI environment to use for accessing java

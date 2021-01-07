@@ -57,6 +57,10 @@ namespace ultralight_java {
                  "(Lcom/labymedia/ultralight/plugin/filesystem/UltralightFileSystem;)V",
                  UltralightPlatformJNI::set_file_system),
              NATIVE_METHOD(
+                 "setGPUDriver",
+                 "(Lcom/labymedia/ultralight/plugin/render/UltralightGPUDriver;)V",
+                 UltralightPlatformJNI::set_gpu_driver),
+             NATIVE_METHOD(
                  "setClipboard",
                  "(Lcom/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
                  UltralightPlatformJNI::set_clipboard),
@@ -147,7 +151,8 @@ namespace ultralight_java {
                  UltralightViewJNI::set_load_listener),
              NATIVE_METHOD("setNeedsPaint", "(Z)V", UltralightViewJNI::set_needs_paint),
              NATIVE_METHOD("needsPaint", "()Z", UltralightViewJNI::needs_paint),
-             NATIVE_METHOD("inspector", "()Lcom/labymedia/ultralight/UltralightView;", UltralightViewJNI::inspector)};
+             NATIVE_METHOD("inspector", "()Lcom/labymedia/ultralight/UltralightView;", UltralightViewJNI::inspector),
+             NATIVE_METHOD("renderTarget", "()Lcom/labymedia/ultralight/plugin/render/UltralightRenderTarget;", UltralightViewJNI::renderTarget)};
 
         runtime.ultralight_surface.native_methods =
             {NATIVE_METHOD("width", "()J", UltralightSurfaceJNI::width),
@@ -397,6 +402,13 @@ namespace ultralight_java {
             "CONTENT_BLOCKER",
             ultralight::kMessageSource_Other,
             "OTHER");
+
+        runtime.ultralight_vertexbuffer_format.constants = JavaEnum<ultralight::VertexBufferFormat>(
+                ultralight::kVertexBufferFormat_2f_4ub_2f,
+                "FORMAT_2F_4UB_2F",
+                ultralight::kVertexBufferFormat_2f_4ub_2f_2f_28f,
+                "FORMAT_2F_4UB_2F_2F_28F"
+        );
 
         runtime.javascript_context.native_methods =
             {NATIVE_METHOD(
@@ -747,6 +759,7 @@ namespace ultralight_java {
 
         runtime.bridged_logger = nullptr;
         runtime.bridged_file_system = nullptr;
+        runtime.bridged_gpu_driver = nullptr;
         runtime.bridged_clipboard = nullptr;
     }
 } // namespace ultralight_java

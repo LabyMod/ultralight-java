@@ -25,13 +25,14 @@ import com.labymedia.ultralight.annotation.Unsigned;
 import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.ffi.RefPtr;
 import com.labymedia.ultralight.input.UltralightKeyEvent;
+import com.labymedia.ultralight.input.UltralightKeyEventType;
 import com.labymedia.ultralight.input.UltralightMouseEvent;
 import com.labymedia.ultralight.input.UltralightScrollEvent;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
 import com.labymedia.ultralight.javascript.JavascriptEvaluationException;
 import com.labymedia.ultralight.plugin.loading.UltralightLoadListener;
+import com.labymedia.ultralight.plugin.render.UltralightRenderTarget;
 import com.labymedia.ultralight.plugin.view.UltralightViewListener;
-import com.labymedia.ultralight.input.UltralightKeyEventType;
 
 import java.util.Objects;
 
@@ -332,6 +333,8 @@ public class UltralightView implements ObjectWithHandle {
      * @return An inspector view for the current view
      */
     public native UltralightView inspector();
+
+    public native UltralightRenderTarget renderTarget();
 
     @Override
     public long getHandle() {
