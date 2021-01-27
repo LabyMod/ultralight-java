@@ -21,7 +21,11 @@ package com.labymedia.ultralight.utils;
 
 import com.labymedia.ultralight.Databind;
 import com.labymedia.ultralight.DatabindJavascriptClass;
-import com.labymedia.ultralight.javascript.*;
+import com.labymedia.ultralight.javascript.JavascriptClass;
+import com.labymedia.ultralight.javascript.JavascriptContext;
+import com.labymedia.ultralight.javascript.JavascriptObject;
+import com.labymedia.ultralight.javascript.JavascriptType;
+import com.labymedia.ultralight.javascript.JavascriptValue;
 
 import java.lang.reflect.Array;
 import java.util.Date;
@@ -45,8 +49,8 @@ public final class JavascriptConversionUtils {
     /**
      * Converts a Java object to a Javascript object.
      *
-     * @param context   The Javascript context to use for the conversion
-     * @param object    The Java object to convert
+     * @param context The Javascript context to use for the conversion
+     * @param object  The Java object to convert
      * @return The converted object as a Javascript value
      */
     public JavascriptValue toJavascript(JavascriptContext context, Object object) {
@@ -141,9 +145,9 @@ public final class JavascriptConversionUtils {
             return value instanceof JavascriptObject ? (JavascriptObject) value : value.toObject();
         }
 
-        if (value.isNull() || value.isUndefined() || type == void.class || type == Void.class) {
+        if (value.isNull() || value.isUndefined() || type == void.class || type == Void.class || type == null) {
             // Special handling of Javascript null and undefined
-            if (type.isPrimitive() && type != void.class) {
+            if (type != null && type.isPrimitive() && type != void.class) {
                 // Primitives can not be null in Java
                 throw new IllegalArgumentException(
                         "Can not convert " + (value.isNull() ? "null" : "undefined") + " to " + type.getName());
@@ -214,7 +218,7 @@ public final class JavascriptConversionUtils {
             JavascriptObject object = value.toObject();
             if (value.isDate()) {
                 // Date's are primitives in Javascript
-                if (type.isAssignableFrom(Date.class)) {
+                if (!type.isAssignableFrom(Date.class)) {
                     throw new IllegalArgumentException("Can not convert Javascript date to " + type.getName());
                 }
 
@@ -229,11 +233,12 @@ public final class JavascriptConversionUtils {
 
                 // Prepare an array reflectively
                 int size = (int) object.getProperty("length").toNumber();
-                Object objects = Array.newInstance(type.getComponentType(), size);
+                Class<?> componentType = type.getComponentType();
+                Object objects = Array.newInstance(componentType, size);
 
                 for (int i = 0; i < size; i++) {
                     // Recursively convert values
-                    Array.set(objects, i, fromJavascript(object.getPropertyAtIndex(i), type));
+                    Array.set(objects, i, fromJavascript(object.getPropertyAtIndex(i), componentType));
                 }
 
                 return objects;
@@ -247,7 +252,7 @@ public final class JavascriptConversionUtils {
             DatabindJavascriptClass.Data privateData = (DatabindJavascriptClass.Data) object.getPrivate();
             if (privateData == null) {
                 // The Javascript object has not been constructed by java
-                if(type == Object.class) {
+                if (type == Object.class) {
                     return value;
                 }
 
@@ -283,11 +288,11 @@ public final class JavascriptConversionUtils {
      * Tries to infer the type from a Javascript value.
      *
      * @param value The value to infer the type from
-     * @return The inferred type
+     * @return The inferred type or null if the value is null or undefined
      */
     public static Class<?> determineType(JavascriptValue value) {
         if (value.isNull() || value.isUndefined()) {
-            return Object.class;
+            return null;
         }
 
         // Check primitives first
@@ -347,7 +352,8 @@ public final class JavascriptConversionUtils {
 
         // Convert all Javascript values to Java classes
         for (int i = 0; i < classes.length; i++) {
-            classes[i] = determineType(values[i]);
+            Class<?> type = determineType(values[i]);
+            classes[i] = type == null ? Object.class : type;
         }
 
         Class<?> commonSuperclass = classes[0];
@@ -356,9 +362,11 @@ public final class JavascriptConversionUtils {
         outer:
         for (; commonSuperclass != Object.class; commonSuperclass = commonSuperclass.getSuperclass()) {
             for (int i = 1; i < classes.length; i++) {
-                if (!commonSuperclass.isAssignableFrom(classes[i]))
+                if (!commonSuperclass.isAssignableFrom(classes[i])) {
                     continue outer;
+                }
             }
+            return commonSuperclass;
         }
 
         return commonSuperclass;

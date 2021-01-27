@@ -75,19 +75,24 @@ public final class HeuristicMethodChooser implements MethodChooser {
             }
 
             for (int i = 0; i < parameters.length - (injectContext ? 1 : 0); i++) {
+                Class<?> type = sourceParameterTypes[i];
+                if (type == null) {
+                    // null/undefined parameter provided
+                    continue;
+                }
+
                 if (i + (injectContext ? 1 : 0) == parameters.length - 1 && executable.isVarArgs()) {
                     // Last parameter is var args, special handling required
                     if (sourceParameterTypes.length < parameters.length) {
                         // Var args not supplied at all
                         varArgsType = CallData.VarArgsType.EMPTY;
-                    } else if (sourceParameterTypes[i].isArray() && sourceParameterTypes.length == parameters.length) {
-                        if (parameters[i + (injectContext ? 1 : 0)].getType()
-                                .isAssignableFrom(sourceParameterTypes[i])) {
+                    } else if (type.isArray() && sourceParameterTypes.length == parameters.length) {
+                        if (parameters[i + (injectContext ? 1 : 0)].getType().isAssignableFrom(type)) {
                             // Var args array can be passed through as the array types match
                             varArgsType = CallData.VarArgsType.PASS_THROUGH;
                         } else {
                             if (!parameters[i + (injectContext ? 1 : 0)].getType().getComponentType()
-                                    .isAssignableFrom(sourceParameterTypes[i])) {
+                                    .isAssignableFrom(type)) {
                                 // Method parameter can't be compacted down
                                 continue tryNextMethod;
                             }
