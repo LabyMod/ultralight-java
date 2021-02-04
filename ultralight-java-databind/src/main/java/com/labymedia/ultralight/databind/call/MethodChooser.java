@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.call;
+package com.labymedia.ultralight.databind.call;
 
 import com.labymedia.ultralight.javascript.JavascriptValue;
 

@@ -17,12 +17,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight;
+package com.labymedia.ultralight.databind;
 
-import com.labymedia.ultralight.context.ContextProviderFactory;
+import com.labymedia.ultralight.databind.cache.JavascriptClassCache;
+import com.labymedia.ultralight.databind.context.ContextProviderFactory;
+import com.labymedia.ultralight.databind.utils.JavascriptConversionUtils;
 import com.labymedia.ultralight.javascript.JavascriptClass;
-import com.labymedia.ultralight.cache.JavascriptClassCache;
-import com.labymedia.ultralight.utils.JavascriptConversionUtils;
 
 /**
  * Representation of Databind instances.

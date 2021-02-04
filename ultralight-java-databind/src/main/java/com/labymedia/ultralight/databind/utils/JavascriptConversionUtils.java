@@ -17,10 +17,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.utils;
+package com.labymedia.ultralight.databind.utils;
 
-import com.labymedia.ultralight.Databind;
-import com.labymedia.ultralight.DatabindJavascriptClass;
+import com.labymedia.ultralight.databind.Databind;
+import com.labymedia.ultralight.databind.DatabindJavascriptClass;
 import com.labymedia.ultralight.javascript.JavascriptClass;
 import com.labymedia.ultralight.javascript.JavascriptContext;
 import com.labymedia.ultralight.javascript.JavascriptObject;
