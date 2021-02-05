@@ -6,11 +6,11 @@ plugins {
 group 'com.labymedia'
 
 jar {
-	manifest {
-		attributes(
-			'Automatic-Module-Name': 'com.labymedia.ultralight.databind'
-		)
-	}
+    manifest {
+        attributes(
+            'Automatic-Module-Name': 'com.labymedia.ultralight.databind'
+        )
+    }
 }
 
 dependencies {
