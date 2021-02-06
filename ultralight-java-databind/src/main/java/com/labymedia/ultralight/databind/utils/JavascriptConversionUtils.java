@@ -227,13 +227,16 @@ public final class JavascriptConversionUtils {
                         .toObject().callAsFunction(value.toObject()).toNumber();
                 return new Date(millis);
             } else if (value.isArray()) {
-                if (!type.isArray()) {
+                // The target might use any object, so just convert the JS array to an Object[]
+                boolean anyType = type == Object.class;
+
+                if (!type.isArray() && !anyType) {
                     throw new IllegalArgumentException("Can not convert a Javascript array to " + type.getName());
                 }
 
                 // Prepare an array reflectively
                 int size = (int) object.getProperty("length").toNumber();
-                Class<?> componentType = type.getComponentType();
+                Class<?> componentType = anyType ? Object.class : type.getComponentType();
                 Object objects = Array.newInstance(componentType, size);
 
                 for (int i = 0; i < size; i++) {
