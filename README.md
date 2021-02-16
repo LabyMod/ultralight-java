@@ -72,6 +72,12 @@ the Library in order to provide the natives!**
 
 See [Examples](https://github.com/LabyMod/ultralight-java/tree/develop/example) for more info.
 
+# Sponsors
+[<img src="https://www.yourkit.com/images/yklogo.png"/>](https://www.yourkit.com/)
+
+YourKit supports open source projects with innovative and intelligent tools for monitoring and profiling Java and .NET applications.
+YourKit is the creator of [YourKit Java Profiler](https://www.yourkit.com/java/profiler/), [YourKit .NET Profiler](https://www.yourkit.com/.net/profiler/), and [YourKit YouMonitor](https://www.yourkit.com/youmonitor/).
+
 # Licensing
 For Ultralight Java [LGPLv3](https://www.gnu.org/licenses/lgpl-3.0.en.html) is being used, however, Ultralight itself is
 licensed under a custom proprietary license. See
