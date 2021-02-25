@@ -59,6 +59,45 @@
         lock.get())
 
 namespace ultralight_java {
+    ManagedJavascriptPrivateData::ManagedJavascriptPrivateData(JNIEnv *env, jobject reference) : reference(env->NewGlobalRef(reference)), ref_count(0) {
+    }
+
+    ManagedJavascriptPrivateData::~ManagedJavascriptPrivateData() {
+        assert(ref_count == 0);
+    }
+
+    jobject ManagedJavascriptPrivateData::get_inner() const {
+        return reference;
+    }
+
+    void ManagedJavascriptPrivateData::ref() {
+        assert(ref_count >= 0);
+        ref_count++;
+    }
+
+    bool ManagedJavascriptPrivateData::deref() {
+        assert(ref_count > 0);
+        return --ref_count == 0;
+    }
+
+    uint64_t ManagedJavascriptPrivateData::get_ref_count() const {
+        return ref_count;
+    }
+
+    void ManagedJavascriptPrivateData::swap(JNIEnv *env, jobject new_reference) {
+        assert(ref_count > 0);
+
+        if(reference) {
+            env->DeleteGlobalRef(reference);
+        }
+
+        if(new_reference) {
+            reference = env->NewGlobalRef(new_reference);
+        } else {
+            reference = nullptr;
+        }
+    }
+
     ManagedJavascriptFunctionContainer::ManagedJavascriptFunctionContainer()
         : java_initializer(nullptr),
           java_finalizer(nullptr),
@@ -83,29 +122,34 @@ namespace ultralight_java {
 
     void ManagedJavascriptCallbacks::initialize(JSContextRef ctx, JSClassRef clazz, JSObjectRef object) {
         auto *class_data = reinterpret_cast<ManagedJavascriptClassData *>(JSClassGetPrivate(clazz));
+        auto *private_data = reinterpret_cast<ManagedJavascriptPrivateData *>(JSObjectGetPrivate(object));
+        private_data->ref();
 
-        TemporaryJNI env;
-        LocalJNIReferenceWrapper<jobject> java_lock(env, JavascriptContextLockJNI::create(env, ctx));
-        auto java_context = WRAP_CONTEXT(env, ctx, java_lock);
-        auto java_object = WRAP_OBJECT(env, ctx, object, java_lock);
-        if(env->ExceptionCheck() && java_lock) {
+        if(class_data->functions.java_initializer) {
+            TemporaryJNI env;
+            LocalJNIReferenceWrapper<jobject> java_lock(env, JavascriptContextLockJNI::create(env, ctx));
+            auto java_context = WRAP_CONTEXT(env, ctx, java_lock);
+            auto java_object = WRAP_OBJECT(env, ctx, object, java_lock);
+            if(env->ExceptionCheck() && java_lock) {
+                env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+            }
+            ProxiedJavaException::throw_if_any(env);
+
+            env->CallVoidMethod(
+                class_data->functions.java_initializer,
+                runtime.javascript_object_initializer.initialize_javascript_object_method,
+                java_context.get(),
+                java_object.get());
+
             env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
+
+            ProxiedJavaException::throw_if_any(env);
         }
-        ProxiedJavaException::throw_if_any(env);
-
-        env->CallVoidMethod(
-            class_data->functions.java_initializer,
-            runtime.javascript_object_initializer.initialize_javascript_object_method,
-            java_context.get(),
-            java_object.get());
-
-        env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
-
-        ProxiedJavaException::throw_if_any(env);
     }
 
     void ManagedJavascriptCallbacks::finalize(JSClassRef clazz, JSObjectRef object) {
         auto *class_data = reinterpret_cast<ManagedJavascriptClassData *>(JSClassGetPrivate(clazz));
+        auto *private_data = reinterpret_cast<ManagedJavascriptPrivateData *>(JSObjectGetPrivate(object));
 
         TemporaryJNI env;
         if(class_data->functions.java_finalizer) {
@@ -122,9 +166,10 @@ namespace ultralight_java {
                 java_object.get());
         }
 
-        auto private_data = reinterpret_cast<jobject>(JSObjectGetPrivate(object));
-        if(private_data && env->GetObjectRefType(private_data) == JNIGlobalRefType) {
-            env->DeleteGlobalRef(private_data);
+
+        if(private_data->deref()) {
+            env->DeleteGlobalRef(private_data->get_inner());
+            delete private_data;
         }
 
         ProxiedJavaException::throw_if_any(env);

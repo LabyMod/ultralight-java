@@ -24,6 +24,7 @@
 #include <ultralight_java/ultralight_java_instance.hpp>
 
 #include "ultralight_java/java_bridges/javascript_context_lock_jni.hpp"
+#include "ultralight_java/platform/managed_javascript_class.hpp"
 #include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {
@@ -295,7 +296,8 @@ namespace ultralight_java {
             return nullptr;
         }
 
-        return reinterpret_cast<jobject>(JSObjectGetPrivate(object));
+        auto *data = reinterpret_cast<ManagedJavascriptPrivateData *>(JSObjectGetPrivate(object));
+        return data == nullptr ? nullptr : data->get_inner();
     }
 
     void JavascriptObjectJNI::set_private(JNIEnv *env, jobject java_instance, jobject java_data) {
@@ -304,12 +306,8 @@ namespace ultralight_java {
             return;
         }
 
-        auto existing = reinterpret_cast<jobject>(JSObjectGetPrivate(object));
-        if(existing && env->GetObjectRefType(existing) != JNIInvalidRefType) {
-            env->DeleteGlobalRef(existing);
-        }
-
-        JSObjectSetPrivate(object, env->NewGlobalRef(java_data));
+        auto existing = reinterpret_cast<ManagedJavascriptPrivateData *>(JSObjectGetPrivate(object));
+        existing->swap(env, java_data);
     }
 
     jboolean JavascriptObjectJNI::is_function(JNIEnv *env, jobject java_instance) {

@@ -475,7 +475,8 @@ namespace ultralight_java {
                  "Ljava/lang/String;"
                  "I"
                  ")Lcom/labymedia/ultralight/javascript/JavascriptObject;",
-                 JavascriptContextJNI::make_function)};
+                 JavascriptContextJNI::make_function),
+             NATIVE_METHOD("garbageCollect", "()V", JavascriptContextJNI::garbage_collect)};
 
         runtime.javascript_context_lock.native_methods =
             {NATIVE_METHOD(
