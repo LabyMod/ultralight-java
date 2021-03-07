@@ -89,6 +89,13 @@ public class UltralightPlatform implements ObjectWithHandle {
     public native void setGPUDriver(UltralightGPUDriver gpuDriver);
 
     /**
+     * Set the GPU driver implementation
+     *
+     * @param handle The pointer to the GPU driver
+     */
+    public native void setGPUDriverPointer(long handle);
+
+    /**
      * Set the Clipboard (will be used for all clipboard operations).
      *
      * @param clipboard A user-defined Clipboard implementation

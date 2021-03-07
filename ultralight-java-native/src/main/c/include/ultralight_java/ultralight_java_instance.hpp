@@ -66,7 +66,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 8> native_methods;
+            std::array<JNINativeMethod, 9> native_methods;
         } ultralight_platform;
 
         struct {
@@ -952,7 +952,7 @@ namespace ultralight_java {
         /**
          * Current global GPU driver instance, or nullptr, if none
          */
-         BridgedGPUDriver *bridged_gpu_driver;
+        ultralight::GPUDriver *bridged_gpu_driver;
 
         /**
          * Current global clipboard instance, or nullptr, if none

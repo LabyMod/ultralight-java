@@ -225,6 +225,25 @@ namespace ultralight_java {
 
     }
 
+    void UltralightPlatformJNI::set_gpu_driver_pointer(JNIEnv *env, jobject java_instance, jlong handle) {
+        auto *platform = reinterpret_cast<ultralight::Platform *>(
+            env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
+
+        if (env->ExceptionCheck())
+            return;
+
+        platform->set_gpu_driver(nullptr);
+
+        delete runtime.bridged_gpu_driver;
+        if (handle) {
+            auto *driver = (ultralight::GPUDriver *) handle;
+            runtime.bridged_gpu_driver = driver;
+            platform->set_gpu_driver(driver);
+        } else {
+            runtime.bridged_gpu_driver = nullptr;
+        }
+    }
+
     void UltralightPlatformJNI::set_clipboard(JNIEnv *env, jobject java_instance, jobject java_clipboard) {
         // Retrieve the native platform pointer from the java object
         auto *platform = reinterpret_cast<ultralight::Platform *>(

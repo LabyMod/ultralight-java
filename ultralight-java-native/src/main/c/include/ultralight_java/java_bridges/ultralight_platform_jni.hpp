@@ -26,11 +26,11 @@ namespace ultralight_java {
      * Class used for interfacing with ultralight::Platform from java.
      */
     class UltralightPlatformJNI {
-    private:
+      private:
         // Global ref to a java instance object
         static jobject global_instance;
 
-    public:
+      public:
         /**
          * Retrieves the java object matching the platform instance object.
          * If the instance does not exist yet, it is created.
@@ -83,7 +83,16 @@ namespace ultralight_java {
          * @param java_instance The instance of the platform as a java object
          * @param java_gpu_driver The java gpu driver object
          */
-         static void set_gpu_driver(JNIEnv *env, jobject java_instance, jobject java_gpu_driver);
+        static void set_gpu_driver(JNIEnv *env, jobject java_instance, jobject java_gpu_driver);
+
+        /**
+         * Sets the GPU driver to the provided java one.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The instance of the platform as a java object
+         * @param handle The pointer to the gpu driver object
+         */
+        static void set_gpu_driver_pointer(JNIEnv *env, jobject java_instance, jlong handle);
 
         /**
          * Sets the internal clipboard to the provided java one
@@ -102,5 +111,7 @@ namespace ultralight_java {
          * @param java_logger The java logger object
          */
         static void set_logger(JNIEnv *env, jobject java_instance, jobject java_logger);
+
+        static void use_opengl_driver(JNIEnv *env, jobject java_instance);
     };
 }

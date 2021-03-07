@@ -61,6 +61,10 @@ namespace ultralight_java {
                  "(Lcom/labymedia/ultralight/plugin/render/UltralightGPUDriver;)V",
                  UltralightPlatformJNI::set_gpu_driver),
              NATIVE_METHOD(
+                 "setGPUDriverPointer",
+                 "(J)V",
+                 UltralightPlatformJNI::set_gpu_driver_pointer),
+             NATIVE_METHOD(
                  "setClipboard",
                  "(Lcom/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
                  UltralightPlatformJNI::set_clipboard),
