@@ -29,10 +29,10 @@ endif ()
 set(ULTRALIGHT_DIR "${CMAKE_CURRENT_BINARY_DIR}/ultralight-${ULTRALIGHT_OS_NAME}-${ULTRALIGHT_ARCH}")
 set(ULTRALIGHT_ARCHIVE "${ULTRALIGHT_DIR}/ultralight.7z")
 # d1b164895859be1fa3dadf4caf0ef017ef21e5a5
-# Fix bug with Bitmap::WritePNG ignoring internal row bytes configuration.
+# Fix build error on macOS when copying resources to bundle in standalone SDK build.
 #
-# https://github.com/ultralight-ux/Ultralight/commit/d1b164895859be1fa3dadf4caf0ef017ef21e5a5
-set(ULTRALIGHT_VERSION "d1b1648")
+# https://github.com/ultralight-ux/Ultralight/commit/adcae14da210045b9994e5d8f7859c02bf0e13db
+set(ULTRALIGHT_VERSION "adcae14")
 
 # Check the version of ultralight
 set(ULTRALIGHT_VERSION_FILE "${ULTRALIGHT_DIR}/.version")

@@ -27,6 +27,61 @@
 
 namespace ultralight_java {
     /**
+     * Private data of a Javascript managed object
+     */
+    class ManagedJavascriptPrivateData {
+    private:
+        jobject reference;
+        uint64_t ref_count;
+
+
+    public:
+        /**
+         * Initializes the private data with the given reference and sets the
+         * ref count to 0.
+         *
+         * @param reference The reference to make a global reference from
+         */
+        explicit ManagedJavascriptPrivateData(JNIEnv *env, jobject reference);
+        ~ManagedJavascriptPrivateData();
+
+        /**
+         * Retrieves the jobject representation of this data.
+         *
+         * @return The jobject representation
+         */
+        jobject get_inner() const;
+
+        /**
+         * Increments the reference count of this private data.
+         */
+        void ref();
+
+        /**
+         * Decrements the reference count of this private data.
+         * If this method returns true, the caller is responsible to free the internal global reference.
+         *
+         * @return true, if the count reached 0 and the reference should be cleaned up, false otherwise
+         */
+        bool deref();
+
+        /**
+         * Retrieves the current ref count.
+         *
+         * @return The current ref count
+         */
+        uint64_t get_ref_count() const;
+
+        /**
+         * Swaps the reference internally and deletes the old one.
+         *
+         * @param env The environment to use for swapping
+         * @param new_reference The new reference to carry
+         */
+        void swap(JNIEnv *env, jobject new_reference);
+    };
+
+    /**
      * Helper struct containing operations which Javascript can invoke on a bridged object.
      */
     struct ManagedJavascriptFunctionContainer {
