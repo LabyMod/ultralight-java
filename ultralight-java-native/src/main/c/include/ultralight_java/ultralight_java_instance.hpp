@@ -76,18 +76,9 @@ namespace ultralight_java {
 
             /* String */ jfieldID resource_path_field;
             /* String */ jfieldID cache_path_field;
-            /* boolean */ jfieldID use_gpu_renderer_field;
-            /* double */ jfieldID device_scale_field;
             /* FaceWinding */ jfieldID face_winding_field;
-            /* boolean */ jfieldID enable_images_field;
-            /* boolean */ jfieldID enable_javascript_field;
             /* FontHinting */ jfieldID font_hinting_field;
             /* double */ jfieldID font_gamma_field;
-            /* String */ jfieldID font_family_standard_field;
-            /* String */ jfieldID font_family_fixed_field;
-            /* String */ jfieldID font_family_serif_field;
-            /* String */ jfieldID font_family_sans_serif_field;
-            /* String */ jfieldID user_agent_field;
             /* String */ jfieldID user_stylesheet_field;
             /* boolean */ jfieldID force_repaint_field;
             /* double */ jfieldID animation_timer_delay_field;
@@ -99,6 +90,25 @@ namespace ultralight_java {
             /* long */ jfieldID min_large_heap_size_field;
             /* long */ jfieldID min_small_heap_size_field;
         } ultralight_config;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /* boolean */ jfieldID is_accelerated_field;
+            /* boolean */ jfieldID is_transparent_field;
+            /* double */ jfieldID initial_device_scale_field;
+            /* boolean */ jfieldID initial_focus_field;
+            /* boolean */ jfieldID enable_images_field;
+            /* boolean */ jfieldID enable_javascript_field;
+            /* String */ jfieldID font_family_standard_field;
+            /* String */ jfieldID font_family_fixed_field;
+            /* String */ jfieldID font_family_serif_field;
+            /* String */ jfieldID font_family_sans_serif_field;
+            /* String */ jfieldID user_agent_field;
+        } ultralight_view_config;
 
         struct {
             /**

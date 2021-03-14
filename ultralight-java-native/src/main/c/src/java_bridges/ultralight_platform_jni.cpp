@@ -28,20 +28,6 @@
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
 
-#define ASSIGN_CONFIG_STRING(name, msg)                                                                                \
-    if(!JNI_STRING16_OR_NPE(                                                                                           \
-           config.name, env, env->GetObjectField(java_config, runtime.ultralight_config.name##_field), msg)) {         \
-        return;                                                                                                        \
-    }                                                                                                                  \
-    void()
-
-#define ASSIGN_CONFIG(type, name)                                                                                      \
-    config.name = env->Get##type##Field(java_config, runtime.ultralight_config.name##_field);                          \
-    if(env->ExceptionCheck()) {                                                                                        \
-        return;                                                                                                        \
-    }                                                                                                                  \
-    void()
-
 namespace ultralight_java {
     jobject UltralightPlatformJNI::global_instance = nullptr;
 
@@ -87,8 +73,6 @@ namespace ultralight_java {
             }
         }
 
-        ASSIGN_CONFIG(Boolean, use_gpu_renderer);
-        ASSIGN_CONFIG(Double, device_scale);
         // Retrieve the face winding field
         jobject java_face_winding = env->GetObjectField(java_config, config_type.face_winding_field);
         if(!java_face_winding) {
@@ -102,8 +86,6 @@ namespace ultralight_java {
             // by the function
             return;
         }
-        ASSIGN_CONFIG(Boolean, enable_images);
-        ASSIGN_CONFIG(Boolean, enable_javascript);
         // Retrieve the font hinting field
         jobject java_font_hinting = env->GetObjectField(java_config, config_type.font_hinting_field);
         if(!java_font_hinting) {
@@ -118,11 +100,6 @@ namespace ultralight_java {
             return;
         }
         ASSIGN_CONFIG(Double, font_gamma);
-        ASSIGN_CONFIG_STRING(font_family_standard, "fontFamilyStandard can't be null");
-        ASSIGN_CONFIG_STRING(font_family_fixed, "fonFamilyFixed can't be null");
-        ASSIGN_CONFIG_STRING(font_family_serif, "fontFamilySerif can't be null");
-        ASSIGN_CONFIG_STRING(font_family_sans_serif, "fontFamilySansSerif can't be null");
-        ASSIGN_CONFIG_STRING(user_agent, "userAgent can't be null");
         ASSIGN_CONFIG_STRING(user_stylesheet, "userStylesheet can't be null");
         ASSIGN_CONFIG(Boolean, force_repaint);
         ASSIGN_CONFIG(Double, animation_timer_delay);
