@@ -22,18 +22,17 @@ package com.labymedia.ultralight.lwjgl3.opengl.support;
 import com.labymedia.ultralight.UltralightPlatform;
 import com.labymedia.ultralight.UltralightRenderer;
 import com.labymedia.ultralight.UltralightView;
-import com.labymedia.ultralight.bitmap.UltralightBitmap;
-import com.labymedia.ultralight.bitmap.UltralightBitmapSurface;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
+import com.labymedia.ultralight.gpu.GPUDriverGL;
+import com.labymedia.ultralight.gpu.GPUDriverUtil;
+import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
-import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
-import com.labymedia.ultralight.math.IntRect;
-
-import java.nio.ByteBuffer;
+import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL30;
 
 import static org.lwjgl.opengl.GL20.*;
 
@@ -42,11 +41,15 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class WebController {
     private final UltralightPlatform platform;
-    private final UltralightRenderer renderer;
-    private final UltralightView view;
-    private final ExampleViewListener viewListener;
-    private final ExampleLoadListener loadListener;
-    private final InputAdapter inputAdapter;
+    private final CursorAdapter cursorManager;
+    private final long window;
+    private UltralightRenderer renderer;
+    private UltralightView view;
+    private ExampleViewListener viewListener;
+    private ExampleLoadListener loadListener;
+    private InputAdapter inputAdapter;
+
+    private GPUDriverGL driver;
 
     private int glTexture;
 
@@ -55,20 +58,32 @@ public class WebController {
      *
      * @param cursorManager Cursor manager for callbacks on cursor changes
      */
-    public WebController(CursorAdapter cursorManager) {
+    public WebController(CursorAdapter cursorManager, long window) {
+        this.cursorManager = cursorManager;
+        this.window = window;
         this.platform = UltralightPlatform.instance();
+
+
 
         this.platform.setConfig(
                 new UltralightConfig()
                         .resourcePath("./resources/")
                         .fontHinting(FontHinting.NORMAL)
                         .deviceScale(1.0)
+                        .useGpuRenderer(true)
         );
         this.platform.usePlatformFontLoader();
         this.platform.setFileSystem(new ExampleFileSystem());
         this.platform.setLogger(new ExampleLogger());
         this.platform.setClipboard(new ClipboardAdapter());
 
+
+    }
+
+    public void initGPUDriver() {
+        this.driver = new GPUDriverGL(1.0f, false, false);
+
+        this.platform.setGPUDriverPointer(this.driver.getDriverHandle());
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
 
@@ -105,7 +120,7 @@ public class WebController {
      */
     public void update() {
         this.renderer.update();
-        this.renderer.render();
+        //this.renderer.render();
     }
 
     /**
@@ -122,7 +137,39 @@ public class WebController {
      * Render the current image using OpenGL
      */
     public void render() {
-        if(glTexture == -1) {
+
+
+        glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
+        this.renderer.render();
+
+
+
+
+
+        this.driver.beginSynchronize();
+        // overlay
+        this.driver.endSynchronize();
+
+        if (this.driver.hasCommandsPending()) {
+            //GLFW.glfwMakeContextCurrent(this.window);
+            this.driver.drawCommandList();
+            //GLFW.glfwSwapBuffers(this.window);
+        }
+        glPopAttrib();
+
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+
+        long text = this.view.renderTarget().textureId;
+        long buffer = this.view.renderTarget().renderBufferId;
+        float[] uv = this.view.renderTarget().uv_coords;
+        int width = (int) view.width();
+        int height = (int) view.height();
+        glEnable(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, (int) text);
+        //GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, (int) buffer);
+
+        /*if(glTexture == -1) {
             createGLTexture();
         }
 
@@ -166,7 +213,7 @@ public class WebController {
 
             bitmap.unlockPixels();
             surface.clearDirtyBounds();
-        }
+        }*/
 
         // Set up the OpenGL state for rendering of a fullscreen quad
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
@@ -187,7 +234,7 @@ public class WebController {
 
         // Make sure we draw with a neutral color
         // (so we don't mess with the color channels of the image)
-        glColor4f(1, 1, 1, 1f);
+        glColor4f(1, 1, 1, 0.5f);
 
         glBegin(GL_QUADS);
 

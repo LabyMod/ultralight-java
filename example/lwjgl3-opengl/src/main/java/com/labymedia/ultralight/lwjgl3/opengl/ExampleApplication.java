@@ -42,7 +42,7 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class ExampleApplication {
     private final long window;
-    private final InputAdapter inputAdapter;
+    private InputAdapter inputAdapter;
     private final CursorAdapter cursorManager;
     private final WebController webController;
 
@@ -68,17 +68,8 @@ public class ExampleApplication {
 
         // Set up various internal controllers
         this.cursorManager = new CursorAdapter(window);
-        this.webController = new WebController(cursorManager);
-        this.inputAdapter = webController.getInputAdapter();
+        this.webController = new WebController(cursorManager, window);
 
-        // Register all the GLFW callbacks required by this application
-        setCallback(GLFW::glfwSetWindowContentScaleCallback, inputAdapter::windowContentScaleCallback);
-        setCallback(GLFW::glfwSetKeyCallback, inputAdapter::keyCallback);
-        setCallback(GLFW::glfwSetCharCallback, inputAdapter::charCallback);
-        setCallback(GLFW::glfwSetCursorPosCallback, inputAdapter::cursorPosCallback);
-        setCallback(GLFW::glfwSetMouseButtonCallback, inputAdapter::mouseButtonCallback);
-        setCallback(GLFW::glfwSetScrollCallback, inputAdapter::scrollCallback);
-        setCallback(GLFW::glfwSetWindowFocusCallback, inputAdapter::focusCallback);
     }
 
     /**
@@ -166,6 +157,20 @@ public class ExampleApplication {
 
         // Initialize OpenGL capabilities
         GL.createCapabilities();
+
+        webController.initGPUDriver();
+
+        this.inputAdapter = webController.getInputAdapter();
+
+        // Register all the GLFW callbacks required by this application
+        setCallback(GLFW::glfwSetWindowContentScaleCallback, inputAdapter::windowContentScaleCallback);
+        setCallback(GLFW::glfwSetKeyCallback, inputAdapter::keyCallback);
+        setCallback(GLFW::glfwSetCharCallback, inputAdapter::charCallback);
+        setCallback(GLFW::glfwSetCursorPosCallback, inputAdapter::cursorPosCallback);
+        setCallback(GLFW::glfwSetMouseButtonCallback, inputAdapter::mouseButtonCallback);
+        setCallback(GLFW::glfwSetScrollCallback, inputAdapter::scrollCallback);
+        setCallback(GLFW::glfwSetWindowFocusCallback, inputAdapter::focusCallback);
+
 
         // Manually update focus for the first time
         inputAdapter.focusCallback(window, glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0);

@@ -35,7 +35,8 @@ public class OpenGLDrawer {
         glEnable(GL_ALPHA_TEST);
 
         glPushMatrix();
-        glRotatef(rotation++, 0, 0, 1);
+        rotation += 0.01;
+        glRotatef(rotation, 0, 0, 1);
         glBegin(GL_TRIANGLES);
 
 
