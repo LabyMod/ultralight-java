@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2020 - 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -170,8 +170,8 @@ public class JavascriptContext implements ObjectWithHandle, JavascriptLockedObje
      * @param name               The name of the function, or {@code null}, to create an anonymous function
      * @param parameterNames     The names of the parameters passed to the function, or {@code null}, if none
      * @param body               The body of the function
-     * @param sourceUrl          The URL where the function body originates from, used for exception reporting,
-     *                           can be {@code null} to exclude this information
+     * @param sourceUrl          The URL where the function body originates from, used for exception reporting, can be
+     *                           {@code null} to exclude this information
      * @param startingLineNumber The line number where the function has been declared, used for exception reporting,
      *                           values are clamped to 1 if they are invalid
      * @return The created function
@@ -184,6 +184,15 @@ public class JavascriptContext implements ObjectWithHandle, JavascriptLockedObje
             String sourceUrl,
             int startingLineNumber
     ) throws JavascriptException;
+
+    /**
+     * Performs Javascript garbage collection.
+     * <p>
+     * In theory, there is no need to call this manually while the Javascript engine is running. However, if you are
+     * converting many Java objects to Javascript objects it is recommended to call this from time to time in order to
+     * not block the JVM garbage collector.
+     */
+    public native void garbageCollect();
 
     @Override
     public void contextUnlocking() {

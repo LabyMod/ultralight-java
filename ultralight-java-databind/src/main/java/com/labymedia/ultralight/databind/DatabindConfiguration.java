@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2020 - 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight;
+package com.labymedia.ultralight.databind;
 
-import com.labymedia.ultralight.context.ContextProviderFactory;
-import com.labymedia.ultralight.cache.JavascriptClassCache;
-import com.labymedia.ultralight.cache.NaiveJavascriptClassCache;
-import com.labymedia.ultralight.call.HeuristicMethodChooser;
-import com.labymedia.ultralight.call.MethodChooser;
+import com.labymedia.ultralight.databind.cache.JavascriptClassCache;
+import com.labymedia.ultralight.databind.cache.NaiveJavascriptClassCache;
+import com.labymedia.ultralight.databind.call.HeuristicMethodChooser;
+import com.labymedia.ultralight.databind.call.MethodChooser;
+import com.labymedia.ultralight.databind.context.ContextProviderFactory;
 
 /**
  * Databind configuration.

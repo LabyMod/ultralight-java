@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2020 - 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,11 +17,11 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight;
+package com.labymedia.ultralight.databind;
 
+import com.labymedia.ultralight.databind.utils.JavascriptConversionUtils;
 import com.labymedia.ultralight.javascript.*;
 import com.labymedia.ultralight.javascript.*;
-import com.labymedia.ultralight.utils.JavascriptConversionUtils;
 
 import java.util.ArrayList;
 import java.util.List;

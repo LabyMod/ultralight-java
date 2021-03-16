@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2020 - 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,11 +19,11 @@
 
 package com.labymedia.ultralight.lwjgl3.opengl.listener;
 
-import com.labymedia.ultralight.Databind;
-import com.labymedia.ultralight.DatabindConfiguration;
-import com.labymedia.ultralight.DatabindJavascriptClass;
 import com.labymedia.ultralight.UltralightView;
-import com.labymedia.ultralight.api.JavaAPI;
+import com.labymedia.ultralight.databind.Databind;
+import com.labymedia.ultralight.databind.DatabindConfiguration;
+import com.labymedia.ultralight.databind.DatabindJavascriptClass;
+import com.labymedia.ultralight.databind.api.JavaAPI;
 import com.labymedia.ultralight.javascript.*;
 import com.labymedia.ultralight.lwjgl3.opengl.support.ViewContextProvider;
 import com.labymedia.ultralight.plugin.loading.UltralightLoadListener;

@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -475,7 +475,8 @@ namespace ultralight_java {
                  "Ljava/lang/String;"
                  "I"
                  ")Lcom/labymedia/ultralight/javascript/JavascriptObject;",
-                 JavascriptContextJNI::make_function)};
+                 JavascriptContextJNI::make_function),
+             NATIVE_METHOD("garbageCollect", "()V", JavascriptContextJNI::garbage_collect)};
 
         runtime.javascript_context_lock.native_methods =
             {NATIVE_METHOD(

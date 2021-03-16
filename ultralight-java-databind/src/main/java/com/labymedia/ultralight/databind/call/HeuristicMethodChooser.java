@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2020 - 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,12 +17,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.call;
+package com.labymedia.ultralight.databind.call;
 
-import com.labymedia.ultralight.api.InjectJavascriptContext;
+import com.labymedia.ultralight.databind.api.InjectJavascriptContext;
+import com.labymedia.ultralight.databind.utils.JavascriptConversionUtils;
 import com.labymedia.ultralight.javascript.JavascriptObject;
 import com.labymedia.ultralight.javascript.JavascriptValue;
-import com.labymedia.ultralight.utils.JavascriptConversionUtils;
 
 import java.lang.reflect.Executable;
 import java.lang.reflect.Modifier;
@@ -60,12 +60,13 @@ public final class HeuristicMethodChooser implements MethodChooser {
             // It is required to know if we need to shift parameter selection by one if the method
             // needs a Javascript context
             boolean injectContext = executable.isAnnotationPresent(InjectJavascriptContext.class);
-
+            int paramMod = injectContext ? 1 : 0;
+            
             int currentPenalty = 0;
             CallData.VarArgsType varArgsType = null;
 
             Parameter[] parameters = executable.getParameters();
-            if (parameters.length != sourceParameterTypes.length + (injectContext ? 1 : 0)) {
+            if (parameters.length != sourceParameterTypes.length + paramMod) {
                 // Parameter count does not match
                 if (!executable.isVarArgs() || sourceParameterTypes.length < parameters.length - (injectContext ? 0 : 1)) {
                     // The method is either not a var args executable or even when the var args are not filled, the
@@ -74,20 +75,24 @@ public final class HeuristicMethodChooser implements MethodChooser {
                 }
             }
 
-            for (int i = 0; i < parameters.length - (injectContext ? 1 : 0); i++) {
-                if (i + (injectContext ? 1 : 0) == parameters.length - 1 && executable.isVarArgs()) {
+            for (int i = 0; i < parameters.length - paramMod; i++) {
+                Class<?> type = sourceParameterTypes[i];
+                if (type == null) {
+                    // null/undefined parameter provided
+                    continue;
+                }
+
+                if (i + paramMod == parameters.length - 1 && executable.isVarArgs()) {
                     // Last parameter is var args, special handling required
                     if (sourceParameterTypes.length < parameters.length) {
                         // Var args not supplied at all
                         varArgsType = CallData.VarArgsType.EMPTY;
-                    } else if (sourceParameterTypes[i].isArray() && sourceParameterTypes.length == parameters.length) {
-                        if (parameters[i + (injectContext ? 1 : 0)].getType()
-                                .isAssignableFrom(sourceParameterTypes[i])) {
+                    } else if (type.isArray() && sourceParameterTypes.length == parameters.length) {
+                        if (parameters[i + paramMod].getType().isAssignableFrom(type)) {
                             // Var args array can be passed through as the array types match
                             varArgsType = CallData.VarArgsType.PASS_THROUGH;
                         } else {
-                            if (!parameters[i + (injectContext ? 1 : 0)].getType().getComponentType()
-                                    .isAssignableFrom(sourceParameterTypes[i])) {
+                            if (!parameters[i + paramMod].getType().getComponentType().isAssignableFrom(type)) {
                                 // Method parameter can't be compacted down
                                 continue tryNextMethod;
                             }
@@ -104,7 +109,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
                         for (int x = i; x < sourceParameterTypes.length; x++) {
                             // Sum up the penalties for every method parameter
                             int argPenalty = calculatePenalty(
-                                    parameters[i + (injectContext ? 1 : 0)].getType().getComponentType(),
+                                    parameters[i + paramMod].getType().getComponentType(),
                                     sourceParameterTypes[x],
                                     javascriptValues[x]
                             );
@@ -121,7 +126,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
                     }
                 } else {
                     int argPenalty = calculatePenalty(
-                            parameters[i + (injectContext ? 1 : 0)].getType(),
+                            parameters[i + paramMod].getType(),
                             sourceParameterTypes[i],
                             javascriptValues[i]
                     );
@@ -212,7 +217,11 @@ public final class HeuristicMethodChooser implements MethodChooser {
     }
 
     private int calculatePenalty(Class<?> target, Class<?> source, JavascriptValue value) {
-        if (target == JavascriptValue.class) {
+        if (target == Object.class) {
+            // The target accepts any parameter, but higher penalty because there might be methods that are
+            // more specific
+            return 100;
+        } else if (target == JavascriptValue.class) {
             // No casting required at all, as the value can be passed directly
             return 0;
         } else if (target == JavascriptObject.class) {

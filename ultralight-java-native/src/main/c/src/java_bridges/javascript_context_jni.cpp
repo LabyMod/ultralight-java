@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@
 #include <JavaScriptCore/JavaScript.h>
 #include <ultralight_java/ultralight_java_instance.hpp>
 
+#include "ultralight_java/platform/managed_javascript_class.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/util.hpp"
 
@@ -63,6 +64,8 @@ namespace ultralight_java {
         }
 
         JSObjectRef global_object = JSContextGetGlobalObject(context);
+
+        JSValueProtect(context, global_object);
 
         return env->NewObject(
             runtime.javascript_object.clazz,
@@ -201,7 +204,10 @@ namespace ultralight_java {
             return nullptr;
         }
 
-        auto object = JSObjectMake(context, clazz, env->NewGlobalRef(private_data));
+        auto *managed_private = new ManagedJavascriptPrivateData(env, private_data);
+        auto object = JSObjectMake(context, clazz, managed_private);
+
+        JSValueProtect(context, object);
 
         return env->NewObject(
             runtime.javascript_object.clazz,
@@ -384,5 +390,14 @@ namespace ultralight_java {
             runtime.javascript_object.constructor,
             reinterpret_cast<jlong>(function),
             lock);
+    }
+
+    void JavascriptContextJNI::garbage_collect(JNIEnv *env, jobject java_instance) {
+        auto [ok, context, lock] = extract(env, java_instance);
+        if(!ok) {
+            return;
+        }
+
+        JSGarbageCollect(context);
     }
 } // namespace ultralight_java

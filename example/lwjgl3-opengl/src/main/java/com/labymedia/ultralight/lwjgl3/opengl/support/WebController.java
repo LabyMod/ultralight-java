@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2020 - 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -26,6 +26,7 @@ import com.labymedia.ultralight.bitmap.UltralightBitmap;
 import com.labymedia.ultralight.bitmap.UltralightBitmapSurface;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
+import com.labymedia.ultralight.javascript.JavascriptContextLock;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
@@ -49,6 +50,7 @@ public class WebController {
     private final InputAdapter inputAdapter;
 
     private int glTexture;
+    private long lastJavascriptGarbageCollections;
 
     /**
      * Constructs a new {@link WebController} and retrieves the platform.
@@ -77,7 +79,9 @@ public class WebController {
         this.view.setViewListener(viewListener);
         this.loadListener = new ExampleLoadListener(view);
         this.view.setLoadListener(loadListener);
+
         this.glTexture = -1;
+        this.lastJavascriptGarbageCollections = 0;
 
         this.inputAdapter = new InputAdapter(view);
     }
@@ -106,6 +110,16 @@ public class WebController {
     public void update() {
         this.renderer.update();
         this.renderer.render();
+
+        if(lastJavascriptGarbageCollections == 0) {
+            lastJavascriptGarbageCollections = System.currentTimeMillis();
+        } else if(System.currentTimeMillis() - lastJavascriptGarbageCollections > 1000) {
+            System.out.println("Garbage collecting Javascript...");
+            try(JavascriptContextLock lock = this.view.lockJavascriptContext()) {
+                lock.getContext().garbageCollect();
+            }
+            lastJavascriptGarbageCollections = System.currentTimeMillis();
+        }
     }
 
     /**

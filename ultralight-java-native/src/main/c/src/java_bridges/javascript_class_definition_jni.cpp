@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -381,9 +381,7 @@ namespace ultralight_java {
             class_definition.staticFunctions = nullptr;
         }
 
-        class_definition.initializeEx = description->data.functions.java_initializer ?
-                                            &ManagedJavascriptCallbacks::initialize :
-                                            nullptr;
+        class_definition.initializeEx = &ManagedJavascriptCallbacks::initialize;
         class_definition.finalizeEx = &ManagedJavascriptCallbacks::finalize;
         class_definition.hasPropertyEx = description->data.functions.java_has_property_tester ?
                                              &ManagedJavascriptCallbacks::has_property :

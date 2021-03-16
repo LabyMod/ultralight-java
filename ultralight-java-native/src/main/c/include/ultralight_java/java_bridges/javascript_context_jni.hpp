@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 LabyMedia and contributors
+ * Copyright (C) 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -185,5 +185,13 @@ namespace ultralight_java {
             jstring java_body,
             jstring java_source_url,
             jint starting_line_number);
+
+        /**
+         * Performs Javascript garbage collection on the context.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param java_instance The java instance of this context
+         */
+        static void garbage_collect(JNIEnv *env, jobject java_instance);
     };
 } // namespace ultralight_java
