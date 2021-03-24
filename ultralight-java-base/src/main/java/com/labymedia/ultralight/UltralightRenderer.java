@@ -22,6 +22,7 @@ package com.labymedia.ultralight;
 import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.annotation.Unsigned;
+import com.labymedia.ultralight.config.UltralightViewConfig;
 import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.ffi.RefPtr;
 
@@ -71,34 +72,16 @@ public class UltralightRenderer implements ObjectWithHandle {
     /**
      * Create a new View.
      *
-     * @param width       The initial width, in pixels.
-     * @param height      The initial height, in pixels.
-     * @param transparent Whether or not the view background is transparent.
-     * @return The created view
-     */
-    public UltralightView createView(
-            @NativeType("uint32_t") @Unsigned long width,
-            @NativeType("uint32_t") @Unsigned long height,
-            boolean transparent
-    ) {
-        return createView(width, height, transparent, false);
-    }
-
-    /**
-     * Create a new View.
-     *
-     * @param width            The initial width, in pixels.
-     * @param height           The initial height, in pixels.
-     * @param transparent      Whether or not the view background is transparent.
-     * @param forceCpuRenderer Whether or not the view should always use the CPU renderer.
+     * @param width   The initial width, in pixels.
+     * @param height  The initial height, in pixels.
+     * @param config  Configuration details for the View.
      *
      * @return The created view
      */
     public native UltralightView createView(
             @NativeType("uint32_t") @Unsigned long width,
             @NativeType("uint32_t") @Unsigned long height,
-            boolean transparent,
-            boolean forceCpuRenderer
+            UltralightViewConfig config
     );
 
     /**

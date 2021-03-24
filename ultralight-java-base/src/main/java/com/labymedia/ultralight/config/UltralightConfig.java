@@ -51,45 +51,12 @@ public class UltralightConfig {
     private String cachePath;
 
     /**
-     * When enabled, each View will be rendered to an offscreen GPU texture
-     * using the GPU driver set in Platform::set_gpu_driver. You can fetch
-     * details for the texture via View::render_target.
-     * <p>
-     * When disabled (the default), each View will be rendered to an offscreen
-     * pixel buffer. This pixel buffer can optionally be provided by the user--
-     * for more info see <Ultralight/platform/Surface.h> and View::surface.
-     */
-    @Native
-    private boolean useGpuRenderer = false;
-
-    /**
-     * The amount that the application DPI has been scaled (200% = 2.0).
-     * This should match the device scale set for the current monitor.
-     * <p>
-     * Note: Device scales are rounded to nearest 1/8th (eg, 0.125).
-     */
-    @Native
-    private double deviceScale = 1.0;
-
-    /**
      * The winding order for front-facing triangles. @see FaceWinding
      * <p>
      * Note: This is only used when the GPU renderer is enabled.
      */
     @Native
     private FaceWinding faceWinding = FaceWinding.COUNTER_CLOCKWISE;
-
-    /**
-     * Whether or not images should be enabled.
-     */
-    @Native
-    private boolean enableImages = true;
-
-    /**
-     * Whether or not JavaScript should be enabled.
-     */
-    @Native
-    private boolean enableJavascript = true;
 
     /**
      * The hinting algorithm to use when rendering fonts.
@@ -105,43 +72,6 @@ public class UltralightConfig {
      */
     @Native
     private double fontGamma = 1.8;
-
-    /**
-     * Default font-family to use.
-     */
-    @NativeType("ultralight::String16")
-    @Native
-    private String fontFamilyStandard = "Times New Roman";
-
-    /**
-     * Default font-family to use for fixed fonts. (pre/code)
-     */
-    @NativeType("ultralight::String16")
-    @Native
-    private String fontFamilyFixed = "Courier New";
-
-    /**
-     * Default font-family to use for serif fonts.
-     */
-    @NativeType("ultralight::String16")
-    @Native
-    private String fontFamilySerif = "Times New Roman";
-
-    /**
-     * Default font-family to use for sans-serif fonts.
-     */
-    @NativeType("ultralight::String16")
-    @Native
-    private String fontFamilySansSerif = "Arial";
-
-    /**
-     * Default user-agent string.
-     */
-    @NativeType("ultralight::String16")
-    @Native
-    private String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) " +
-            "AppleWebKit/608.3.10 (KHTML, like Gecko) " +
-            "Ultralight/1.2.0 Safari/608.3.10";
 
     /**
      * Default user stylesheet. You should set this to your own custom CSS
@@ -260,30 +190,6 @@ public class UltralightConfig {
     }
 
     /**
-     * Sets the useGpuRenderer field of this instance.
-     *
-     * @param useGpuRenderer The new value of the field
-     * @return this
-     * @see #useGpuRenderer
-     */
-    public UltralightConfig useGpuRenderer(boolean useGpuRenderer) {
-        this.useGpuRenderer = useGpuRenderer;
-        return this;
-    }
-
-    /**
-     * Sets the deviceScale field of this instance.
-     *
-     * @param deviceScale The new value of the field
-     * @return this
-     * @see #deviceScale
-     */
-    public UltralightConfig deviceScale(double deviceScale) {
-        this.deviceScale = deviceScale;
-        return this;
-    }
-
-    /**
      * Sets the faceWinding field of this instance.
      *
      * @param faceWinding The new value of the field
@@ -292,30 +198,6 @@ public class UltralightConfig {
      */
     public UltralightConfig faceWinding(FaceWinding faceWinding) {
         this.faceWinding = faceWinding;
-        return this;
-    }
-
-    /**
-     * Sets the enableImages field of this instance.
-     *
-     * @param enableImages The new value of the field
-     * @return this
-     * @see #enableImages
-     */
-    public UltralightConfig enableImages(boolean enableImages) {
-        this.enableImages = enableImages;
-        return this;
-    }
-
-    /**
-     * Sets the enableJavascript field of this instance.
-     *
-     * @param enableJavascript The new value of the field
-     * @return this
-     * @see #enableJavascript
-     */
-    public UltralightConfig enableJavascript(boolean enableJavascript) {
-        this.enableJavascript = enableJavascript;
         return this;
     }
 
@@ -340,66 +222,6 @@ public class UltralightConfig {
      */
     public UltralightConfig fontGamma(double fontGamma) {
         this.fontGamma = fontGamma;
-        return this;
-    }
-
-    /**
-     * Sets the fontFamilyStandard field of this instance.
-     *
-     * @param fontFamilyStandard The new value of the field
-     * @return this
-     * @see #fontFamilyStandard
-     */
-    public UltralightConfig fontFamilyStandard(String fontFamilyStandard) {
-        this.fontFamilyStandard = fontFamilyStandard;
-        return this;
-    }
-
-    /**
-     * Sets the fontFamilyFixed field of this instance.
-     *
-     * @param fontFamilyFixed The new value of the field
-     * @return this
-     * @see #fontFamilyFixed
-     */
-    public UltralightConfig fontFamilyFixed(String fontFamilyFixed) {
-        this.fontFamilyFixed = fontFamilyFixed;
-        return this;
-    }
-
-    /**
-     * Sets the fontFamilySerif field of this instance.
-     *
-     * @param fontFamilySerif The new value of the field
-     * @return this
-     * @see #fontFamilySerif
-     */
-    public UltralightConfig fontFamilySerif(String fontFamilySerif) {
-        this.fontFamilySerif = fontFamilySerif;
-        return this;
-    }
-
-    /**
-     * Sets the fontFamilySansSerif field of this instance.
-     *
-     * @param fontFamilySansSerif The new value of the field
-     * @return this
-     * @see #fontFamilySansSerif
-     */
-    public UltralightConfig fontFamilySansSerif(String fontFamilySansSerif) {
-        this.fontFamilySansSerif = fontFamilySansSerif;
-        return this;
-    }
-
-    /**
-     * Sets the userAgent field of this instance.
-     *
-     * @param userAgent The new value of the field
-     * @return this
-     * @see #userAgent
-     */
-    public UltralightConfig userAgent(String userAgent) {
-        this.userAgent = userAgent;
         return this;
     }
 

@@ -23,6 +23,7 @@ import com.labymedia.ultralight.UltralightRenderer;
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.annotation.Unsigned;
+import com.labymedia.ultralight.config.UltralightViewConfig;
 import com.labymedia.ultralight.math.IntRect;
 import com.labymedia.ultralight.input.UltralightCursor;
 
@@ -84,7 +85,7 @@ public interface UltralightViewListener {
      * window.open(url).
      * <p>
      * To allow creation of these new Views, you should create a new View in this callback (eg, {@link
-     * UltralightRenderer#createView(long, long, boolean)}), resize it to your container, and
+     * UltralightRenderer#createView(long, long, UltralightViewConfig)} )}), resize it to your container, and
      * return it. You are responsible for displaying the returned View.
      *
      * @param openerUrl The URL of the page that initiated this request

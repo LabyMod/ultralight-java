@@ -92,7 +92,9 @@ namespace ultralight_java {
         runtime.ultralight_renderer.native_methods =
             {NATIVE_METHOD("create", "()Lcom/labymedia/ultralight/UltralightRenderer;", UltralightRendererJNI::create),
              NATIVE_METHOD(
-                 "createView", "(JJZZ)Lcom/labymedia/ultralight/UltralightView;", UltralightRendererJNI::create_view),
+                 "createView",
+                 "(JJLcom/labymedia/ultralight/config/UltralightViewConfig;)Lcom/labymedia/ultralight/UltralightView;",
+                 UltralightRendererJNI::create_view),
              NATIVE_METHOD("update", "()V", UltralightRendererJNI::update),
              NATIVE_METHOD("render", "()V", UltralightRendererJNI::render),
              NATIVE_METHOD("purgeMemory", "()V", UltralightRendererJNI::purgeMemory),

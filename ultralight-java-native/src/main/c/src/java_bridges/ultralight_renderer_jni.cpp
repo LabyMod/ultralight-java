@@ -24,6 +24,7 @@
 #include "ultralight_java/java_bridges/proxied_java_exception.hpp"
 #include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
+#include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {
     jobject UltralightRendererJNI::create(JNIEnv *env, jclass caller_class) {
@@ -44,14 +45,29 @@ namespace ultralight_java {
     }
 
     jobject UltralightRendererJNI::create_view(
-        JNIEnv *env, jobject instance, jlong width, jlong height, jboolean transparent, jboolean force_cpu_renderer) {
+        JNIEnv *env, jobject instance, jlong width, jlong height, jobject java_config) {
         auto renderer = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::Renderer>(env, instance);
         if(env->ExceptionCheck()) {
             return nullptr;
         }
 
+        auto &config_type = runtime.ultralight_view_config;
+
+        ultralight::ViewConfig config;
+        ASSIGN_CONFIG_RET(Boolean, is_accelerated, nullptr);
+        ASSIGN_CONFIG_RET(Boolean, is_transparent, nullptr);
+        ASSIGN_CONFIG_RET(Double, initial_device_scale, nullptr);
+        ASSIGN_CONFIG_RET(Boolean, initial_focus, nullptr);
+        ASSIGN_CONFIG_RET(Boolean, enable_images, nullptr);
+        ASSIGN_CONFIG_RET(Boolean, enable_javascript, nullptr);
+        ASSIGN_CONFIG_STRING_RET(font_family_standard, "fontFamilyStandard can't be null", nullptr);
+        ASSIGN_CONFIG_STRING_RET(font_family_fixed, "fontFamilyFixed can't be null", nullptr);
+        ASSIGN_CONFIG_STRING_RET(font_family_serif, "fontFamilySerif can't be null", nullptr);
+        ASSIGN_CONFIG_STRING_RET(font_family_sans_serif, "fontFamilySansSerif can't be null", nullptr);
+        ASSIGN_CONFIG_STRING_RET(user_agent, "userAgent can't be null", nullptr);
+
         // Create the view RefPtr
-        auto view = renderer->CreateView(width, height, transparent, nullptr);
+        auto view = renderer->CreateView(width, height, config, nullptr);
 
         // Convert the RefPtr to a java object
         jobject pointer = UltralightRefPtrJNI::create(env, ultralight::RefPtr<ultralight::View>(std::move(view)));

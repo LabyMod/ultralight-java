@@ -43,8 +43,7 @@ namespace ultralight_java {
          * @param instance The java object of the ultralight::Renderer creating this view
          * @param width The width of the view in pixels
          * @param height The height of the view in pixels
-         * @param transparent Whether the view should be transparent
-         * @param force_cpu_renderer Whether this view should always be rendered using the CPU
+         * @param java_config The view config
          * @return The java object wrapping the created view
          */
         static jobject create_view(
@@ -52,8 +51,7 @@ namespace ultralight_java {
             jobject instance,
             jlong width,
             jlong height,
-            jboolean transparent,
-            jboolean force_cpu_renderer);
+            jobject java_config);
 
         /**
          * Calls the ultralight::Renderer::Update method.
