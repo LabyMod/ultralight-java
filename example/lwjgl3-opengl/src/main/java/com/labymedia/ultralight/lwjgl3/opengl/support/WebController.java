@@ -26,10 +26,11 @@ import com.labymedia.ultralight.bitmap.UltralightBitmap;
 import com.labymedia.ultralight.bitmap.UltralightBitmapSurface;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
+import com.labymedia.ultralight.config.UltralightViewConfig;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
+import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
-import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
 import com.labymedia.ultralight.math.IntRect;
@@ -64,7 +65,6 @@ public class WebController {
                 new UltralightConfig()
                         .resourcePath("./resources/")
                         .fontHinting(FontHinting.NORMAL)
-                        .deviceScale(1.0)
         );
         this.platform.usePlatformFontLoader();
         this.platform.setFileSystem(new ExampleFileSystem());
@@ -74,7 +74,10 @@ public class WebController {
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
 
-        this.view = renderer.createView(300, 300, true);
+        this.view = renderer.createView(300, 300,
+                new UltralightViewConfig()
+                        .initialDeviceScale(1.0)
+                        .isTransparent(true));
         this.viewListener = new ExampleViewListener(cursorManager);
         this.view.setViewListener(viewListener);
         this.loadListener = new ExampleLoadListener(view);
@@ -111,11 +114,11 @@ public class WebController {
         this.renderer.update();
         this.renderer.render();
 
-        if(lastJavascriptGarbageCollections == 0) {
+        if (lastJavascriptGarbageCollections == 0) {
             lastJavascriptGarbageCollections = System.currentTimeMillis();
-        } else if(System.currentTimeMillis() - lastJavascriptGarbageCollections > 1000) {
+        } else if (System.currentTimeMillis() - lastJavascriptGarbageCollections > 1000) {
             System.out.println("Garbage collecting Javascript...");
-            try(JavascriptContextLock lock = this.view.lockJavascriptContext()) {
+            try (JavascriptContextLock lock = this.view.lockJavascriptContext()) {
                 lock.getContext().garbageCollect();
             }
             lastJavascriptGarbageCollections = System.currentTimeMillis();
@@ -136,7 +139,7 @@ public class WebController {
      * Render the current image using OpenGL
      */
     public void render() {
-        if(glTexture == -1) {
+        if (glTexture == -1) {
             createGLTexture();
         }
 
@@ -153,11 +156,11 @@ public class WebController {
 
         IntRect dirtyBounds = surface.dirtyBounds();
 
-        if(dirtyBounds.isValid()) {
+        if (dirtyBounds.isValid()) {
             ByteBuffer imageData = bitmap.lockPixels();
 
             glPixelStorei(GL_UNPACK_ROW_LENGTH, (int) bitmap.rowBytes() / 4);
-            if(dirtyBounds.width() == width && dirtyBounds.height() == height) {
+            if (dirtyBounds.width() == width && dirtyBounds.height() == height) {
                 // Update full image
                 glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, width, height, 0, GL_BGRA, GL_UNSIGNED_INT_8_8_8_8_REV, imageData);
                 glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);

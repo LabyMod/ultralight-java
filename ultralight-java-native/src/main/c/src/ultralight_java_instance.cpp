@@ -87,25 +87,11 @@ namespace ultralight_java {
             .resource_path_field = env->GetFieldID(ultralight_config_class, "resourcePath", "Ljava/lang/String;");
         ultralight_config
             .cache_path_field = env->GetFieldID(ultralight_config_class, "cachePath", "Ljava/lang/String;");
-        ultralight_config.use_gpu_renderer_field = env->GetFieldID(ultralight_config_class, "useGpuRenderer", "Z");
-        ultralight_config.device_scale_field = env->GetFieldID(ultralight_config_class, "deviceScale", "D");
         ultralight_config.face_winding_field =
             env->GetFieldID(ultralight_config_class, "faceWinding", "Lcom/labymedia/ultralight/config/FaceWinding;");
-        ultralight_config.enable_images_field = env->GetFieldID(ultralight_config_class, "enableImages", "Z");
-        ultralight_config.enable_javascript_field = env->GetFieldID(ultralight_config_class, "enableJavascript", "Z");
         ultralight_config.font_hinting_field =
             env->GetFieldID(ultralight_config_class, "fontHinting", "Lcom/labymedia/ultralight/config/FontHinting;");
         ultralight_config.font_gamma_field = env->GetFieldID(ultralight_config_class, "fontGamma", "D");
-        ultralight_config.font_family_standard_field =
-            env->GetFieldID(ultralight_config_class, "fontFamilyStandard", "Ljava/lang/String;");
-        ultralight_config.font_family_fixed_field =
-            env->GetFieldID(ultralight_config_class, "fontFamilyFixed", "Ljava/lang/String;");
-        ultralight_config.font_family_serif_field =
-            env->GetFieldID(ultralight_config_class, "fontFamilySerif", "Ljava/lang/String;");
-        ultralight_config.font_family_sans_serif_field =
-            env->GetFieldID(ultralight_config_class, "fontFamilySansSerif", "Ljava/lang/String;");
-        ultralight_config
-            .user_agent_field = env->GetFieldID(ultralight_config_class, "userAgent", "Ljava/lang/String;");
         ultralight_config
             .user_stylesheet_field = env->GetFieldID(ultralight_config_class, "userStylesheet", "Ljava/lang/String;");
         ultralight_config.force_repaint_field = env->GetFieldID(ultralight_config_class, "forceRepaint", "Z");
@@ -118,6 +104,34 @@ namespace ultralight_java {
         ultralight_config.override_ram_size_field = env->GetFieldID(ultralight_config_class, "overrideRamSize", "J");
         ultralight_config.min_large_heap_size_field = env->GetFieldID(ultralight_config_class, "minLargeHeapSize", "J");
         ultralight_config.min_small_heap_size_field = env->GetFieldID(ultralight_config_class, "minSmallHeapSize", "J");
+
+        // Retrieve information about the UltralightViewConfig class
+        auto ultralight_view_config_class = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/config/UltralightViewConfig")));
+        runtime.ultralight_view_config.clazz = ultralight_view_config_class;
+
+        runtime.ultralight_view_config
+            .is_accelerated_field = env->GetFieldID(ultralight_view_config_class, "isAccelerated", "Z");
+        runtime.ultralight_view_config
+            .is_transparent_field = env->GetFieldID(ultralight_view_config_class, "isTransparent", "Z");
+        runtime.ultralight_view_config
+            .initial_device_scale_field = env->GetFieldID(ultralight_view_config_class, "initialDeviceScale", "D");
+        runtime.ultralight_view_config
+            .initial_focus_field = env->GetFieldID(ultralight_view_config_class, "initialFocus", "Z");
+        runtime.ultralight_view_config
+            .enable_images_field = env->GetFieldID(ultralight_view_config_class, "enableImages", "Z");
+        runtime.ultralight_view_config
+            .enable_javascript_field = env->GetFieldID(ultralight_view_config_class, "enableJavascript", "Z");
+        runtime.ultralight_view_config.font_family_standard_field =
+            env->GetFieldID(ultralight_view_config_class, "fontFamilyStandard", "Ljava/lang/String;");
+        runtime.ultralight_view_config.font_family_fixed_field =
+            env->GetFieldID(ultralight_view_config_class, "fontFamilyFixed", "Ljava/lang/String;");
+        runtime.ultralight_view_config.font_family_serif_field =
+            env->GetFieldID(ultralight_view_config_class, "fontFamilySerif", "Ljava/lang/String;");
+        runtime.ultralight_view_config.font_family_sans_serif_field =
+            env->GetFieldID(ultralight_view_config_class, "fontFamilySansSerif", "Ljava/lang/String;");
+        runtime.ultralight_view_config.user_agent_field =
+            env->GetFieldID(ultralight_view_config_class, "userAgent", "Ljava/lang/String;");
 
         // Retrieve information about the FaceWinding enum
         runtime.face_winding.clazz = reinterpret_cast<jclass>(
@@ -193,8 +207,8 @@ namespace ultralight_java {
         // Retrieve information about the UltralightSurface class
         runtime.ultralight_surface.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/UltralightSurface")));
-        runtime.ultralight_surface.constructor =
-            env->GetMethodID(runtime.ultralight_surface.clazz, "<init>", "(Lcom/labymedia/ultralight/UltralightView;J)V");
+        runtime.ultralight_surface.constructor = env->GetMethodID(
+            runtime.ultralight_surface.clazz, "<init>", "(Lcom/labymedia/ultralight/UltralightView;J)V");
 
         // Register the native methods for the UltralightSurface class
         env->RegisterNatives(
@@ -327,7 +341,9 @@ namespace ultralight_java {
         runtime.ultralight_scroll_event.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/input/UltralightScrollEvent")));
         runtime.ultralight_scroll_event.type_field = env->GetFieldID(
-            runtime.ultralight_scroll_event.clazz, "type", "Lcom/labymedia/ultralight/input/UltralightScrollEventType;");
+            runtime.ultralight_scroll_event.clazz,
+            "type",
+            "Lcom/labymedia/ultralight/input/UltralightScrollEventType;");
         runtime.ultralight_scroll_event
             .delta_x_field = env->GetFieldID(runtime.ultralight_scroll_event.clazz, "deltaX", "I");
         runtime.ultralight_scroll_event
@@ -476,8 +492,8 @@ namespace ultralight_java {
             "()Lcom/labymedia/ultralight/javascript/JavascriptContextLock;");
         runtime.javascript_locked_object.get_context_handle_method =
             env->GetMethodID(runtime.javascript_locked_object.clazz, "getContextHandle", "()J");
-        runtime.javascript_locked_object.get_lock_handle_method =
-            env->GetMethodID(runtime.javascript_locked_object.clazz, "getLockHandle", "()J");
+        runtime.javascript_locked_object
+            .get_lock_handle_method = env->GetMethodID(runtime.javascript_locked_object.clazz, "getLockHandle", "()J");
 
         // Retrieve information about the JavascriptProtectedValue class
         runtime.javascript_protected_value.clazz = reinterpret_cast<jclass>(
@@ -489,7 +505,9 @@ namespace ultralight_java {
         runtime.javascript_value.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/javascript/JavascriptValue")));
         runtime.javascript_value.constructor = env->GetMethodID(
-            runtime.javascript_value.clazz, "<init>", "(JLcom/labymedia/ultralight/javascript/JavascriptContextLock;)V");
+            runtime.javascript_value.clazz,
+            "<init>",
+            "(JLcom/labymedia/ultralight/javascript/JavascriptContextLock;)V");
 
         // Register native methods for the JavascriptValue class
         env->RegisterNatives(
@@ -501,7 +519,9 @@ namespace ultralight_java {
         runtime.javascript_object.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/javascript/JavascriptObject")));
         runtime.javascript_object.constructor = env->GetMethodID(
-            runtime.javascript_object.clazz, "<init>", "(JLcom/labymedia/ultralight/javascript/JavascriptContextLock;)V");
+            runtime.javascript_object.clazz,
+            "<init>",
+            "(JLcom/labymedia/ultralight/javascript/JavascriptContextLock;)V");
 
         // Register native methods for the JavascriptObject class
         env->RegisterNatives(
@@ -546,8 +566,8 @@ namespace ultralight_java {
             runtime.javascript_class_definition.native_methods.size());
 
         // Retrieve information about the JavascriptObjectConstructor interface
-        runtime.javascript_object_constructor.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/javascript/interop/JavascriptObjectConstructor")));
+        runtime.javascript_object_constructor.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("com/labymedia/ultralight/javascript/interop/JavascriptObjectConstructor")));
         runtime.javascript_object_constructor.call_as_javascript_constructor_method = env->GetMethodID(
             runtime.javascript_object_constructor.clazz,
             "callAsJavascriptConstructor",
@@ -603,8 +623,8 @@ namespace ultralight_java {
             ")Z");
 
         // Retrieve information about the JavascriptObjectInitializer interface
-        runtime.javascript_object_initializer.clazz = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/javascript/interop/JavascriptObjectInitializer")));
+        runtime.javascript_object_initializer.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(
+            env->FindClass("com/labymedia/ultralight/javascript/interop/JavascriptObjectInitializer")));
         runtime.javascript_object_initializer.initialize_javascript_object_method = env->GetMethodID(
             runtime.javascript_object_initializer.clazz,
             "initializeJavascriptObject",
@@ -793,6 +813,7 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.font_hinting.clazz);
         runtime.face_winding.constants.clear(env);
         env->DeleteGlobalRef(runtime.face_winding.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_view_config.clazz);
         env->DeleteGlobalRef(runtime.ultralight_config.clazz);
         env->UnregisterNatives(runtime.ultralight_platform.clazz);
         env->DeleteGlobalRef(runtime.ultralight_platform.clazz);
