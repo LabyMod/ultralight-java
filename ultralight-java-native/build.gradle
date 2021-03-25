@@ -61,6 +61,7 @@ task build(type: CMakeBuildTask) {
             println "Building using JDK at ${javaHome.absolutePath}"
             variable "JAVA_HOME", javaHome.absolutePath.replace('\\', '/')
         }
+
     }
 }
 

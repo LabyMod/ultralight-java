@@ -24,18 +24,14 @@ import com.labymedia.ultralight.UltralightRenderer;
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
-import com.labymedia.ultralight.gpu.GPUDriverGL;
-import com.labymedia.ultralight.gpu.GPUDriverUtil;
-import com.labymedia.ultralight.lwjgl3.opengl.GPUDriverGL;
-import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.config.UltralightViewConfig;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
+import com.labymedia.ultralight.lwjgl3.opengl.GPUDriverGL;
 import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
-import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL30;
 
 import static org.lwjgl.opengl.GL20.*;
@@ -62,6 +58,7 @@ public class WebController {
      * Constructs a new {@link WebController} and retrieves the platform.
      *
      * @param cursorManager Cursor manager for callbacks on cursor changes
+     * @param window the window handle
      */
     public WebController(CursorAdapter cursorManager, long window) {
         this.cursorManager = cursorManager;
@@ -69,13 +66,10 @@ public class WebController {
         this.platform = UltralightPlatform.instance();
 
 
-
         this.platform.setConfig(
                 new UltralightConfig()
                         .resourcePath("./resources/")
                         .fontHinting(FontHinting.NORMAL)
-                        .deviceScale(1.0)
-                        .useGpuRenderer(true)
         );
         this.platform.usePlatformFontLoader();
         this.platform.setFileSystem(new ExampleFileSystem());
@@ -88,7 +82,7 @@ public class WebController {
     public void initGPUDriver() {
         this.driver = new GPUDriverGL(1.0f, false, false);
 
-        this.platform.setGPUDriver(this.driver);
+//        this.platform.setGPUDriver(this.driver);
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
 
@@ -161,9 +155,6 @@ public class WebController {
 
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
         this.renderer.render();
-
-
-
 
 
         this.driver.beginSynchronize();
@@ -254,7 +245,7 @@ public class WebController {
 
         // Make sure we draw with a neutral color
         // (so we don't mess with the color channels of the image)
-        glColor4f(1, 1, 1, 0.5f);
+        glColor4f(1, 1, 1, 1);
 
         glBegin(GL_QUADS);
 

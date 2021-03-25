@@ -21,7 +21,6 @@ package com.labymedia.ultralight.lwjgl3.opengl;
 
 import com.labymedia.ultralight.UltralightJava;
 import com.labymedia.ultralight.UltralightLoadException;
-import com.labymedia.ultralight.gpu.GPUDriverUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -70,7 +69,6 @@ public class ExampleMain {
         // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as
         // the second parameter.
         UltralightJava.load(nativesDir);
-        GPUDriverUtil.load(nativesDir);
 
         // Create and run a simple test application
         ExampleApplication application = new ExampleApplication();

@@ -67,7 +67,7 @@ namespace ultralight_java {
         ASSIGN_CONFIG_STRING_RET(user_agent, "userAgent can't be null", nullptr);
 
         // Create the view RefPtr
-        auto view = renderer->CreateView(width, height, config, nullptr, force_cpu_renderer);
+        auto view = renderer->CreateView(width, height, config, nullptr);
 
         // Convert the RefPtr to a java object
         jobject pointer = UltralightRefPtrJNI::create(env, ultralight::RefPtr<ultralight::View>(std::move(view)));
