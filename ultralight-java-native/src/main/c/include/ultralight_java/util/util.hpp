@@ -33,6 +33,32 @@
         return true;                                                                                                   \
     })()
 
+#define ASSIGN_CONFIG_STRING(name, msg)                                                                                \
+    if(!JNI_STRING16_OR_NPE(config.name, env, env->GetObjectField(java_config, config_type.name##_field), msg)) {      \
+        return;                                                                                                        \
+    }                                                                                                                  \
+    void()
+
+#define ASSIGN_CONFIG(type, name)                                                                                      \
+    config.name = env->Get##type##Field(java_config, config_type.name##_field);                                        \
+    if(env->ExceptionCheck()) {                                                                                        \
+        return;                                                                                                        \
+    }                                                                                                                  \
+    void()
+
+#define ASSIGN_CONFIG_STRING_RET(name, msg, ret_expr)                                                                  \
+    if(!JNI_STRING16_OR_NPE(config.name, env, env->GetObjectField(java_config, config_type.name##_field), msg)) {      \
+        return (ret_expr);                                                                                             \
+    }                                                                                                                  \
+    void()
+
+#define ASSIGN_CONFIG_RET(type, name, ret_expr)                                                                        \
+    config.name = env->Get##type##Field(java_config, config_type.name##_field);                                        \
+    if(env->ExceptionCheck()) {                                                                                        \
+        return (ret_expr);                                                                                             \
+    }                                                                                                                  \
+    void()
+
 namespace ultralight_java {
     /**
      * Static utility class for performing various utility functions
@@ -43,11 +69,11 @@ namespace ultralight_java {
         explicit Util() = delete;
 
         /**
-          * Creates a std::string from a javascript string.
-          *
-          * @param str The string to convert
-          * @return The converted string
-          */
+         * Creates a std::string from a javascript string.
+         *
+         * @param str The string to convert
+         * @return The converted string
+         */
         static std::string create_utf8_from_jsstring_ref(JSStringRef str);
 
         /**
@@ -142,7 +168,7 @@ namespace ultralight_java {
          * @param lock The java representation of the context lock
          */
         static void throw_jssvalue_ref_as_java_exception(
-            const std::string& message, JSContextRef context, JSValueRef javascript_value, JNIEnv *env, jobject lock);
+            const std::string &message, JSContextRef context, JSValueRef javascript_value, JNIEnv *env, jobject lock);
 
         /**
          * Creates a javascript value from a java exception.
@@ -161,7 +187,7 @@ namespace ultralight_java {
          * @param message The message of the exception
          * @return The created exception
          */
-        static JSValueRef create_jserror(JSContextRef context, const std::string& message);
+        static JSValueRef create_jserror(JSContextRef context, const std::string &message);
 
         /**
          * Translates an array of JavascriptValue objects to JSValueRef's.

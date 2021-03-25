@@ -381,9 +381,7 @@ namespace ultralight_java {
             class_definition.staticFunctions = nullptr;
         }
 
-        class_definition.initializeEx = description->data.functions.java_initializer ?
-                                            &ManagedJavascriptCallbacks::initialize :
-                                            nullptr;
+        class_definition.initializeEx = &ManagedJavascriptCallbacks::initialize;
         class_definition.finalizeEx = &ManagedJavascriptCallbacks::finalize;
         class_definition.hasPropertyEx = description->data.functions.java_has_property_tester ?
                                              &ManagedJavascriptCallbacks::has_property :

@@ -17,14 +17,14 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight;
+package com.labymedia.ultralight.databind;
 
-import com.labymedia.ultralight.call.CallData;
+import com.labymedia.ultralight.databind.call.CallData;
+import com.labymedia.ultralight.databind.call.MethodChooser;
+import com.labymedia.ultralight.databind.utils.JavascriptConversionUtils;
 import com.labymedia.ultralight.javascript.*;
 import com.labymedia.ultralight.javascript.interop.JavascriptInteropException;
-import com.labymedia.ultralight.call.MethodChooser;
 import com.labymedia.ultralight.javascript.*;
-import com.labymedia.ultralight.utils.JavascriptConversionUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;

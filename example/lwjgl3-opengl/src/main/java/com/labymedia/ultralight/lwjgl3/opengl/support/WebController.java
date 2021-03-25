@@ -28,6 +28,9 @@ import com.labymedia.ultralight.gpu.GPUDriverGL;
 import com.labymedia.ultralight.gpu.GPUDriverUtil;
 import com.labymedia.ultralight.lwjgl3.opengl.GPUDriverGL;
 import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
+import com.labymedia.ultralight.config.UltralightViewConfig;
+import com.labymedia.ultralight.javascript.JavascriptContextLock;
+import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
@@ -53,6 +56,7 @@ public class WebController {
     private GPUDriverGL driver;
 
     private int glTexture;
+    private long lastJavascriptGarbageCollections;
 
     /**
      * Constructs a new {@link WebController} and retrieves the platform.
@@ -88,12 +92,17 @@ public class WebController {
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
 
-        this.view = renderer.createView(300, 300, true);
+        this.view = renderer.createView(300, 300,
+                new UltralightViewConfig()
+                        .initialDeviceScale(1.0)
+                        .isTransparent(true));
         this.viewListener = new ExampleViewListener(cursorManager);
         this.view.setViewListener(viewListener);
         this.loadListener = new ExampleLoadListener(view);
         this.view.setLoadListener(loadListener);
+
         this.glTexture = -1;
+        this.lastJavascriptGarbageCollections = 0;
 
         this.inputAdapter = new InputAdapter(view);
     }
@@ -121,7 +130,17 @@ public class WebController {
      */
     public void update() {
         this.renderer.update();
-        //this.renderer.render();
+        this.renderer.render();
+
+        if (lastJavascriptGarbageCollections == 0) {
+            lastJavascriptGarbageCollections = System.currentTimeMillis();
+        } else if (System.currentTimeMillis() - lastJavascriptGarbageCollections > 1000) {
+            System.out.println("Garbage collecting Javascript...");
+            try (JavascriptContextLock lock = this.view.lockJavascriptContext()) {
+                lock.getContext().garbageCollect();
+            }
+            lastJavascriptGarbageCollections = System.currentTimeMillis();
+        }
     }
 
     /**
