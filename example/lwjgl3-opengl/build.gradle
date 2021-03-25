@@ -36,7 +36,6 @@ dependencies {
     implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
 
-    implementation group: 'com.labymedia', name: 'ultralight-java-gpu', version: '1.7-SNAPSHOT'
 }
 
 def runDir = file("run")

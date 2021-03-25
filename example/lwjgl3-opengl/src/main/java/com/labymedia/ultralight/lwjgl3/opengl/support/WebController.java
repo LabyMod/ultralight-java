@@ -26,6 +26,7 @@ import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
 import com.labymedia.ultralight.gpu.GPUDriverGL;
 import com.labymedia.ultralight.gpu.GPUDriverUtil;
+import com.labymedia.ultralight.lwjgl3.opengl.GPUDriverGL;
 import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
@@ -83,7 +84,7 @@ public class WebController {
     public void initGPUDriver() {
         this.driver = new GPUDriverGL(1.0f, false, false);
 
-        this.platform.setGPUDriverPointer(this.driver.getDriverHandle());
+        this.platform.setGPUDriver(this.driver);
         this.renderer = UltralightRenderer.create();
         this.renderer.logMemoryUsage();
 

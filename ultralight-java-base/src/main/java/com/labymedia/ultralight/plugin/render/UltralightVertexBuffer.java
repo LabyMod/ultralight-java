@@ -30,6 +30,7 @@ public class UltralightVertexBuffer {
         this.data = data;
     }
 
+
     public @NativeType("ultralight::VertexBufferFormat")
     UltralightVertexBufferFormat format;
     public @NativeType("uint8_t[]")
