@@ -32,4 +32,5 @@ public class RenderBufferEntry {
     boolean isBitmapDirty;
     boolean isFirstDraw;
     boolean needsUpdate;
+
 }

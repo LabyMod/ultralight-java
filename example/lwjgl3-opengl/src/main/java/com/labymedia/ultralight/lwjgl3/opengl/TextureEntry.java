@@ -26,4 +26,5 @@ public class TextureEntry {
     long width;
     long height;
     boolean isSRGB;
+
 }

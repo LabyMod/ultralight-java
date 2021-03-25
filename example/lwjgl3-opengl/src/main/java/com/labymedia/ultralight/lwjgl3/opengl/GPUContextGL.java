@@ -1,4 +1,4 @@
-/*
+package com.labymedia.ultralight.lwjgl3.opengl;/*
  * Ultralight Java - Java wrapper for the Ultralight web engine
  * Copyright (C) 2020 - 2021 LabyMedia and contributors
  *
@@ -17,8 +17,6 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
-
 public class GPUContextGL {
     public GPUContextGL(float scale, boolean vsync, boolean msaa) {
 
@@ -30,5 +28,9 @@ public class GPUContextGL {
 
     public boolean isEnableOffscreenGl() {
         return false;
+    }
+
+    public long activeWindow() {
+        return 0;
     }
 }

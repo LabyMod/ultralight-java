@@ -24,6 +24,8 @@ repositories {
 }
 
 dependencies {
+    implementation group: 'org.joml', name: 'joml', version: '1.10.1'
+
     implementation group: 'org.lwjgl', name: 'lwjgl', version: '3.2.2'
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl', version: '3.2.2', classifier: lwjglClassifier()
 
