@@ -75,7 +75,7 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/util/util.cpp
 
         src/ultralight_initializer.cpp
-        src/ultralight_java_instance.cpp)
+        src/ultralight_java_instance.cpp include/ultralight_java/java_bridges/ultralight_matrix_jni.hpp src/java_bridges/ultralight_matrix_jni.cpp)
 
 ##############
 # Add target #
