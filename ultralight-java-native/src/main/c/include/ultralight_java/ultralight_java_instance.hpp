@@ -233,6 +233,16 @@ namespace ultralight_java {
              */
             jclass clazz;
 
+            jmethodID constructor;
+
+        } vec4;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
             /**
              * Constructor taking a UltralightView and a long as a handle
              */
@@ -243,6 +253,31 @@ namespace ultralight_java {
              */
             std::array<JNINativeMethod, 10> native_methods;
         } ultralight_surface;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID constructor;
+
+            std::array<JNINativeMethod, 7> native_methods;
+        } ultralight_matrix;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            jmethodID constructor;
+
+            /**
+             * Native methods that should be bound
+             */
+            std::array<JNINativeMethod, 4> native_methods;
+        } ultralight_matrix4x4;
 
         struct {
             /**
@@ -309,7 +344,6 @@ namespace ultralight_java {
             jmethodID constructor;
         } ultralight_gpustate;
 
-
         struct {
             /**
              * The java class itself
@@ -336,7 +370,6 @@ namespace ultralight_java {
 
         } ultralight_vertexbuffer;
 
-
         struct {
             /**
              * The java class itself
@@ -356,8 +389,8 @@ namespace ultralight_java {
             jclass clazz;
 
             /**
-            * Constructor
-            */
+             * Constructor
+             */
             jmethodID constructor;
 
         } ultralight_render_buffer;

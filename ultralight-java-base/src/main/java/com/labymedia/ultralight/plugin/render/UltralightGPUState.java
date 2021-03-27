@@ -19,8 +19,11 @@
 
 package com.labymedia.ultralight.plugin.render;
 
+import com.labymedia.ultralight.UltralightMatrix;
+import com.labymedia.ultralight.UltralightMatrix4x4;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.math.IntRect;
+import com.labymedia.ultralight.math.Vec4;
 
 import java.nio.ByteBuffer;
 
@@ -30,7 +33,7 @@ public class UltralightGPUState {
     long viewportWidth, viewportHeight;
 
     public final @NativeType("ultralight::Matrix4x4")
-    ByteBuffer transformMatrix;
+    UltralightMatrix4x4 transformMatrix;
 
     public final @NativeType("bool")
     boolean enableTexturing, enableBlend;
@@ -41,14 +44,14 @@ public class UltralightGPUState {
     public final @NativeType("uint32_t")
     long renderBufferId, texture1Id, texture2Id, texture3Id;
 
-    public final @NativeType("float[]")
-    ByteBuffer uniformScalar;
+    public final
+    float[] uniformScalar;
     public final @NativeType("ultralight::vec4[]")
-    ByteBuffer uniformVector;
+    Vec4[] uniformVector;
     public final @NativeType("uint8_t")
     short clipSize;
     public final @NativeType("ultralight::Matrix4x4[]")
-    ByteBuffer clip;
+    UltralightMatrix4x4[] clip;
 
     public final @NativeType("bool")
     boolean enableScissor;
@@ -56,7 +59,7 @@ public class UltralightGPUState {
     public final @NativeType("IntRect")
     IntRect scissorRect;
 
-    public UltralightGPUState(long viewportWidth, long viewportHeight, ByteBuffer transformMatrix, boolean enableTexturing, boolean enableBlend, short shaderType, long renderBufferId, long texture1Id, long texture2Id, long texture3Id, ByteBuffer uniformScalar, ByteBuffer uniformVector, short clipSize, ByteBuffer clip, boolean enableScissor, IntRect scissorRect) {
+    public UltralightGPUState(long viewportWidth, long viewportHeight, UltralightMatrix4x4 transformMatrix, boolean enableTexturing, boolean enableBlend, short shaderType, long renderBufferId, long texture1Id, long texture2Id, long texture3Id, float[] uniformScalar, Vec4[] uniformVector, short clipSize, UltralightMatrix4x4[] clip, boolean enableScissor, IntRect scissorRect) {
         this.viewportWidth = viewportWidth;
         this.viewportHeight = viewportHeight;
         this.transformMatrix = transformMatrix;

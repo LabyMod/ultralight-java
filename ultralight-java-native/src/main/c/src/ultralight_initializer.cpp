@@ -29,6 +29,8 @@
 #include "ultralight_java/java_bridges/ultralight_bitmap_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_bitmap_surface_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_key_event_jni.hpp"
+#include "ultralight_java/java_bridges/ultralight_matrix4x4_jni.hpp"
+#include "ultralight_java/java_bridges/ultralight_matrix_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_platform_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/java_bridges/ultralight_renderer_jni.hpp"
@@ -60,10 +62,7 @@ namespace ultralight_java {
                  "setGPUDriver",
                  "(Lcom/labymedia/ultralight/plugin/render/UltralightGPUDriver;)V",
                  UltralightPlatformJNI::set_gpu_driver),
-             NATIVE_METHOD(
-                 "setGPUDriverPointer",
-                 "(J)V",
-                 UltralightPlatformJNI::set_gpu_driver_pointer),
+             NATIVE_METHOD("setGPUDriverPointer", "(J)V", UltralightPlatformJNI::set_gpu_driver_pointer),
              NATIVE_METHOD(
                  "setClipboard",
                  "(Lcom/labymedia/ultralight/plugin/clipboard/UltralightClipboard;)V",
@@ -158,7 +157,10 @@ namespace ultralight_java {
              NATIVE_METHOD("setNeedsPaint", "(Z)V", UltralightViewJNI::set_needs_paint),
              NATIVE_METHOD("needsPaint", "()Z", UltralightViewJNI::needs_paint),
              NATIVE_METHOD("inspector", "()Lcom/labymedia/ultralight/UltralightView;", UltralightViewJNI::inspector),
-             NATIVE_METHOD("renderTarget", "()Lcom/labymedia/ultralight/plugin/render/UltralightRenderTarget;", UltralightViewJNI::renderTarget)};
+             NATIVE_METHOD(
+                 "renderTarget",
+                 "()Lcom/labymedia/ultralight/plugin/render/UltralightRenderTarget;",
+                 UltralightViewJNI::renderTarget)};
 
         runtime.ultralight_surface.native_methods =
             {NATIVE_METHOD("width", "()J", UltralightSurfaceJNI::width),
@@ -173,6 +175,25 @@ namespace ultralight_java {
              NATIVE_METHOD(
                  "dirtyBounds", "()Lcom/labymedia/ultralight/math/IntRect;", UltralightSurfaceJNI::dirtyBounds),
              NATIVE_METHOD("clearDirtyBounds", "()V", UltralightSurfaceJNI::clearDirtyBounds)};
+
+        runtime.ultralight_matrix4x4.native_methods =
+            {NATIVE_METHOD("setIdentity", "()V", UltralightMatrix4x4JNI::set_identity),
+             NATIVE_METHOD("getData", "()[F", UltralightMatrix4x4JNI::get_data),
+             NATIVE_METHOD("construct", "()J", UltralightMatrix4x4JNI::construct),
+             NATIVE_METHOD("delete", "(J)V", UltralightMatrix4x4JNI::_delete)};
+
+        runtime.ultralight_matrix.native_methods =
+            {NATIVE_METHOD(
+                 "getMatrix4x4",
+                 "()Lcom/labymedia/ultralight/UltralightMatrix4x4;",
+                 UltralightMatrixJNI::getMatrix4x4),
+             NATIVE_METHOD("delete", "(J)V", UltralightMatrixJNI::_delete),
+             NATIVE_METHOD("construct", "()J", UltralightMatrixJNI::construct),
+             NATIVE_METHOD("set", "(DDDDDDDDDDDDDDDD)V", UltralightMatrixJNI::set),
+             NATIVE_METHOD("set", "(Lcom/labymedia/ultralight/UltralightMatrix4x4;)V", UltralightMatrixJNI::set1),
+             NATIVE_METHOD("setOrthographicProjection", "(DDZ)V", UltralightMatrixJNI::setOrthographicProjection),
+             NATIVE_METHOD(
+                 "transform", "(Lcom/labymedia/ultralight/UltralightMatrix;)V", UltralightMatrixJNI::transform)};
 
         runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
             "bitmap", "()Lcom/labymedia/ultralight/bitmap/UltralightBitmap;", UltralightBitmapSurfaceJNI::bitmap)};
@@ -410,11 +431,10 @@ namespace ultralight_java {
             "OTHER");
 
         runtime.ultralight_vertexbuffer_format.constants = JavaEnum<ultralight::VertexBufferFormat>(
-                ultralight::kVertexBufferFormat_2f_4ub_2f,
-                "FORMAT_2F_4UB_2F",
-                ultralight::kVertexBufferFormat_2f_4ub_2f_2f_28f,
-                "FORMAT_2F_4UB_2F_2F_28F"
-        );
+            ultralight::kVertexBufferFormat_2f_4ub_2f,
+            "FORMAT_2F_4UB_2F",
+            ultralight::kVertexBufferFormat_2f_4ub_2f_2f_28f,
+            "FORMAT_2F_4UB_2F_2F_28F");
 
         runtime.javascript_context.native_methods =
             {NATIVE_METHOD(

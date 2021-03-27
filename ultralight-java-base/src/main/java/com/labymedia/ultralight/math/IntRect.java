@@ -260,4 +260,20 @@ public final class IntRect {
     public int hashCode() {
         return Objects.hash(left, top, right, bottom);
     }
+
+    public int getLeft() {
+        return left;
+    }
+
+    public int getTop() {
+        return top;
+    }
+
+    public int getRight() {
+        return right;
+    }
+
+    public int getBottom() {
+        return bottom;
+    }
 }

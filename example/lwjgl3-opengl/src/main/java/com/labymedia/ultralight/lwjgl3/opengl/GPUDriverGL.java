@@ -1,3 +1,22 @@
+/*
+ * Ultralight Java - Java wrapper for the Ultralight web engine
+ * Copyright (C) 2020 - 2021 LabyMedia and contributors
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 3 of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ */
+
 package com.labymedia.ultralight.lwjgl3.opengl;/*
  * Ultralight Java - Java wrapper for the Ultralight web engine
  * Copyright (C) 2020 - 2021 LabyMedia and contributors
@@ -17,18 +36,22 @@ package com.labymedia.ultralight.lwjgl3.opengl;/*
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
+import com.labymedia.ultralight.UltralightMatrix;
+import com.labymedia.ultralight.UltralightMatrix4x4;
 import com.labymedia.ultralight.bitmap.UltralightBitmap;
 import com.labymedia.ultralight.bitmap.UltralightBitmapFormat;
+import com.labymedia.ultralight.math.IntRect;
 import com.labymedia.ultralight.plugin.render.*;
-import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
-import java.nio.FloatBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -40,6 +63,8 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.glTexImage2DMultisample;
+import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS;
+import static org.lwjgl.opengl.GLUtil.setupDebugMessageCallback;
 
 public class GPUDriverGL implements UltralightGPUDriver {
 
@@ -61,8 +86,14 @@ public class GPUDriverGL implements UltralightGPUDriver {
     private int batchCount;
     private long curProgramId;
 
-    public GPUDriverGL(float scale, boolean vsync, boolean msaa) {
-        this.context = new GPUContextGL(scale, vsync, msaa);
+    public GPUDriverGL() {
+        this.context = new GPUContextGL();
+        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+        setupDebugMessageCallback();
+    }
+
+    public GPUContextGL getContext() {
+        return context;
     }
 
     public boolean hasCommandsPending() {
@@ -70,19 +101,24 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     public void drawCommandList() {
+        CHECK_GL();
         if (this.commands.isEmpty())
             return;
 
         batchCount = 0;
         for (UltralightCommand command : commands) {
-            if (command.commandType == KCOMMANDTYPE_DRAWGEOMETRY)
+            if (command.commandType == KCOMMANDTYPE_DRAWGEOMETRY) {
                 drawGeometry(command.geometryId, command.indicesCount, command.indicesOffset, command.gpuState);
-            else if (command.commandType == KCOMMANDTYPE_CLEARRENDERBUFFER)
+            } else if (command.commandType == KCOMMANDTYPE_CLEARRENDERBUFFER) {
                 clearRenderBuffer(command.gpuState.renderBufferId);
+            }
             batchCount++;
         }
 
         commands.clear();
+
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        CHECK_GL();
     }
 
     private void clearRenderBuffer(long renderBufferId) {
@@ -96,6 +132,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     private void bindRenderBuffer(long renderBufferId) {
+        CHECK_GL();
         if (renderBufferId == 0) {
             // Render buffer id '0' is reserved for window's backbuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -122,11 +159,105 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     private void createFBOIfNeededForActiveContext(long renderBufferId) {
+        CHECK_GL();
+        if (renderBufferId == 0)
+            return;
 
+        RenderBufferEntry entry = renderBufferMap.get(renderBufferId);
+        if (entry == null) {
+            throw new RuntimeException("Error, render buffer entry should exist here.");
+        }
+
+        FBOEntry fboEntry = entry.fboMap.get(glfwGetCurrentContext());
+        if (fboEntry != null) {
+            return;
+        }
+
+        entry.fboMap.put(glfwGetCurrentContext(), fboEntry = new FBOEntry());
+
+        int[] fboId = new int[1];
+        glGenFramebuffers(fboId);
+        fboEntry.fboId = fboId[0];
+        CHECK_GL();
+        glBindFramebuffer(GL_FRAMEBUFFER, Math.toIntExact(fboEntry.fboId));
+        CHECK_GL();
+
+        TextureEntry textureEntry = textureMap.get(entry.textureId);
+
+        if (context.isEnableOffscreenGl()) {
+            if (entry.bitmap != null)
+                makeTextureSRGBIfNeeded(entry.textureId);
+        }
+
+        glBindTexture(GL_TEXTURE_2D, Math.toIntExact(textureEntry.texId));
+        CHECK_GL();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, Math.toIntExact(textureEntry.texId), 0);
+        CHECK_GL();
+
+        int drawBuffers[] = {
+                GL_COLOR_ATTACHMENT0
+        };
+        glDrawBuffers(drawBuffers);
+        CHECK_GL();
+
+        int result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (result != GL_FRAMEBUFFER_COMPLETE)
+            throw new RuntimeException("Error creating FBO, this usually fails if your DPI scale is invalid or View dimensions are massive: " + result);
+        CHECK_GL();
+
+        if (!context.msaaEnabled()) {
+            return;
+        }
+
+        // Create MSAA FBO
+        int[] msaaFboId = new int[1];
+        glGenFramebuffers(msaaFboId);
+        fboEntry.msaaFboId = msaaFboId[0];
+        CHECK_GL();
+        glBindFramebuffer(GL_FRAMEBUFFER, Math.toIntExact(fboEntry.msaaFboId));
+        CHECK_GL();
+
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, Math.toIntExact(textureEntry.msaaTexId));
+        CHECK_GL();
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D_MULTISAMPLE, Math.toIntExact(textureEntry.msaaTexId), 0);
+        CHECK_GL();
+
+        glDrawBuffers(drawBuffers);
+        CHECK_GL();
+
+        result = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+        if (result != GL_FRAMEBUFFER_COMPLETE)
+            throw new RuntimeException("Error creating MSAA FBO, this usually fails if your DPI scale is invalid or View dimensions are massive: " + result);
+        CHECK_GL();
+    }
+
+    private void makeTextureSRGBIfNeeded(long textureId) {
+        CHECK_GL();
+        TextureEntry textureEntry = textureMap.computeIfAbsent(textureId, unused -> new TextureEntry());
+        if (!textureEntry.isSRGB) {
+            // We need to make the primary texture sRGB
+            // First, Destroy existing texture.
+            int[] texId = new int[1];
+            glDeleteTextures(texId);
+            textureEntry.texId = texId[0];
+            CHECK_GL();
+            // Create new sRGB texture
+            glGenTextures(texId);
+            textureEntry.texId = texId[0];
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, Math.toIntExact(textureEntry.texId));
+            CHECK_GL();
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_SRGB8_ALPHA8, (int) textureEntry.width, (int) textureEntry.height, 0,
+                    GL_BGRA, GL_UNSIGNED_BYTE, (ByteBuffer) null);
+            CHECK_GL();
+            textureEntry.isSRGB = true;
+        }
+        CHECK_GL();
     }
 
     private void drawGeometry(long geometryId, long indicesCount, long indicesOffset, UltralightGPUState state) {
-        glfwMakeContextCurrent(context.activeWindow());
+        CHECK_GL();
+        glfwMakeContextCurrent(context.getActiveWindow());
 
         if (programs.isEmpty())
             loadPrograms();
@@ -151,37 +282,36 @@ public class GPUDriverGL implements UltralightGPUDriver {
         bindTexture(2, state.texture3Id);
 
         CHECK_GL();
-
-        if (state.enable_scissor) {
+        if (state.enableScissor) {
             glEnable(GL_SCISSOR_TEST);
-    const IntRect & r = state.scissor_rect;
-            glScissor(r.left, r.top, (r.right - r.left), (r.bottom - r.top));
+            IntRect r = state.scissorRect;
+            glScissor(r.getLeft(), r.getTop(), (r.getRight() - r.getLeft()), (r.getBottom() - r.getTop()));
         } else {
             glDisable(GL_SCISSOR_TEST);
         }
 
-        if (state.enable_blend)
+        if (state.enableBlend)
             glEnable(GL_BLEND);
         else
             glDisable(GL_BLEND);
         CHECK_GL();
-        glDrawElements(GL_TRIANGLES, indices_count, GL_UNSIGNED_INT,
-                (GLvoid *) (indices_offset * sizeof(unsigned int)));
+        glDrawElements(GL_TRIANGLES, Math.toIntExact(indicesCount), GL_UNSIGNED_INT, indicesOffset * Integer.BYTES);
         CHECK_GL();
         glBindVertexArray(0);
 
-#if ENABLE_OFFSCREEN_GL
-        auto & rbuf = render_buffer_map[state.render_buffer_id];
-        if (rbuf.bitmap)
-            rbuf.needs_update = true;
-#endif
+        if (context.isEnableOffscreenGl()) {
+            RenderBufferEntry renderBufferEntry = renderBufferMap.computeIfAbsent(state.renderBufferId, unused -> new RenderBufferEntry());
 
-        batch_count_++;
+            if (renderBufferEntry.bitmap != null)
+                renderBufferEntry.needsUpdate = true;
+        }
+
+        batchCount++;
 
         CHECK_GL();
     }
 
-    private void bindTexture(int texture_unit, long texture_id) {
+    public void bindTexture(int texture_unit, long texture_id) {
         glActiveTexture(GL_TEXTURE0 + texture_unit);
         bindUltralightTexture(texture_id);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
@@ -192,12 +322,11 @@ public class GPUDriverGL implements UltralightGPUDriver {
         CHECK_GL();
     }
 
-    private void bindUltralightTexture(long textureId) {
+    public void bindUltralightTexture(long textureId) {
         TextureEntry entry = textureMap.computeIfAbsent(textureId, unused -> new TextureEntry());
         resolveIfNeeded(entry.renderBufferId);
         glBindTexture(GL_TEXTURE_2D, Math.toIntExact(entry.texId));
         CHECK_GL();
-
     }
 
     void resolveIfNeeded(long renderBufferId) {
@@ -235,47 +364,134 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
 
     private void createVAOIfNeededForActiveContext(long geometryId) {
+        GeometryEntry geometryEntry = geometryMap.computeIfAbsent(geometryId, unused -> new GeometryEntry());
+        if (geometryEntry == null) {
+            throw new RuntimeException("Geometry ID doesn't exist.");
+        }
 
+        Long vaoEntry = geometryEntry.vaoMap.get(glfwGetCurrentContext());
+        if (vaoEntry != null) {
+            return;
+        }
+
+        vaoEntry = (long) glGenVertexArrays();
+        glBindVertexArray(Math.toIntExact(vaoEntry));
+
+        glBindBuffer(GL_ARRAY_BUFFER, geometryEntry.vboVertices);
+        CHECK_GL();
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometryEntry.vboIndices);
+        CHECK_GL();
+
+        if (geometryEntry.vertexFormat == UltralightVertexBufferFormat.FORMAT_2F_4UB_2F_2F_28F) {
+            int stride = 140;
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, false, stride, 0);
+            glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, true, stride, 8);
+            glVertexAttribPointer(2, 2, GL_FLOAT, false, stride, 12);
+            glVertexAttribPointer(3, 2, GL_FLOAT, false, stride, 20);
+            glVertexAttribPointer(4, 4, GL_FLOAT, false, stride, 28);
+            glVertexAttribPointer(5, 4, GL_FLOAT, false, stride, 44);
+            glVertexAttribPointer(6, 4, GL_FLOAT, false, stride, 60);
+            glVertexAttribPointer(7, 4, GL_FLOAT, false, stride, 76);
+            glVertexAttribPointer(8, 4, GL_FLOAT, false, stride, 92);
+            glVertexAttribPointer(9, 4, GL_FLOAT, false, stride, 108);
+            glVertexAttribPointer(10, 4, GL_FLOAT, false, stride, 124);
+
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(2);
+            glEnableVertexAttribArray(3);
+            glEnableVertexAttribArray(4);
+            glEnableVertexAttribArray(5);
+            glEnableVertexAttribArray(6);
+            glEnableVertexAttribArray(7);
+            glEnableVertexAttribArray(8);
+            glEnableVertexAttribArray(9);
+            glEnableVertexAttribArray(10);
+
+            CHECK_GL();
+        } else if (geometryEntry.vertexFormat == UltralightVertexBufferFormat.FORMAT_2F_4UB_2F) {
+            int stride = 20;
+
+            glVertexAttribPointer(0, 2, GL_FLOAT, false, stride, 0);
+            glVertexAttribPointer(1, 4, GL_UNSIGNED_BYTE, true, stride, 8);
+            glVertexAttribPointer(2, 2, GL_FLOAT, false, stride, 12);
+
+            glEnableVertexAttribArray(0);
+            glEnableVertexAttribArray(1);
+            glEnableVertexAttribArray(2);
+
+            CHECK_GL();
+        } else {
+            throw new RuntimeException("Unhandled vertex format: " + geometryEntry.vertexFormat);
+        }
+
+        glBindVertexArray(0);
+
+        geometryEntry.vaoMap.put(glfwGetCurrentContext(), vaoEntry);
+        CHECK_GL();
     }
 
     void updateUniforms(UltralightGPUState state) {
         boolean flip_y = state.renderBufferId != 0;
-        Matrix4f modelViewProjection = applyProjection(state.transformMatrix, state.viewportWidth, state.viewportHeight, flip_y);
+        UltralightMatrix modelViewProjection = applyProjection(state.transformMatrix, state.viewportWidth, state.viewportHeight, flip_y);
 
         float params[] = new float[]{
                 (float) (glfwGetTime() / 1000.0), state.viewportWidth, state.viewportHeight, 1.0f
         };
         setUniform4f("State", params);
         CHECK_GL();
-        ultralight::Matrix4x4 mat = modelViewProjection.GetMatrix4x4();
-        SetUniformMatrix4fv("Transform", 1, mat.data);
+        UltralightMatrix4x4 mat = modelViewProjection.getMatrix4x4();
+        setUniformMatrix4fv("Transform", mat.getData());
         CHECK_GL();
-        SetUniform4fv("Scalar4", 2, & state.uniform_scalar[0]);
+        setUniform4fv("Scalar4", state.uniformScalar);
         CHECK_GL();
-        SetUniform4fv("Vector", 8, & state.uniform_vector[0].value[0]);
+        float[] vectorData = new float[8 * 4];
+
+        for(int i = 0; i < 8 * 4; i += 4) {
+            System.arraycopy(state.uniformVector[i / 4].getValue(), 0, vectorData, i, 4);
+        }
+
+        setUniform4fv("Vector", vectorData);
         CHECK_GL();
-        SetUniform1ui("ClipSize", state.clip_size);
+        setUniform1ui("ClipSize", state.clipSize);
         CHECK_GL();
-        SetUniformMatrix4fv("Clip", 8, state.clip[0].data[0]);
+
+        float[] clip = new float[8 * 16];
+        for(int i = 0; i < 8 * 16; i += 16) {
+            System.arraycopy(state.clip[i / 16].getData(), 0, clip, i, 16);
+        }
+
+        setUniformMatrix4fv("Clip", clip);
         CHECK_GL();
+    }
+
+    private void setUniform4fv(String name, float[] val) {
+        glUniform4fv(glGetUniformLocation(Math.toIntExact(curProgramId), name), val);
+    }
+
+    private void setUniform1ui(String name, int val) {
+        glUniform1ui(glGetUniformLocation(Math.toIntExact(curProgramId), name), val);
     }
 
     private void setUniform4f(String name, float[] params) {
         glUniform4fv(glGetUniformLocation(Math.toIntExact(curProgramId), name), params);
     }
 
-    Matrix4f applyProjection(ByteBuffer transform, float screen_width, float screen_height, boolean flip_y) {
-        Matrix4f transform_mat = new Matrix4f(transform.asFloatBuffer());
+    UltralightMatrix applyProjection(UltralightMatrix4x4 transform, float screenWidth, float screenHeight, boolean flipY) {
+        UltralightMatrix transform_mat = new UltralightMatrix();
+        transform_mat.set(transform);
 
-        Matrix result;
-        result.SetOrthographicProjection(screen_width, screen_height, flip_y);
-        result.Transform(transform_mat);
+        UltralightMatrix result = new UltralightMatrix();
+        result.setOrthographicProjection(screenWidth, screenHeight, flipY);
+        result.transform(transform_mat);
 
         return result;
     }
 
-    void SetUniformMatrix4fv(String name, size_t count, FloatBuffer val) {
-        glUniformMatrix4fv(glGetUniformLocation(cur_program_id_, name), (GLsizei) count, false, val);
+    void setUniformMatrix4fv(String name, float[] val) {
+        glUniformMatrix4fv(glGetUniformLocation(Math.toIntExact(curProgramId), name), false, val);
     }
 
     private void loadPrograms() {
@@ -284,12 +500,14 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     void selectProgram(short type) {
+        CHECK_GL();
         ProgramEntry programEntry = this.programs.get(type);
         if (programEntry == null) {
             throw new RuntimeException("Missing shader type: " + type);
         }
         curProgramId = programEntry.programId;
         glUseProgram(programEntry.programId);
+        CHECK_GL();
     }
 
 
@@ -300,12 +518,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
             prog.vertShaderId = loadShaderFromSource(GL_VERTEX_SHADER,
                     readShader("shader_v2f_c4f_t2f_t2f_d28f.vs"), "shader_v2f_c4f_t2f_t2f_d28f.vert");
             prog.fragShaderId = loadShaderFromSource(GL_FRAGMENT_SHADER,
-                    "shader_fill_frag.fs", "shader_fill.frag");
+                    readShader("shader_fill_frag.fs"), "shader_fill.frag");
         } else if (type == KSHADERTYPE_FILLPATH) {
             prog.vertShaderId = loadShaderFromSource(GL_VERTEX_SHADER,
-                    "shader_v2f_c4f_t2f.vs", "shader_v2f_c4f_t2f.vert");
+                    readShader("shader_v2f_c4f_t2f.vs"), "shader_v2f_c4f_t2f.vert");
             prog.fragShaderId = loadShaderFromSource(GL_FRAGMENT_SHADER,
-                    "shader_fill_path_frag.fs", "shader_fill_path.frag");
+                    readShader("shader_fill_path_frag.fs"), "shader_fill_path.frag");
         }
 
         prog.programId = glCreateProgram();
@@ -396,6 +614,8 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
     @Override
     public void createTexture(long textureId, UltralightBitmap bitmap) {
+        CHECK_GL();
+
         if (bitmap.isEmpty()) {
             this.createFBOTexture(textureId, bitmap);
             return;
@@ -446,7 +666,8 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     void CHECK_GL() {
-        if (GL11.glGetError() != GL11.GL_NO_ERROR) {
+        int error;
+        if ((error = GL11.glGetError()) != GL11.GL_NO_ERROR) {
             throw new RuntimeException();
         }
     }
@@ -493,7 +714,8 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
     @Override
     public void updateTexture(long textureId, UltralightBitmap bitmap) {
-        glActiveTexture(GL_TEXTURE0 + 0);
+        CHECK_GL();
+        glActiveTexture(GL_TEXTURE0);
         TextureEntry entry = this.textureMap.get(textureId);
         glBindTexture(GL_TEXTURE_2D, (int) entry.texId);
         CHECK_GL();
@@ -536,6 +758,8 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
     @Override
     public void createRenderBuffer(long renderBufferId, UltralightRenderBuffer buffer) {
+        CHECK_GL();
+
         if (renderBufferId == 0) {
             System.out.println("Should not be reached! Render Buffer ID 0 is reserved for default framebuffer.");
             return;
@@ -550,10 +774,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
         // We don't actually create FBOs here-- they are lazily-created
         // for each active window during BindRenderBuffer (this is because
         // FBOs are not shared between contexts in GL 3.2)
+        CHECK_GL();
     }
 
     @Override
     public void destroyRenderBuffer(long renderBufferId) {
+        CHECK_GL();
         if (renderBufferId == 0)
             return;
 
@@ -582,10 +808,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
         renderBufferMap.remove(renderBufferId);
 
         glfwMakeContextCurrent(previous_context);
+        CHECK_GL();
     }
 
     @Override
     public void createGeometry(long geometryId, UltralightVertexBuffer vertices, UltralightIndexBuffer indices) {
+        CHECK_GL();
         GeometryEntry geometry = new GeometryEntry();
         geometry.vertexFormat = vertices.format;
 
@@ -603,9 +831,9 @@ public class GPUDriverGL implements UltralightGPUDriver {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry.vboIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.data,
                 GL_STATIC_DRAW);
-        CHECK_GL();
 
         geometryMap.put(geometryId, geometry);
+        CHECK_GL();
     }
 
     @Override
@@ -618,13 +846,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry.vboIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.data, GL_STATIC_DRAW);
         CHECK_GL();
-        CHECK_GL();
     }
 
     @Override
     public void destroyGeometry(long geometryId) {
-        GeometryEntry geometry = geometryMap.get(geometryId);
         CHECK_GL();
+        GeometryEntry geometry = geometryMap.get(geometryId);
         glDeleteBuffers(geometry.vboIndices);
         glDeleteBuffers(geometry.vboVertices);
         CHECK_GL();
@@ -643,14 +870,17 @@ public class GPUDriverGL implements UltralightGPUDriver {
         geometryMap.remove(geometryId);
 
         glfwMakeContextCurrent(previous_context);
+        CHECK_GL();
     }
 
     @Override
     public void updateCommandList(UltralightCommandList list) {
+        CHECK_GL();
         if (list.data.length != 0) {
             for (UltralightCommand datum : list.data) {
                 this.commands.add(datum);
             }
         }
+        CHECK_GL();
     }
 }

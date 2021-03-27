@@ -19,8 +19,6 @@
 
 #include "ultralight_java/ultralight_java_instance.hpp"
 
-#include <ultralight_java/ultralight_java_instance.hpp>
-
 #include "ultralight_java/java_bridges/bridged_logger.hpp"
 #include "ultralight_java/java_bridges/ultralight_view_jni.hpp"
 #include "ultralight_java/ultralight_initializer.hpp"
@@ -77,6 +75,34 @@ namespace ultralight_java {
             runtime.ultralight_platform.native_methods.data(),
             runtime.ultralight_platform.native_methods.size());
 
+        // Retrieve information about the UltralightMatrix class
+        auto ultralight_matrix_class = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/UltralightMatrix")));
+        runtime.ultralight_matrix.clazz = ultralight_matrix_class;
+        runtime.ultralight_matrix.constructor = env->GetMethodID(runtime.ultralight_matrix.clazz, "<init>", "(J)V");
+
+        auto &ultralight_matrix = runtime.ultralight_matrix;
+
+        // Register native methods for the UltralightMatrix class
+        env->RegisterNatives(
+            runtime.ultralight_matrix.clazz,
+            runtime.ultralight_matrix.native_methods.data(),
+            runtime.ultralight_matrix.native_methods.size());
+
+        // Retrieve information about the UltralightMatrix4x4 class
+        auto ultralight_matrix4x4_class = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/UltralightMatrix4x4")));
+        runtime.ultralight_matrix4x4.clazz = ultralight_matrix4x4_class;
+        runtime.ultralight_matrix4x4.constructor = env->GetMethodID(runtime.ultralight_matrix4x4.clazz, "<init>", "(J)V");
+
+        auto &ultralight_matrix4x4 = runtime.ultralight_matrix4x4;
+
+        // Register native methods for the UltralightMatrix4x4 class
+        env->RegisterNatives(
+            runtime.ultralight_matrix4x4.clazz,
+            runtime.ultralight_matrix4x4.native_methods.data(),
+            runtime.ultralight_matrix4x4.native_methods.size());
+
         // Retrieve information about the UltralightConfig class
         auto ultralight_config_class = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/config/UltralightConfig")));
@@ -130,8 +156,8 @@ namespace ultralight_java {
             env->GetFieldID(ultralight_view_config_class, "fontFamilySerif", "Ljava/lang/String;");
         runtime.ultralight_view_config.font_family_sans_serif_field =
             env->GetFieldID(ultralight_view_config_class, "fontFamilySansSerif", "Ljava/lang/String;");
-        runtime.ultralight_view_config.user_agent_field =
-            env->GetFieldID(ultralight_view_config_class, "userAgent", "Ljava/lang/String;");
+        runtime.ultralight_view_config
+            .user_agent_field = env->GetFieldID(ultralight_view_config_class, "userAgent", "Ljava/lang/String;");
 
         // Retrieve information about the FaceWinding enum
         runtime.face_winding.clazz = reinterpret_cast<jclass>(
@@ -204,6 +230,11 @@ namespace ultralight_java {
         runtime.int_rect.right_field = env->GetFieldID(runtime.int_rect.clazz, "right", "I");
         runtime.int_rect.bottom_field = env->GetFieldID(runtime.int_rect.clazz, "bottom", "I");
 
+        // Retrieve information about the Vec4 class
+        runtime.vec4.clazz = reinterpret_cast<jclass>(
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/math/Vec4")));
+        runtime.vec4.constructor = env->GetMethodID(runtime.vec4.clazz, "<init>", "(FFFF)V");
+
         // Retrieve information about the UltralightSurface class
         runtime.ultralight_surface.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/UltralightSurface")));
@@ -250,101 +281,107 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightCommandList class
         runtime.ultralight_render_target.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightRenderTarget")));
-        runtime.ultralight_render_target.constructor =
-                env->GetMethodID(runtime.ultralight_render_target.clazz, "<init>",
-                                 "(JJ[F)V");
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightRenderTarget")));
+        runtime.ultralight_render_target
+            .constructor = env->GetMethodID(runtime.ultralight_render_target.clazz, "<init>", "(JJ[F)V");
 
         // Retrieve information about the UltralightCommandList class
         runtime.ultralight_commandlist.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightCommandList")));
-        runtime.ultralight_commandlist.constructor =
-                env->GetMethodID(runtime.ultralight_commandlist.clazz, "<init>",
-                                 "([Lcom/labymedia/ultralight/plugin/render/UltralightCommand;)V");
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightCommandList")));
+        runtime.ultralight_commandlist.constructor = env->GetMethodID(
+            runtime.ultralight_commandlist.clazz,
+            "<init>",
+            "([Lcom/labymedia/ultralight/plugin/render/UltralightCommand;)V");
 
         // Retrieve information about the UltralightCommand class
         runtime.ultralight_command.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightCommand")));
-        runtime.ultralight_command.constructor =
-                env->GetMethodID(runtime.ultralight_command.clazz, "<init>",
-                                 "(SLcom/labymedia/ultralight/plugin/render/UltralightGPUState;JJJ)V");
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightCommand")));
+        runtime.ultralight_command.constructor = env->GetMethodID(
+            runtime.ultralight_command.clazz,
+            "<init>",
+            "(SLcom/labymedia/ultralight/plugin/render/UltralightGPUState;JJJ)V");
 
         // Retrieve information about the UltralightGPUState class
         runtime.ultralight_gpustate.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightGPUState")));
-        runtime.ultralight_gpustate.constructor =
-                env->GetMethodID(runtime.ultralight_gpustate.clazz, "<init>",
-                                 "(JJLjava/nio/ByteBuffer;ZZSJJJJLjava/nio/ByteBuffer;Ljava/nio/ByteBuffer;SLjava/nio/ByteBuffer;ZLcom/labymedia/ultralight/math/IntRect;)V");
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightGPUState")));
+        runtime.ultralight_gpustate.constructor = env->GetMethodID(
+            runtime.ultralight_gpustate.clazz,
+            "<init>",
+            "(JJLcom/labymedia/ultralight/UltralightMatrix4x4;ZZSJJJJ[F[Lcom/labymedia/ultralight/math/Vec4;S[Lcom/labymedia/ultralight/UltralightMatrix4x4;ZLcom/labymedia/ultralight/math/IntRect;)V");
 
         // Retrieve information about the UltralightIndexBuffer class
         runtime.ultralight_indexbuffer.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightIndexBuffer")));
-        runtime.ultralight_indexbuffer.constructor =
-                env->GetMethodID(runtime.ultralight_indexbuffer.clazz, "<init>", "(Ljava/nio/ByteBuffer;)V");
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightIndexBuffer")));
+        runtime.ultralight_indexbuffer
+            .constructor = env->GetMethodID(runtime.ultralight_indexbuffer.clazz, "<init>", "(Ljava/nio/ByteBuffer;)V");
 
         // Retrieve information about the UltralightVertexBuffer class
         runtime.ultralight_vertexbuffer.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightVertexBuffer")));
-        runtime.ultralight_vertexbuffer.constructor =
-                env->GetMethodID(runtime.ultralight_vertexbuffer.clazz, "<init>",
-                                 "(Lcom/labymedia/ultralight/plugin/render/UltralightVertexBufferFormat;Ljava/nio/ByteBuffer;)V");
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightVertexBuffer")));
+        runtime.ultralight_vertexbuffer.constructor = env->GetMethodID(
+            runtime.ultralight_vertexbuffer.clazz,
+            "<init>",
+            "(Lcom/labymedia/ultralight/plugin/render/UltralightVertexBufferFormat;Ljava/nio/ByteBuffer;)V");
 
         // Retrieve information about the UltralightVertexBufferFormat enum
         runtime.ultralight_vertexbuffer_format.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(
-                        env->FindClass("com/labymedia/ultralight/plugin/render/UltralightVertexBufferFormat")));
-        if (!runtime.ultralight_vertexbuffer_format.constants
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightVertexBufferFormat")));
+        if(!runtime.ultralight_vertexbuffer_format.constants
                 .init(env, "com/labymedia/ultralight/plugin/render/UltralightVertexBufferFormat")) {
             return JNI_EINVAL;
         }
 
         // Retrieve information about the UltralightRenderBuffer class
         runtime.ultralight_render_buffer.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightRenderBuffer")));
-        runtime.ultralight_render_buffer.constructor =
-                env->GetMethodID(runtime.ultralight_render_buffer.clazz, "<init>", "(JJJZZ)V");
-
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightRenderBuffer")));
+        runtime.ultralight_render_buffer
+            .constructor = env->GetMethodID(runtime.ultralight_render_buffer.clazz, "<init>", "(JJJZZ)V");
 
         // Retrieve information about the UltralightGPUDriver class
         runtime.ultralight_gpu_driver.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightGPUDriver")));
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightGPUDriver")));
         runtime.ultralight_gpu_driver.begin_synchronize_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "beginSynchronize", "()V");
-        runtime.ultralight_gpu_driver.end_synchronize_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "endSynchronize", "()V");
-        runtime.ultralight_gpu_driver.next_texture_id_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "nextTextureId", "()J");
-        runtime.ultralight_gpu_driver.create_texture_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "createTexture",
-                                 "(JLcom/labymedia/ultralight/bitmap/UltralightBitmap;)V");
-        runtime.ultralight_gpu_driver.update_texture_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "updateTexture",
-                                 "(JLcom/labymedia/ultralight/bitmap/UltralightBitmap;)V");
-        runtime.ultralight_gpu_driver.destroy_texture_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "destroyTexture", "(J)V");
+            env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "beginSynchronize", "()V");
+        runtime.ultralight_gpu_driver
+            .end_synchronize_method = env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "endSynchronize", "()V");
+        runtime.ultralight_gpu_driver
+            .next_texture_id_method = env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "nextTextureId", "()J");
+        runtime.ultralight_gpu_driver.create_texture_method = env->GetMethodID(
+            runtime.ultralight_gpu_driver.clazz,
+            "createTexture",
+            "(JLcom/labymedia/ultralight/bitmap/UltralightBitmap;)V");
+        runtime.ultralight_gpu_driver.update_texture_method = env->GetMethodID(
+            runtime.ultralight_gpu_driver.clazz,
+            "updateTexture",
+            "(JLcom/labymedia/ultralight/bitmap/UltralightBitmap;)V");
+        runtime.ultralight_gpu_driver
+            .destroy_texture_method = env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "destroyTexture", "(J)V");
         runtime.ultralight_gpu_driver.next_render_buffer_id_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "nextRenderBufferId", "()J");
-        runtime.ultralight_gpu_driver.create_render_buffer_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "createRenderBuffer",
-                                 "(JLcom/labymedia/ultralight/plugin/render/UltralightRenderBuffer;)V");
+            env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "nextRenderBufferId", "()J");
+        runtime.ultralight_gpu_driver.create_render_buffer_method = env->GetMethodID(
+            runtime.ultralight_gpu_driver.clazz,
+            "createRenderBuffer",
+            "(JLcom/labymedia/ultralight/plugin/render/UltralightRenderBuffer;)V");
         runtime.ultralight_gpu_driver.destroy_render_buffer_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "destroyRenderBuffer", "(J)V");
-        runtime.ultralight_gpu_driver.next_geometry_id_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "nextGeometryId", "()J");
-        runtime.ultralight_gpu_driver.create_geometry_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "createGeometry",
-                                 "(JLcom/labymedia/ultralight/plugin/render/UltralightVertexBuffer;Lcom/labymedia/ultralight/plugin/render/UltralightIndexBuffer;)V");
-        runtime.ultralight_gpu_driver.update_geometry_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "updateGeometry",
-                                 "(JLcom/labymedia/ultralight/plugin/render/UltralightVertexBuffer;Lcom/labymedia/ultralight/plugin/render/UltralightIndexBuffer;)V");
-        runtime.ultralight_gpu_driver.destroy_geometry_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "destroyGeometry", "(J)V");
-        runtime.ultralight_gpu_driver.update_command_list_method =
-                env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "updateCommandList",
-                                 "(Lcom/labymedia/ultralight/plugin/render/UltralightCommandList;)V");
+            env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "destroyRenderBuffer", "(J)V");
+        runtime.ultralight_gpu_driver
+            .next_geometry_id_method = env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "nextGeometryId", "()J");
+        runtime.ultralight_gpu_driver.create_geometry_method = env->GetMethodID(
+            runtime.ultralight_gpu_driver.clazz,
+            "createGeometry",
+            "(JLcom/labymedia/ultralight/plugin/render/UltralightVertexBuffer;Lcom/labymedia/ultralight/plugin/render/UltralightIndexBuffer;)V");
+        runtime.ultralight_gpu_driver.update_geometry_method = env->GetMethodID(
+            runtime.ultralight_gpu_driver.clazz,
+            "updateGeometry",
+            "(JLcom/labymedia/ultralight/plugin/render/UltralightVertexBuffer;Lcom/labymedia/ultralight/plugin/render/UltralightIndexBuffer;)V");
+        runtime.ultralight_gpu_driver
+            .destroy_geometry_method = env->GetMethodID(runtime.ultralight_gpu_driver.clazz, "destroyGeometry", "(J)V");
+        runtime.ultralight_gpu_driver.update_command_list_method = env->GetMethodID(
+            runtime.ultralight_gpu_driver.clazz,
+            "updateCommandList",
+            "(Lcom/labymedia/ultralight/plugin/render/UltralightCommandList;)V");
 
-        runtime.float_array.clazz = reinterpret_cast<jclass>(
-                env->NewGlobalRef(env->FindClass("[F")));
+        runtime.float_array.clazz = reinterpret_cast<jclass>(env->NewGlobalRef(env->FindClass("[F")));
 
         // Retrieve information about the UltralightLoadListener
         runtime.ultralight_load_listener.clazz = reinterpret_cast<jclass>(
@@ -910,6 +947,7 @@ namespace ultralight_java {
         env->UnregisterNatives(runtime.ultralight_surface.clazz);
         env->DeleteGlobalRef(runtime.ultralight_surface.clazz);
         env->DeleteGlobalRef(runtime.int_rect.clazz);
+        env->DeleteGlobalRef(runtime.vec4.clazz);
         env->UnregisterNatives(runtime.ultralight_renderer.clazz);
         env->DeleteGlobalRef(runtime.ultralight_renderer.clazz);
         env->UnregisterNatives(runtime.ref_ptr.clazz);
@@ -923,6 +961,8 @@ namespace ultralight_java {
         env->DeleteGlobalRef(runtime.face_winding.clazz);
         env->DeleteGlobalRef(runtime.ultralight_view_config.clazz);
         env->DeleteGlobalRef(runtime.ultralight_config.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_matrix.clazz);
+        env->DeleteGlobalRef(runtime.ultralight_matrix4x4.clazz);
         env->UnregisterNatives(runtime.ultralight_platform.clazz);
         env->DeleteGlobalRef(runtime.ultralight_platform.clazz);
         env->DeleteGlobalRef(runtime.object_with_handle.clazz);

@@ -232,6 +232,12 @@ namespace ultralight_java {
         return ultralight::ScrollEvent{type, delta_x, delta_y};
     }
 
+    jfloatArray Util::create_float_array(JNIEnv *env, int count, const float *data) {
+        auto array = env->NewFloatArray(count);
+        env->SetFloatArrayRegion(array, 0, count, data);
+        return array;
+    }
+
     jstring Util::create_jstring_from_jsstring_ref(JNIEnv *env, JSStringRef javascript_string) {
         const JSChar *javascript_chars = JSStringGetCharactersPtr(javascript_string);
         size_t javascript_chars_length = JSStringGetLength(javascript_string);

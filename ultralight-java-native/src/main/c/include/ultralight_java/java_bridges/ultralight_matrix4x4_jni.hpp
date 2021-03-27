@@ -1,6 +1,6 @@
 /*
  * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 - 2021 LabyMedia and contributors
+ * Copyright (C) 2021 LabyMedia and contributors
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -17,13 +17,18 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+#pragma once
 
-public class TextureEntry {
-    long texId;
-    long msaaTexId;
-    long renderBufferId;
-    long width;
-    long height;
-    boolean isSRGB;
-}
+#include <Ultralight/Ultralight.h>
+#include <jni.h>
+
+namespace ultralight_java {
+    class UltralightMatrix4x4JNI {
+    public:
+        static jfloatArray get_data(JNIEnv *env, jobject instance);
+        static void set_identity(JNIEnv *env, jobject instance);
+        static jobject create(JNIEnv *env, ultralight::Matrix4x4 matrix);
+        static jlong construct(JNIEnv *env, jclass caller_class);
+        static void _delete(JNIEnv *env, jclass caller_class, jlong handle);
+    };
+} // namespace ultralight_java

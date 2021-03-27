@@ -259,9 +259,13 @@ vec4 blend(vec4 src, vec4 dest) {
   result.a = src.a + dest.a * (1.0 - src.a);
   return result;
 }
-)";
 
-static const std::string shader_fill_frag2 = R"(
+
+
+
+
+
+
 float innerStroke(float stroke_width, float d) {
   return min(antialias(-d, AA_WIDTH, 0.0), 1.0 - antialias(-d, AA_WIDTH, stroke_width));
 }
@@ -443,11 +447,12 @@ void fillMask() {
   out_Color *= alpha;
 }
 void fillGlyph(vec2 uv) {
-  float alpha = texture(Texture1, uv).r;
-  //  Transform from 2.2 Gamma to target Gamma
-  float gamma = ex_Data0.y;
-  alpha = pow(alpha, gamma / 2.2);
-  out_Color = ex_Color * alpha;
+  float alpha = texture(Texture1, uv).r * ex_Color.a;
+  alpha = clamp(alpha, 0.0, 1.0);
+  float fill_color_luma = ex_Data0.y;
+  float corrected_alpha = texture(Texture2, vec2(alpha, fill_color_luma)).r;
+  //float corrected_alpha = alpha;
+  out_Color = vec4(ex_Color.rgb * corrected_alpha, corrected_alpha);
 }
 void applyClip() {
   for (uint i = 0u; i < ClipSize; i++) {

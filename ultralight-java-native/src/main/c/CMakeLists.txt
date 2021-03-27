@@ -62,6 +62,8 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/java_bridges/ultralight_bitmap_jni.cpp
         src/java_bridges/ultralight_bitmap_surface_jni.cpp
         src/java_bridges/ultralight_key_event_jni.cpp
+        src/java_bridges/ultralight_matrix4x4_jni.cpp
+        src/java_bridges/ultralight_matrix_jni.cpp
         src/java_bridges/ultralight_platform_jni.cpp
         src/java_bridges/ultralight_ref_ptr_jni.cpp
         src/java_bridges/ultralight_renderer_jni.cpp
@@ -75,7 +77,7 @@ set(ULTRALIGHT_JAVA_SOURCE
         src/util/util.cpp
 
         src/ultralight_initializer.cpp
-        src/ultralight_java_instance.cpp include/ultralight_java/java_bridges/ultralight_matrix_jni.hpp src/java_bridges/ultralight_matrix_jni.cpp)
+        src/ultralight_java_instance.cpp)
 
 ##############
 # Add target #

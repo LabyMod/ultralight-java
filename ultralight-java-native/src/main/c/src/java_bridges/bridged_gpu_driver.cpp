@@ -18,12 +18,13 @@
  */
 
 #include <ultralight_java/java_bridges/bridged_gpu_driver.hpp>
+#include <ultralight_java/java_bridges/ultralight_matrix4x4_jni.hpp>
 
 #include "ultralight_java/java_bridges/proxied_java_exception.hpp"
+#include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
 #include "ultralight_java/util/temporary_jni.hpp"
 #include "ultralight_java/util/util.hpp"
-#include "ultralight_java/java_bridges/ultralight_ref_ptr_jni.hpp"
 
 namespace ultralight_java {
     BridgedGPUDriver::BridgedGPUDriver(JNIEnv *env, jobject gpu_driver) : JNIReferenceWrapper(env, gpu_driver) {
@@ -192,13 +193,34 @@ namespace ultralight_java {
         auto commands = env->NewObjectArray(list.size, runtime.ultralight_command.clazz, nullptr);
 
         for (int i = 0; i < list.size; i++) {
+            env->PushLocalFrame(64);
             auto& command = list.commands[i];
+
+            auto clip_array = env->NewObjectArray(8, runtime.ultralight_matrix4x4.clazz, nullptr);
+            for(uint8_t x = 0; x < 8; x++) {
+                env->SetObjectArrayElement(clip_array, x, UltralightMatrix4x4JNI::create(env, command.gpu_state.clip[x]));
+            }
+
+            auto uniform_vector = env->NewObjectArray(8, runtime.vec4.clazz, nullptr);
+            for(uint8_t x = 0; x < 8; x++) {
+                env->SetObjectArrayElement(
+                    uniform_vector,
+                    x,
+                    env->NewObject(
+                        runtime.vec4.clazz,
+                        runtime.vec4.constructor,
+                        command.gpu_state.uniform_vector[x].x,
+                        command.gpu_state.uniform_vector[x].y,
+                        command.gpu_state.uniform_vector[x].z,
+                        command.gpu_state.uniform_vector[x].w
+                    ));
+            }
 
             auto gpuState = env->NewObject(runtime.ultralight_gpustate.clazz,
                                            runtime.ultralight_gpustate.constructor,
                                            static_cast<jlong>(command.gpu_state.viewport_width),
                                            static_cast<jlong>(command.gpu_state.viewport_height),
-                                           env->NewDirectByteBuffer(command.gpu_state.transform.data, 64),
+                                           UltralightMatrix4x4JNI::create(env, command.gpu_state.transform),
                                            static_cast<jboolean>(command.gpu_state.enable_texturing),
                                            static_cast<jboolean>(command.gpu_state.enable_blend),
                                            static_cast<jshort>(command.gpu_state.shader_type),
@@ -206,10 +228,10 @@ namespace ultralight_java {
                                            static_cast<jlong>(command.gpu_state.texture_1_id),
                                            static_cast<jlong>(command.gpu_state.texture_2_id),
                                            static_cast<jlong>(command.gpu_state.texture_3_id),
-                                           env->NewDirectByteBuffer(&command.gpu_state.uniform_scalar[0], 32),
-                                           env->NewDirectByteBuffer(&command.gpu_state.uniform_vector->value[0], 128),
+                                           Util::create_float_array(env, 8, command.gpu_state.uniform_scalar),
+                                           uniform_vector,
                                            static_cast<jshort>(command.gpu_state.clip_size),
-                                           env->NewDirectByteBuffer(&command.gpu_state.clip->data[0], 512),
+                                           clip_array,
                                            static_cast<jboolean>(command.gpu_state.enable_scissor),
                                            env->NewObject(runtime.int_rect.clazz,
                                                           runtime.int_rect.bounds_constructor,
@@ -226,6 +248,7 @@ namespace ultralight_java {
                                                                    static_cast<jlong>(command.geometry_id),
                                                                    static_cast<jlong>(command.indices_count),
                                                                    static_cast<jlong>(command.indices_offset)));
+            env->PopLocalFrame(nullptr);
         }
 
         env->CallVoidMethod(reference,
