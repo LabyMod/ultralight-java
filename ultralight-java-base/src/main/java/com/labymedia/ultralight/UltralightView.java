@@ -25,19 +25,20 @@ import com.labymedia.ultralight.annotation.Unsigned;
 import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.ffi.RefPtr;
 import com.labymedia.ultralight.input.UltralightKeyEvent;
+import com.labymedia.ultralight.input.UltralightKeyEventType;
 import com.labymedia.ultralight.input.UltralightMouseEvent;
 import com.labymedia.ultralight.input.UltralightScrollEvent;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
 import com.labymedia.ultralight.javascript.JavascriptEvaluationException;
 import com.labymedia.ultralight.plugin.loading.UltralightLoadListener;
+import com.labymedia.ultralight.plugin.render.UltralightRenderTarget;
 import com.labymedia.ultralight.plugin.view.UltralightViewListener;
-import com.labymedia.ultralight.input.UltralightKeyEventType;
 
 import java.util.Objects;
 
 /**
- * A View is similar to a tab in a browser-- you load web content into
- * it and display it however you want. @see Renderer::CreateView
+ * A View is similar to a tab in a browser-- you load web content into it and display it however you want. @see
+ * Renderer::CreateView
  * <p>
  * <b>The API is currently not thread-safe, all calls must be made on the
  * main thread.</b>
@@ -48,8 +49,7 @@ public class UltralightView implements ObjectWithHandle {
     private final RefPtr<UltralightView> ptr;
 
     /**
-     * Constructs a new {@link UltralightView} from the given native
-     * {@link RefPtr}.
+     * Constructs a new {@link UltralightView} from the given native {@link RefPtr}.
      *
      * @param ptr The pointer managing the view instance
      */
@@ -97,7 +97,18 @@ public class UltralightView implements ObjectWithHandle {
      */
     public native boolean isLoading();
 
-    // TODO: render_target()
+    /**
+     * Get the offscreen {@link UltralightRenderTarget} for the View.
+     * <p>
+     * Only valid when the {@link com.labymedia.ultralight.config.UltralightViewConfig#isAccelerated(boolean)} is {@code
+     * true}.
+     * <p>
+     * You can use this with your GPUDriver implementation to bind and display the corresponding texture in your
+     * application.
+     *
+     * @return The offscreen render target
+     */
+    public native UltralightRenderTarget renderTarget();
 
     /**
      * Get the Surface for the View (native pixel buffer container).
@@ -123,9 +134,8 @@ public class UltralightView implements ObjectWithHandle {
 
     /**
      * @param html The raw HTML string to load.
-     * @param url  An optional URL for this load (to make it appear as if we
-     *             we loaded this HTML from a certain URL). Can be used for
-     *             resolving relative URLs and cross-origin rules.
+     * @param url  An optional URL for this load (to make it appear as if we we loaded this HTML from a certain URL).
+     *             Can be used for resolving relative URLs and cross-origin rules.
      */
     public void loadHTML(String html, String url) {
         loadHTML(html, url, false);
@@ -135,19 +145,17 @@ public class UltralightView implements ObjectWithHandle {
      * Load a raw string of HTML, the View will navigate to it as a new page.
      *
      * @param html         The raw HTML string to load.
-     * @param url          An optional URL for this load (to make it appear as if we
-     *                     we loaded this HTML from a certain URL). Can be used for
-     *                     resolving relative URLs and cross-origin rules.
-     * @param addToHistory Whether or not this load should be added to the
-     *                     session's history (back/forward list).
+     * @param url          An optional URL for this load (to make it appear as if we we loaded this HTML from a certain
+     *                     URL). Can be used for resolving relative URLs and cross-origin rules.
+     * @param addToHistory Whether or not this load should be added to the session's history (back/forward list).
      */
     public native void loadHTML(String html, String url, boolean addToHistory);
 
     /**
      * Load a URL, the View will navigate to it as a new page.
      * <p>
-     * you can use File URLs (eg, file:///page.html) but you must define
-     * your own FileSystem implementation if you are not using AppCore.
+     * you can use File URLs (eg, file:///page.html) but you must define your own FileSystem implementation if you are
+     * not using AppCore.
      *
      * @param url The url to load
      * @see UltralightPlatform#usePlatformFileSystem(String)
@@ -160,24 +168,24 @@ public class UltralightView implements ObjectWithHandle {
      * @param width  The initial width, in pixels.
      * @param height The initial height, in pixels.
      */
-    public native void resize(@NativeType("uint32_t") @Unsigned long width, @NativeType("uint32_t") @Unsigned long height);
+    public native void resize(@NativeType("uint32_t") @Unsigned long width, @NativeType(
+            "uint32_t") @Unsigned long height);
 
     /**
      * Acquire the page's JSContext for use with the JavaScriptCore API.
      * <p>
      * While the lock is being hold no script will be executed by the web engine.
      * <p>
-     * The context gets reset every time the view navigates, to populate it with
-     * custom values the {@link UltralightLoadListener#onWindowObjectReady(long, boolean, String)}
-     * and {@link UltralightLoadListener#onDOMReady(long, boolean, String)} methods are recommended.
+     * The context gets reset every time the view navigates, to populate it with custom values the {@link
+     * UltralightLoadListener#onWindowObjectReady(long, boolean, String)} and {@link
+     * UltralightLoadListener#onDOMReady(long, boolean, String)} methods are recommended.
      *
      * @return The script context of the view
      */
     public native JavascriptContextLock lockJavascriptContext();
 
     /**
-     * Helper function to evaluate a raw string of JavaScript and return the
-     * result as a String.
+     * Helper function to evaluate a raw string of JavaScript and return the result as a String.
      * <p>
      * You do not need to lock the JS context, it is done automatically.
      *
@@ -231,16 +239,15 @@ public class UltralightView implements ObjectWithHandle {
     /**
      * Give focus to the View.
      * <p>
-     * You should call this to give visual indication that the View has input
-     * focus (changes active text selection colors, for example).
+     * You should call this to give visual indication that the View has input focus (changes active text selection
+     * colors, for example).
      */
     public native void focus();
 
     /**
      * Remove focus from the View and unfocus any focused input elements.
      * <p>
-     * You should call this to give visual indication that the View has lost
-     * input focus.
+     * You should call this to give visual indication that the View has lost input focus.
      */
     public native void unfocus();
 
@@ -252,20 +259,18 @@ public class UltralightView implements ObjectWithHandle {
     public native boolean hasFocus();
 
     /**
-     * Whether or not the View has an input element with visible keyboard focus
-     * (indicated by a blinking caret).
+     * Whether or not the View has an input element with visible keyboard focus (indicated by a blinking caret).
      * <p>
-     * You can use this to decide whether or not the View should consume
-     * keyboard input events (useful in games with mixed UI and key handling).
+     * You can use this to decide whether or not the View should consume keyboard input events (useful in games with
+     * mixed UI and key handling).
      *
      * @return Whether the view has input focus
      */
     public native boolean hasInputFocus();
 
     /**
-     * Fire a keyboard event.
-     * Only {@link UltralightKeyEventType#CHAR CHAR}
-     * events actually generate text in input fields.
+     * Fire a keyboard event. Only {@link UltralightKeyEventType#CHAR CHAR} events actually generate text in input
+     * fields.
      *
      * @param event The event to fire
      */
@@ -300,34 +305,29 @@ public class UltralightView implements ObjectWithHandle {
     public native void setLoadListener(UltralightLoadListener listener);
 
     /**
-     * Set whether or not this View should be repainted during the next
-     * call to {@link UltralightRenderer#render()}.
+     * Set whether or not this View should be repainted during the next call to {@link UltralightRenderer#render()}.
      * <p>
-     * This flag is automatically set whenever the page content changes
-     * but you can set it directly in case you need to force a repaint.
+     * This flag is automatically set whenever the page content changes but you can set it directly in case you need to
+     * force a repaint.
      *
      * @param needsPaint Whether the needs a re paint
      */
     public native void setNeedsPaint(boolean needsPaint);
 
     /**
-     * Whether or not this View should be repainted during the next call to
-     * {@link UltralightRenderer#render()}.
+     * Whether or not this View should be repainted during the next call to {@link UltralightRenderer#render()}.
      *
      * @return Whether the view needs a re paint during the next render
      */
     public native boolean needsPaint();
 
     /**
-     * Get the inspector for this View, this is useful for debugging and
-     * inspecting pages locally. This will only succeed if you have the
-     * inspector assets in your filesystem-- the inspector will look for
+     * Get the inspector for this View, this is useful for debugging and inspecting pages locally. This will only
+     * succeed if you have the inspector assets in your filesystem-- the inspector will look for
      * file:///inspector/Main.html when it first loads.
      * <p>
-     * The inspector View is owned by the View and lazily-created on
-     * first call. The initial dimensions are 10x10, you should call
-     * {@link #resize(long, long)} on the returned View to resize it to your desired
-     * dimensions.
+     * The inspector View is owned by the View and lazily-created on first call. The initial dimensions are 10x10, you
+     * should call {@link #resize(long, long)} on the returned View to resize it to your desired dimensions.
      *
      * @return An inspector view for the current view
      */
@@ -340,8 +340,12 @@ public class UltralightView implements ObjectWithHandle {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof UltralightView)) return false;
+        if (this == o) {
+            return true;
+        }
+        if (!(o instanceof UltralightView)) {
+            return false;
+        }
         UltralightView that = (UltralightView) o;
         return ptr.getHandle() == that.ptr.getHandle();
     }

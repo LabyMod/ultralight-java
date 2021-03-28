@@ -1,4 +1,5 @@
 import org.apache.tools.ant.taskdefs.condition.Os
+import groovy.json.JsonOutput
 
 plugins {
     id 'application'
@@ -34,6 +35,7 @@ dependencies {
 
     implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
+
 }
 
 def runDir = file("run")
@@ -70,4 +72,97 @@ task copyResources(type: Copy) {
     into runDir
 }
 
+task printRunCmd {
+    doLast {
+        println tasks.run.commandLine.join(" ")
+    }
+}
+
 run.dependsOn copyResources
+
+
+def platformExtension() {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        return ".exe"
+    } else {
+        return ""
+    }
+}
+
+def findRenderdoc() {
+    def qRenderdoc = "qrenderdoc${platformExtension()}"
+
+    for (String pathEntry : System.getenv("PATH").split(File.pathSeparator)) {
+        def qRenderdocEntryFile = file("${pathEntry}${File.separator}${qRenderdoc}")
+        if (qRenderdocEntryFile.exists()) {
+            return qRenderdocEntryFile.absolutePath
+        }
+    }
+
+    if (Os.isFamily(Os.FAMILY_UNIX)) {
+        def qRenderdocDefaultFile = file("/usr/bin/qrenderdoc")
+        if (qRenderdocDefaultFile.exists()) {
+            return qRenderdocDefaultFile.absolutePath
+        }
+    } else if (Os.isFamily(Os.FAMILY_WINDOWS)) {
+        def qRenderdocDefaultFile = file("C:\\Program Files\\RenderDoc\\qrenderdoc.exe")
+        if (qRenderdocDefaultFile.exists()) {
+            return qRenderdocDefaultFile.absolutePath
+        }
+    }
+
+    throw new IllegalStateException("Failed to find qrenderdoc, searched PATH and, if available, standard locations")
+}
+
+task runWithRenderdoc {
+    dependsOn build
+    doLast {
+        File.createTempFile("temp", ".cap").with { renderdocCaptureFile ->
+            renderdocCaptureFile.deleteOnExit()
+
+            def commandLine = tasks.run.getCommandLine()
+            def executable = commandLine.get(0)
+            def args = commandLine.subList(1, commandLine.size())
+
+            def environmentVars = tasks.run.getEnvironment().collect { key, value ->
+                return [
+                        separator: "Platform style",
+                        type     : "Set",
+                        value    : value,
+                        variable : key
+                ]
+            }
+
+            renderdocCaptureFile.text = JsonOutput.toJson([
+                    rdocCaptureSettings: 1,
+                    settings           : [
+                            autoStart      : true,
+                            commandLine    : "${args.join(" ")}",
+                            environment    : environmentVars,
+                            executable     : "${executable}",
+                            inject         : false,
+                            numQueuedFrames: 0,
+                            options        : [
+                                    allowFullscreen           : true,
+                                    allowVSync                : true,
+                                    apiValidation             : false,
+                                    captureAllCmdLists        : false,
+                                    captureCallstacks         : false,
+                                    captureCallstacksOnlyDraws: false,
+                                    debugOutputMute           : true,
+                                    delayForDebugger          : 0,
+                                    hookIntoChildren          : false,
+                                    refAllResources           : false,
+                                    verifyBufferAccess        : false
+                            ],
+                            queueFrameCap  : 0,
+                            workingDir     : "${tasks.run.getWorkingDir().absolutePath}"
+                    ]
+            ])
+
+            exec {
+                it.commandLine findRenderdoc(), renderdocCaptureFile.absolutePath
+            }
+        }
+    }
+}

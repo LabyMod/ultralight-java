@@ -140,6 +140,16 @@ namespace ultralight_java {
         static ultralight::ScrollEvent create_scroll_event_from_jobject(JNIEnv *env, jobject event);
 
         /**
+         * Creates a java float array from a native float array.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param count The length of the array
+         * @param data The array itself
+         * @return The created java array
+         */
+        static jfloatArray create_float_array(JNIEnv *env, int count, const float *data);
+
+        /**
          * Converts a javascript string to a java string.
          *
          * @param env The JNI environment to use for accessing java
