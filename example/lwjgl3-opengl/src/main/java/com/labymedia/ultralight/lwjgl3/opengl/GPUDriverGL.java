@@ -83,13 +83,10 @@ public class GPUDriverGL implements UltralightGPUDriver {
     private long nextTextureId = 1;
     private long nextRenderBufferId = 1;
     private long nextGeometryId = 1;
-    private int batchCount;
     private long curProgramId;
 
     public GPUDriverGL() {
         this.context = new GPUContextGL();
-        glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-        setupDebugMessageCallback();
     }
 
     public GPUContextGL getContext() {
@@ -105,14 +102,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
         if (this.commands.isEmpty())
             return;
 
-        batchCount = 0;
         for (UltralightCommand command : commands) {
             if (command.commandType == KCOMMANDTYPE_DRAWGEOMETRY) {
                 drawGeometry(command.geometryId, command.indicesCount, command.indicesOffset, command.gpuState);
             } else if (command.commandType == KCOMMANDTYPE_CLEARRENDERBUFFER) {
                 clearRenderBuffer(command.gpuState.renderBufferId);
             }
-            batchCount++;
         }
 
         commands.clear();
@@ -175,9 +170,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
         entry.fboMap.put(glfwGetCurrentContext(), fboEntry = new FBOEntry());
 
-        int[] fboId = new int[1];
-        glGenFramebuffers(fboId);
-        fboEntry.fboId = fboId[0];
+        fboEntry.fboId = glGenFramebuffers();
         CHECK_GL();
         glBindFramebuffer(GL_FRAMEBUFFER, Math.toIntExact(fboEntry.fboId));
         CHECK_GL();
@@ -210,9 +203,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         }
 
         // Create MSAA FBO
-        int[] msaaFboId = new int[1];
-        glGenFramebuffers(msaaFboId);
-        fboEntry.msaaFboId = msaaFboId[0];
+        fboEntry.msaaFboId = glGenFramebuffers();
         CHECK_GL();
         glBindFramebuffer(GL_FRAMEBUFFER, Math.toIntExact(fboEntry.msaaFboId));
         CHECK_GL();
@@ -237,13 +228,10 @@ public class GPUDriverGL implements UltralightGPUDriver {
         if (!textureEntry.isSRGB) {
             // We need to make the primary texture sRGB
             // First, Destroy existing texture.
-            int[] texId = new int[1];
-            glDeleteTextures(texId);
-            textureEntry.texId = texId[0];
+            glDeleteTextures(Math.toIntExact(textureEntry.texId));
             CHECK_GL();
             // Create new sRGB texture
-            glGenTextures(texId);
-            textureEntry.texId = texId[0];
+            textureEntry.texId = glGenTextures();
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, Math.toIntExact(textureEntry.texId));
             CHECK_GL();
@@ -290,8 +278,10 @@ public class GPUDriverGL implements UltralightGPUDriver {
             glDisable(GL_SCISSOR_TEST);
         }
 
-        if (state.enableBlend)
+        if (state.enableBlend) {
             glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        }
         else
             glDisable(GL_BLEND);
         CHECK_GL();
@@ -305,8 +295,6 @@ public class GPUDriverGL implements UltralightGPUDriver {
             if (renderBufferEntry.bitmap != null)
                 renderBufferEntry.needsUpdate = true;
         }
-
-        batchCount++;
 
         CHECK_GL();
     }
@@ -364,7 +352,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
 
     private void createVAOIfNeededForActiveContext(long geometryId) {
-        GeometryEntry geometryEntry = geometryMap.computeIfAbsent(geometryId, unused -> new GeometryEntry());
+        GeometryEntry geometryEntry = geometryMap.get(geometryId);
         if (geometryEntry == null) {
             throw new RuntimeException("Geometry ID doesn't exist.");
         }
@@ -437,7 +425,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         boolean flip_y = state.renderBufferId != 0;
         UltralightMatrix modelViewProjection = applyProjection(state.transformMatrix, state.viewportWidth, state.viewportHeight, flip_y);
 
-        float params[] = new float[]{
+        float[] params = new float[]{
                 (float) (glfwGetTime() / 1000.0), state.viewportWidth, state.viewportHeight, 1.0f
         };
         setUniform4f("State", params);
@@ -449,7 +437,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         CHECK_GL();
         float[] vectorData = new float[8 * 4];
 
-        for(int i = 0; i < 8 * 4; i += 4) {
+        for (int i = 0; i < 8 * 4; i += 4) {
             System.arraycopy(state.uniformVector[i / 4].getValue(), 0, vectorData, i, 4);
         }
 
@@ -459,7 +447,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         CHECK_GL();
 
         float[] clip = new float[8 * 16];
-        for(int i = 0; i < 8 * 16; i += 16) {
+        for (int i = 0; i < 8 * 16; i += 16) {
             System.arraycopy(state.clip[i / 16].getData(), 0, clip, i, 16);
         }
 
@@ -630,11 +618,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         CHECK_GL();
 
         TextureEntry entry = textureMap.computeIfAbsent(textureId, unused -> new TextureEntry());
-        int[] texId = new int[1];
-        glGenTextures(texId);
-
-        entry.texId = texId[0];
-
+        entry.texId = glGenTextures();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, Math.toIntExact(entry.texId));
         CHECK_GL();
@@ -686,9 +670,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         entry.height = bitmap.height();
 
         // Allocate a single-sampled texture
-        int[] texId = new int[1];
-        glGenTextures(texId);
-        entry.texId = texId[0];
+        entry.texId = glGenTextures();
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, (int) entry.texId);
 
@@ -699,9 +681,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
         if (context.msaaEnabled()) {
             // Allocate the multisampled texture
-            int[] msaaTexId = new int[1];
-            glGenTextures(msaaTexId);
-            entry.msaaTexId = msaaTexId[0];
+            entry.msaaTexId = glGenTextures();
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, (int) entry.msaaTexId);
             glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGBA8, (int) entry.width, (int) entry.height, false);
@@ -750,9 +730,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
         TextureEntry entry = textureMap.get(textureId);
 
         glDeleteTextures(Math.toIntExact(entry.texId));
+        entry.texId = 0;
         CHECK_GL();
-        if (entry.msaaTexId != 0L)
+        if (entry.msaaTexId != 0L) {
             glDeleteTextures(Math.toIntExact(entry.msaaTexId));
+            entry.msaaTexId = 0;
+        }
         CHECK_GL();
     }
 
@@ -792,17 +775,23 @@ public class GPUDriverGL implements UltralightGPUDriver {
             FBOEntry fboEntry = entry.getValue();
             glfwMakeContextCurrent(context);
             glDeleteFramebuffers(Math.toIntExact(fboEntry.fboId));
+            fboEntry.fboId = 0;
             CHECK_GL();
-            if (this.context.msaaEnabled())
+            if (this.context.msaaEnabled()) {
                 glDeleteFramebuffers(Math.toIntExact(fboEntry.msaaFboId));
+                fboEntry.msaaFboId = 0;
+            }
             CHECK_GL();
         }
 
         if (context.isEnableOffscreenGl()) {
 
             // Clean up PBOs if a bitmap is bound
-            if (renderBufferEntry.bitmap != null)
+            if (renderBufferEntry.bitmap != null) {
                 glDeleteBuffers(Math.toIntExact(renderBufferEntry.pboId));
+                renderBufferEntry.pboId = 0;
+            }
+
         }
         CHECK_GL();
         renderBufferMap.remove(renderBufferId);
@@ -817,17 +806,13 @@ public class GPUDriverGL implements UltralightGPUDriver {
         GeometryEntry geometry = new GeometryEntry();
         geometry.vertexFormat = vertices.format;
 
-        int[] vboVertices = new int[1];
-        glGenBuffers(vboVertices);
-        geometry.vboVertices = vboVertices[0];
+        geometry.vboVertices = glGenBuffers();
 
         glBindBuffer(GL_ARRAY_BUFFER, geometry.vboVertices);
         glBufferData(GL_ARRAY_BUFFER, vertices.data, GL_DYNAMIC_DRAW);
         CHECK_GL();
 
-        int[] vboIndices = new int[1];
-        glGenBuffers(vboIndices);
-        geometry.vboIndices = vboIndices[0];
+        geometry.vboIndices = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry.vboIndices);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.data,
                 GL_STATIC_DRAW);
@@ -854,6 +839,9 @@ public class GPUDriverGL implements UltralightGPUDriver {
         GeometryEntry geometry = geometryMap.get(geometryId);
         glDeleteBuffers(geometry.vboIndices);
         glDeleteBuffers(geometry.vboVertices);
+        geometry.vboIndices = 0;
+        geometry.vboVertices = 0;
+
         CHECK_GL();
 
         long previous_context = glfwGetCurrentContext();

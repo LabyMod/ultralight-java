@@ -207,19 +207,19 @@ public class WebController {
 
         // Lower left corner, 0/0 on the screen space, and 0/0 of the image UV
         glTexCoord2f(0, 0);
-        glVertex2f(10, 10);
+        glVertex2f(0, 0);
 
         // Upper left corner
         glTexCoord2f(0, 1);
-        glVertex2i(10, height-10);
+        glVertex2i(0, height);
 
         // Upper right corner
         glTexCoord2f(1, 1);
-        glVertex2i(width-10, height-10);
+        glVertex2i(width, height);
 
         // Lower right corner
         glTexCoord2f(1, 0);
-        glVertex2i(width-10, 10);
+        glVertex2i(width, 0);
 
         glEnd();
 

@@ -40,7 +40,7 @@ public class GPUContextGL {
     private long window;
 
     public boolean msaaEnabled() {
-        return true;
+        return false;
     }
 
     public boolean isEnableOffscreenGl() {

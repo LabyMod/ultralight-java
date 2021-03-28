@@ -31,25 +31,25 @@ public class OpenGLDrawer {
      * Draw a rotating triangle.
      */
     public void draw() {
-    /*    glDisable(GL_DEPTH_TEST);
-        glEnable(GL_ALPHA_TEST);
-        glUseProgram(0);
-        glPushMatrix();
-        rotation += 0.01;
-        glRotatef(rotation, 0, 0, 1);
-        glBegin(GL_TRIANGLES);
-
-
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2f(-1.0f, -1.0f);
-
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex2f(1.0f, -1.0f);
-
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex2f(0.0f, 1.0f);
-
-        glEnd();
-        glPopMatrix();*/
+//        glDisable(GL_DEPTH_TEST);
+//        glEnable(GL_ALPHA_TEST);
+//        glUseProgram(0);
+//        glPushMatrix();
+//        rotation += 0.01;
+//        glRotatef(rotation, 0, 0, 1);
+//        glBegin(GL_TRIANGLES);
+//
+//
+//        glColor3f(1.0f, 0.0f, 0.0f);
+//        glVertex2f(-1.0f, -1.0f);
+//
+//        glColor3f(0.0f, 1.0f, 0.0f);
+//        glVertex2f(1.0f, -1.0f);
+//
+//        glColor3f(0.0f, 0.0f, 1.0f);
+//        glVertex2f(0.0f, 1.0f);
+//
+//        glEnd();
+//        glPopMatrix();
     }
 }
