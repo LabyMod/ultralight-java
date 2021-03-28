@@ -102,6 +102,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
         if (this.commands.isEmpty())
             return;
 
+        glEnable(GL_BLEND);
+        glDisable(GL_SCISSOR_TEST);
+        glDisable(GL_DEPTH_TEST);
+        glDepthFunc(GL_NEVER);
+        glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+
         for (UltralightCommand command : commands) {
             if (command.commandType == KCOMMANDTYPE_DRAWGEOMETRY) {
                 drawGeometry(command.geometryId, command.indicesCount, command.indicesOffset, command.gpuState);
@@ -280,7 +286,6 @@ public class GPUDriverGL implements UltralightGPUDriver {
 
         if (state.enableBlend) {
             glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
         }
         else
             glDisable(GL_BLEND);
