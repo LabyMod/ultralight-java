@@ -36,8 +36,8 @@ package com.labymedia.ultralight.lwjgl3.opengl;/*
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-import com.labymedia.ultralight.UltralightMatrix;
-import com.labymedia.ultralight.UltralightMatrix4x4;
+import com.labymedia.ultralight.math.UltralightMatrix;
+import com.labymedia.ultralight.math.UltralightMatrix4x4;
 import com.labymedia.ultralight.bitmap.UltralightBitmap;
 import com.labymedia.ultralight.bitmap.UltralightBitmapFormat;
 import com.labymedia.ultralight.math.IntRect;
@@ -63,7 +63,6 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.glTexImage2DMultisample;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS;
 import static org.lwjgl.opengl.GLUtil.setupDebugMessageCallback;
 
 public class GPUDriverGL implements UltralightGPUDriver {

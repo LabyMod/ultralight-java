@@ -19,13 +19,10 @@
 
 package com.labymedia.ultralight.plugin.render;
 
-import com.labymedia.ultralight.UltralightMatrix;
-import com.labymedia.ultralight.UltralightMatrix4x4;
+import com.labymedia.ultralight.math.UltralightMatrix4x4;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.math.IntRect;
 import com.labymedia.ultralight.math.Vec4;
-
-import java.nio.ByteBuffer;
 
 @NativeType("ultralight::GPUState")
 public class UltralightGPUState {

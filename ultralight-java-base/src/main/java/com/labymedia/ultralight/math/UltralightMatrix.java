@@ -17,16 +17,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight;
+package com.labymedia.ultralight.math;
 
 import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
-import com.labymedia.ultralight.bitmap.UltralightBitmap;
 import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.ffi.gc.DeletableObject;
-
-import java.lang.annotation.Native;
-import java.nio.ByteBuffer;
 
 @NativeType("ultralight::Matrix")
 public class UltralightMatrix implements ObjectWithHandle {
@@ -42,10 +38,14 @@ public class UltralightMatrix implements ObjectWithHandle {
     }
 
     public native void set(
-            @NativeType("double") double m11, @NativeType("double") double m12, @NativeType("double") double m13, @NativeType("double") double m14,
-            @NativeType("double") double m21, @NativeType("double") double m22, @NativeType("double") double m23, @NativeType("double") double m24,
-            @NativeType("double") double m31, @NativeType("double") double m32, @NativeType("double") double m33, @NativeType("double") double m34,
-            @NativeType("double") double m41, @NativeType("double") double m42, @NativeType("double") double m43, @NativeType("double") double m44
+            @NativeType("double") double m11, @NativeType("double") double m12, @NativeType(
+            "double") double m13, @NativeType("double") double m14,
+            @NativeType("double") double m21, @NativeType("double") double m22, @NativeType(
+            "double") double m23, @NativeType("double") double m24,
+            @NativeType("double") double m31, @NativeType("double") double m32, @NativeType(
+            "double") double m33, @NativeType("double") double m34,
+            @NativeType("double") double m41, @NativeType("double") double m42, @NativeType(
+            "double") double m43, @NativeType("double") double m44
     );
 
     public native void set(UltralightMatrix4x4 ultralightMatrix4x4);
@@ -60,7 +60,8 @@ public class UltralightMatrix implements ObjectWithHandle {
         return handle.get();
     }
 
-    public native void setOrthographicProjection(@NativeType("double") double screenWidth, @NativeType("double") double screenHeight, @NativeType("bool") boolean flipY);
+    public native void setOrthographicProjection(@NativeType("double") double screenWidth, @NativeType(
+            "double") double screenHeight, @NativeType("bool") boolean flipY);
 
     public native void transform(UltralightMatrix transformMat);
 

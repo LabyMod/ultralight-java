@@ -185,15 +185,15 @@ namespace ultralight_java {
         runtime.ultralight_matrix.native_methods =
             {NATIVE_METHOD(
                  "getMatrix4x4",
-                 "()Lcom/labymedia/ultralight/UltralightMatrix4x4;",
-                 UltralightMatrixJNI::getMatrix4x4),
+                 "()Lcom/labymedia/ultralight/math/UltralightMatrix4x4;",
+                 UltralightMatrixJNI::get_matrix_4x4),
              NATIVE_METHOD("delete", "(J)V", UltralightMatrixJNI::_delete),
              NATIVE_METHOD("construct", "()J", UltralightMatrixJNI::construct),
              NATIVE_METHOD("set", "(DDDDDDDDDDDDDDDD)V", UltralightMatrixJNI::set),
-             NATIVE_METHOD("set", "(Lcom/labymedia/ultralight/UltralightMatrix4x4;)V", UltralightMatrixJNI::set1),
-             NATIVE_METHOD("setOrthographicProjection", "(DDZ)V", UltralightMatrixJNI::setOrthographicProjection),
+             NATIVE_METHOD("set", "(Lcom/labymedia/ultralight/math/UltralightMatrix4x4;)V", UltralightMatrixJNI::set1),
+             NATIVE_METHOD("setOrthographicProjection", "(DDZ)V", UltralightMatrixJNI::set_orthographic_projection),
              NATIVE_METHOD(
-                 "transform", "(Lcom/labymedia/ultralight/UltralightMatrix;)V", UltralightMatrixJNI::transform)};
+                 "transform", "(Lcom/labymedia/ultralight/math/UltralightMatrix;)V", UltralightMatrixJNI::transform)};
 
         runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
             "bitmap", "()Lcom/labymedia/ultralight/bitmap/UltralightBitmap;", UltralightBitmapSurfaceJNI::bitmap)};

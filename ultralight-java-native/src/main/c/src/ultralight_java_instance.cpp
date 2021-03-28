@@ -77,7 +77,7 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightMatrix class
         auto ultralight_matrix_class = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/UltralightMatrix")));
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/math/UltralightMatrix")));
         runtime.ultralight_matrix.clazz = ultralight_matrix_class;
         runtime.ultralight_matrix.constructor = env->GetMethodID(runtime.ultralight_matrix.clazz, "<init>", "(J)V");
 
@@ -91,7 +91,7 @@ namespace ultralight_java {
 
         // Retrieve information about the UltralightMatrix4x4 class
         auto ultralight_matrix4x4_class = reinterpret_cast<jclass>(
-            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/UltralightMatrix4x4")));
+            env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/math/UltralightMatrix4x4")));
         runtime.ultralight_matrix4x4.clazz = ultralight_matrix4x4_class;
         runtime.ultralight_matrix4x4.constructor = env->GetMethodID(runtime.ultralight_matrix4x4.clazz, "<init>", "(J)V");
 
@@ -307,7 +307,7 @@ namespace ultralight_java {
         runtime.ultralight_gpustate.constructor = env->GetMethodID(
             runtime.ultralight_gpustate.clazz,
             "<init>",
-            "(JJLcom/labymedia/ultralight/UltralightMatrix4x4;ZZSJJJJ[F[Lcom/labymedia/ultralight/math/Vec4;S[Lcom/labymedia/ultralight/UltralightMatrix4x4;ZLcom/labymedia/ultralight/math/IntRect;)V");
+            "(JJLcom/labymedia/ultralight/math/UltralightMatrix4x4;ZZSJJJJ[F[Lcom/labymedia/ultralight/math/Vec4;S[Lcom/labymedia/ultralight/math/UltralightMatrix4x4;ZLcom/labymedia/ultralight/math/IntRect;)V");
 
         // Retrieve information about the UltralightIndexBuffer class
         runtime.ultralight_indexbuffer.clazz = reinterpret_cast<jclass>(
