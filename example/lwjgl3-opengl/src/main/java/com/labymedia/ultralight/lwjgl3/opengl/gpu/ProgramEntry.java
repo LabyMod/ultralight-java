@@ -17,16 +17,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.gpu;
 
-import com.labymedia.ultralight.plugin.render.UltralightVertexBufferFormat;
+public class ProgramEntry {
 
-import java.util.HashMap;
-import java.util.Map;
+    int programId;
+    int vertShaderId;
+    int fragShaderId;
 
-public class GeometryEntry {
-    Map<Long, Long> vaoMap = new HashMap<>();
-    UltralightVertexBufferFormat vertexFormat;
-    int vboVertices = 0; // VBO id for vertices
-    int vboIndices = 0; // VBO id for indices
 }

@@ -306,7 +306,13 @@ namespace ultralight_java {
         runtime.ultralight_command.constructor = env->GetMethodID(
             runtime.ultralight_command.clazz,
             "<init>",
-            "(SLcom/labymedia/ultralight/plugin/render/UltralightGPUState;JJJ)V");
+            "("
+            "Lcom/labymedia/ultralight/plugin/render/UltralightCommandType;"
+            "Lcom/labymedia/ultralight/plugin/render/UltralightGPUState;"
+            "J"
+            "J"
+            "J"
+            ")V");
 
         // Retrieve information about the UltralightCommandType enum
         runtime.ultralight_command_type.clazz = reinterpret_cast<jclass>(

@@ -17,10 +17,20 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.gpu;
 
-public class FBOEntry {
-    long fboId;
-    long msaaFboId;
-    boolean needsResolve;
+import com.labymedia.ultralight.bitmap.UltralightBitmap;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class RenderBufferEntry {
+    Map<Long, FBOEntry> fboMap = new HashMap<>();
+    long textureId;
+    UltralightBitmap bitmap;
+    long pboId;
+    boolean isBitmapDirty;
+    boolean isFirstDraw;
+    boolean needsUpdate;
+
 }

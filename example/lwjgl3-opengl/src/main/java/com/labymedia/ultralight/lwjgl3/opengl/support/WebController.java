@@ -26,7 +26,7 @@ import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
 import com.labymedia.ultralight.config.UltralightViewConfig;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
-import com.labymedia.ultralight.lwjgl3.opengl.GPUDriverGL;
+import com.labymedia.ultralight.lwjgl3.opengl.gpu.GPUDriverGL;
 import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
@@ -50,7 +50,6 @@ public class WebController {
 
     private GPUDriverGL driver;
 
-    private int glTexture;
     private long lastJavascriptGarbageCollections;
 
     /**
@@ -96,7 +95,6 @@ public class WebController {
         this.loadListener = new ExampleLoadListener(view);
         this.view.setLoadListener(loadListener);
 
-        this.glTexture = -1;
         this.lastJavascriptGarbageCollections = 0;
 
         this.inputAdapter = new InputAdapter(view);
@@ -156,10 +154,6 @@ public class WebController {
 
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
 
-        this.driver.beginSynchronize();
-        // overlay
-        this.driver.endSynchronize();
-
         if (this.driver.hasCommandsPending()) {
             //GLFW.glfwMakeContextCurrent(this.window);
             this.driver.drawCommandList();
@@ -168,9 +162,7 @@ public class WebController {
 
         glPopAttrib();
 
-        long text = this.view.renderTarget().textureId;
-        long buffer = this.view.renderTarget().renderBufferId;
-        float[] uv = this.view.renderTarget().uvCoords;
+        long text = this.view.renderTarget().getTextureId();
         int width = (int) view.width();
         int height = (int) view.height();
         glClearColor(0,0,0,1);
@@ -180,7 +172,6 @@ public class WebController {
         this.driver.bindTexture(0, text);
 
         glUseProgram(0);
-
 
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
@@ -200,7 +191,6 @@ public class WebController {
         // Make sure we draw with a neutral color
         // (so we don't mess with the color channels of the image)
         glColor4f(1, 1, 1, 1);
-
 
         glBegin(GL_QUADS);
 
@@ -232,21 +222,5 @@ public class WebController {
 
         glDisable(GL_TEXTURE_2D);
         glPopAttrib();
-
-    }
-
-    /**
-     * Sets up the OpenGL texture for rendering
-     */
-    private void createGLTexture() {
-        glEnable(GL_TEXTURE_2D);
-        this.glTexture = glGenTextures();
-        glBindTexture(GL_TEXTURE_2D, this.glTexture);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glDisable(GL_TEXTURE_2D);
     }
 }

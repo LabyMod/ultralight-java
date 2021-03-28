@@ -17,20 +17,16 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.lwjgl3.opengl.gpu;
 
-import com.labymedia.ultralight.bitmap.UltralightBitmap;
+import com.labymedia.ultralight.plugin.render.UltralightVertexBufferFormat;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public class RenderBufferEntry {
-    Map<Long, FBOEntry> fboMap = new HashMap<>();
-    long textureId;
-    UltralightBitmap bitmap;
-    long pboId;
-    boolean isBitmapDirty;
-    boolean isFirstDraw;
-    boolean needsUpdate;
-
+public class GeometryEntry {
+    Map<Long, Long> vaoMap = new HashMap<>();
+    UltralightVertexBufferFormat vertexFormat;
+    int vboVertices = 0; // VBO id for vertices
+    int vboIndices = 0; // VBO id for indices
 }
