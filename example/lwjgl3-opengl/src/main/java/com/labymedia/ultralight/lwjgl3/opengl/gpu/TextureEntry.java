@@ -17,34 +17,13 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-html, body {
-    background: transparent;
-}
+package com.labymedia.ultralight.lwjgl3.opengl.gpu;
 
-#center {
-    position: absolute;
-    width: 400px;
-    height: 100px;
-
-    margin: auto;
-
-    background: rgba(0, 0, 0, 0.2);
-
-    top: 0;
-    left: 0;
-    bottom: 0;
-    right: 0;
-
-    border-radius: 10px;
-}
-
-#center > span {
-    text-align: center;
-    vertical-align: middle;
-    line-height: 100px;
-
-    color: white;
-    font-size: 40px;
-
-    width: 400px;
+public class TextureEntry {
+    long texId;
+    long msaaTexId;
+    long renderBufferId;
+    long width;
+    long height;
+    boolean isSRGB;
 }

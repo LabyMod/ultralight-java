@@ -17,39 +17,38 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl.drawing;
+package com.labymedia.ultralight.plugin.render;
 
-import static org.lwjgl.opengl.GL21.*;
+import com.labymedia.ultralight.annotation.NativeCall;
+import com.labymedia.ultralight.annotation.NativeType;
+
+import java.nio.ByteBuffer;
 
 /**
- * This class just draws a simple, colored rotating triangle in the background for demonstration.
+ * Vertex index buffer.
+ *
+ * @see UltralightGPUDriver#createGeometry(long, UltralightVertexBuffer, UltralightIndexBuffer)
  */
-public class OpenGLDrawer {
-    private float rotation;
+@NativeType("ultralight::IndexBuffer")
+public class UltralightIndexBuffer {
+    private final @NativeType("uint8_t[]") ByteBuffer data;
 
     /**
-     * Draw a rotating triangle.
+     * Constructs a new index buffer wrapping an existing byte buffer.
+     *
+     * @param data The data of the index buffer
      */
-    public void draw() {
-        glDisable(GL_DEPTH_TEST);
-        glEnable(GL_ALPHA_TEST);
-        glUseProgram(0);
-        glPushMatrix();
-        rotation += 0.01;
-        glRotatef(rotation, 0, 0, 1);
-        glBegin(GL_TRIANGLES);
+    @NativeCall
+    public UltralightIndexBuffer(ByteBuffer data) {
+        this.data = data;
+    }
 
-
-        glColor3f(1.0f, 0.0f, 0.0f);
-        glVertex2f(-1.0f, -1.0f);
-
-        glColor3f(0.0f, 1.0f, 0.0f);
-        glVertex2f(1.0f, -1.0f);
-
-        glColor3f(0.0f, 0.0f, 1.0f);
-        glVertex2f(0.0f, 1.0f);
-
-        glEnd();
-        glPopMatrix();
+    /**
+     * Retrieves the data of the index buffer.
+     *
+     * @return The data of the index buffer
+     */
+    public ByteBuffer getData() {
+        return data;
     }
 }

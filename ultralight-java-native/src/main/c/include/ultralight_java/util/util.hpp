@@ -139,6 +139,8 @@ namespace ultralight_java {
          */
         static ultralight::ScrollEvent create_scroll_event_from_jobject(JNIEnv *env, jobject event);
 
+        static jfloatArray create_float_array(JNIEnv *env, int count, const float *data);
+
         /**
          * Converts a javascript string to a java string.
          *
