@@ -48,10 +48,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -866,12 +863,10 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     @Override
-    public void updateCommandList(UltralightCommandList list) {
+    public void updateCommandList(UltralightCommand[] list) {
         CHECK_GL();
-        if (list.data.length != 0) {
-            for (UltralightCommand datum : list.data) {
-                this.commands.add(datum);
-            }
+        if (list.length != 0) {
+            Collections.addAll(this.commands, list);
         }
         CHECK_GL();
     }

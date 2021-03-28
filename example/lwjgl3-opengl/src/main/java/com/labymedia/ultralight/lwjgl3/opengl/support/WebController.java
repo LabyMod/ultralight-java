@@ -170,7 +170,7 @@ public class WebController {
 
         long text = this.view.renderTarget().textureId;
         long buffer = this.view.renderTarget().renderBufferId;
-        float[] uv = this.view.renderTarget().uv_coords;
+        float[] uv = this.view.renderTarget().uvCoords;
         int width = (int) view.width();
         int height = (int) view.height();
         glClearColor(0,0,0,1);

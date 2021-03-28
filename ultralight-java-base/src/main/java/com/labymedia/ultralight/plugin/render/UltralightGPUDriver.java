@@ -19,40 +19,131 @@
 
 package com.labymedia.ultralight.plugin.render;
 
+import com.labymedia.ultralight.UltralightRenderer;
 import com.labymedia.ultralight.annotation.NativeType;
+import com.labymedia.ultralight.annotation.Unsigned;
 import com.labymedia.ultralight.bitmap.UltralightBitmap;
 
+/**
+ * GPUDriver interface, dispatches GPU calls to the native driver.
+ *
+ * If you are using {@link UltralightRenderer#create()}, you will need to provide your own
+ *
+ * implementation of this class if you have enabled the GPU renderer in the
+ * Config.
+ *
+ * @see com.labymedia.ultralight.UltralightPlatform#setGPUDriver(UltralightGPUDriver)
+ */
 @NativeType("ultralight::GPUDriver")
 public interface UltralightGPUDriver {
-
+    /**
+     * Called before any commands are dispatched during a frame.
+     */
     void beginSynchronize();
 
+    /**
+     * Called after any commands are dispatched during a frame.
+     */
     void endSynchronize();
 
-    @NativeType("uint32_t")
-    long nextTextureId();
+    /**
+     * Get the next available texture ID.
+     *
+     * @return The next available texture ID
+     */
+    @Unsigned @NativeType("uint32_t") long nextTextureId();
 
-    void createTexture(@NativeType("uint32_t") long textureId, @NativeType("ultralight::Ref<ultralight::Bitmap>") UltralightBitmap bitmap);
+    /**
+     * Create a texture with a certain ID and optional bitmap.
+     * <p>
+     * If the Bitmap is empty {@link UltralightBitmap#isEmpty()}, then a RTT Texture should be created instead. This
+     * will be used as a backing texture for a new RenderBuffer.
+     *
+     * @param textureId The id of the texture to create
+     * @param bitmap    The bitmap to use, if any
+     */
+    void createTexture(@Unsigned @NativeType("uint32_t") long textureId, @NativeType(
+            "ultralight::Ref<ultralight::Bitmap>") UltralightBitmap bitmap);
 
-    void updateTexture(@NativeType("uint32_t") long textureId, @NativeType("ultralight::Ref<ultralight::Bitmap>") UltralightBitmap bitmap);
+    /**
+     * Update an existing non-RTT texture with new bitmap data.
+     *
+     * @param textureId The id of the texture ot update
+     * @param bitmap    The new bitmap to use
+     */
+    void updateTexture(@Unsigned @NativeType("uint32_t") long textureId, @NativeType(
+            "ultralight::Ref<ultralight::Bitmap>") UltralightBitmap bitmap);
 
-    void destroyTexture(@NativeType("uint32_t") long textureId);
+    /**
+     * Destroy a texture.
+     *
+     * @param textureId The id of the texture to destroy
+     */
+    void destroyTexture(@Unsigned @NativeType("uint32_t") long textureId);
 
-    @NativeType("uint32_t")
-    long nextRenderBufferId();
+    /**
+     * Generate the next available render buffer ID.
+     *
+     * @return The next available render buffer ID
+     */
+    @Unsigned @NativeType("uint32_t") long nextRenderBufferId();
 
-    void createRenderBuffer(@NativeType("uint32_t") long renderBufferId, @NativeType("ultralight::RenderBuffer") UltralightRenderBuffer buffer);
+    /**
+     * Create a render buffer with certain ID and buffer description.
+     *
+     * @param renderBufferId The id of the buffer to create
+     * @param buffer         The description of the buffer to create
+     */
+    void createRenderBuffer(@Unsigned @NativeType("uint32_t") long renderBufferId, @NativeType(
+            "ultralight::RenderBuffer") UltralightRenderBuffer buffer);
 
-    void destroyRenderBuffer(@NativeType("uint32_t") long renderBufferId);
+    /**
+     * Destroy a render buffer.
+     *
+     * @param renderBufferId The render buffer to destroy
+     */
+    void destroyRenderBuffer(@Unsigned @NativeType("uint32_t") long renderBufferId);
 
-    @NativeType("uint32_t")
-    long nextGeometryId();
+    /**
+     * Generate the next available geometry ID.
+     *
+     * @return The next available geometry ID
+     */
+    @Unsigned @NativeType("uint32_t") long nextGeometryId();
 
-    void createGeometry(@NativeType("uint32_t") long geometryId, @NativeType("ultralight::VertexBuffer") UltralightVertexBuffer vertices, @NativeType("ultralight::IndexBuffer") UltralightIndexBuffer indices);
+    /**
+     * Create geometry with certain ID and vertex/index data.
+     *
+     * @param geometryId The id of the geometry to create
+     * @param vertices   The vertex data of the geometry
+     * @param indices    The index data of the geometry
+     */
+    void createGeometry(@Unsigned @NativeType("uint32_t") long geometryId, @NativeType(
+            "ultralight::VertexBuffer") UltralightVertexBuffer vertices, @NativeType(
+            "ultralight::IndexBuffer") UltralightIndexBuffer indices);
 
-    void updateGeometry(@NativeType("uint32_t") long geometryId, @NativeType("ultralight::VertexBuffer") UltralightVertexBuffer vertices, @NativeType("ultralight::IndexBuffer") UltralightIndexBuffer indices);
+    /**
+     * Update existing geometry with new vertex/index data.
+     *
+     * @param geometryId The id of the geometry to update
+     * @param vertices   The new vertex data of the geometry
+     * @param indices    The The index data of the geometry
+     */
+    void updateGeometry(@Unsigned @NativeType("uint32_t") long geometryId, @NativeType(
+            "ultralight::VertexBuffer") UltralightVertexBuffer vertices, @NativeType(
+            "ultralight::IndexBuffer") UltralightIndexBuffer indices);
 
-    void destroyGeometry(@NativeType("uint32_t") long geometryId);
+    /**
+     * Destroy geometry.
+     *
+     * @param geometryId The id of the geometry to destroy
+     */
+    void destroyGeometry(@Unsigned @NativeType("uint32_t") long geometryId);
 
-    void updateCommandList(@NativeType("ultralight::CommandList") UltralightCommandList list);
+    /**
+     * Update command list.
+     *
+     * @param list The new list of commands
+     */
+    void updateCommandList(UltralightCommand[] list);
 }

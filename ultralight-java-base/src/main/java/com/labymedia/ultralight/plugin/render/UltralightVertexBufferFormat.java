@@ -21,8 +21,11 @@ package com.labymedia.ultralight.plugin.render;
 
 import com.labymedia.ultralight.annotation.NativeType;
 
+/**
+ * Vertex formats.
+ */
 @NativeType("ultralight::VertexBufferFormat")
 public enum UltralightVertexBufferFormat {
     FORMAT_2F_4UB_2F,
-    FORMAT_2F_4UB_2F_2F_28F;
+    FORMAT_2F_4UB_2F_2F_28F
 }

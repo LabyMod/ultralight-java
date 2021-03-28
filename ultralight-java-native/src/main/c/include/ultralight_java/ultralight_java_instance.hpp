@@ -318,18 +318,6 @@ namespace ultralight_java {
              * Constructor
              */
             jmethodID constructor;
-        } ultralight_commandlist;
-
-        struct {
-            /**
-             * The java class itself
-             */
-            jclass clazz;
-
-            /**
-             * Constructor
-             */
-            jmethodID constructor;
         } ultralight_command;
 
         struct {
@@ -339,10 +327,34 @@ namespace ultralight_java {
             jclass clazz;
 
             /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::CommandType> constants;
+        } ultralight_command_type;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
              * Constructor
              */
             jmethodID constructor;
-        } ultralight_gpustate;
+        } ultralight_gpu_state;
+
+        struct {
+            /**
+             * The java class itself
+             */
+            jclass clazz;
+
+            /**
+             * The java enum constants
+             */
+            JavaEnum<ultralight::ShaderType> constants;
+        } ultralight_shader_type;
 
         struct {
             /**

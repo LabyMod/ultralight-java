@@ -198,6 +198,16 @@ namespace ultralight_java {
         runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
             "bitmap", "()Lcom/labymedia/ultralight/bitmap/UltralightBitmap;", UltralightBitmapSurfaceJNI::bitmap)};
 
+        runtime.ultralight_command_type.constants = JavaEnum<ultralight::CommandType>(
+            ultralight::kCommandType_ClearRenderBuffer,
+            "CLEAR_RENDER_BUFFER",
+            ultralight::kCommandType_DrawGeometry,
+            "DRAW_GEOMETRY");
+
+        runtime.ultralight_shader_type.constants = JavaEnum<
+            ultralight::
+                ShaderType>(ultralight::kShaderType_Fill, "FILL", ultralight::kShaderType_FillPath, "FILL_PATH");
+
         runtime.ultralight_bitmap_format.constants = JavaEnum<ultralight::BitmapFormat>(
             ultralight::kBitmapFormat_A8_UNORM,
             "A8_UNORM",

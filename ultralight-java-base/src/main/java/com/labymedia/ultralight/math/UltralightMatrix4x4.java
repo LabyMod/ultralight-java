@@ -24,26 +24,52 @@ import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.ffi.gc.DeletableObject;
 
+/**
+ * 4x4 Matrix Helper.
+ */
 @NativeType("ultralight::Matrix4x4")
 public class UltralightMatrix4x4 implements ObjectWithHandle {
-
     private final DeletableObject<Long> handle;
 
+    /**
+     * Constructs a new {@link UltralightMatrix4x4} and begins tracking the underlying handle.
+     *
+     * @param handle A pointer to a native ultralight::Matrix4x4, the java object will take
+     *               ownership of the native pointer
+     */
     @NativeCall
     private UltralightMatrix4x4(long handle) {
         this.handle = new DeletableObject<>(handle, UltralightMatrix4x4::delete);
     }
 
+    /**
+     * Constructs a new, empty 4x4 matrix.
+     */
     public UltralightMatrix4x4() {
         this.handle = new DeletableObject<>(construct(), UltralightMatrix4x4::delete);
     }
 
     public native @NativeType("float*") float[] getData();
 
+    /**
+     * Set to identity matrix.
+     */
     public native void setIdentity();
 
+    /**
+     * Constructs a native instance of the matrix.
+     *
+     * @return A pointer to the crated instance.
+     */
     private static native long construct();
 
+    /**
+     * Executes the deletion of the native `ultralight::Matrix4x4` instance.
+     * This method is static to not keep a reference to the java object, which
+     * else would prevent deletion.
+     *
+     * @param handle A pointer to the instance to delete
+     */
     private static native void delete(long handle);
 
     @Override
