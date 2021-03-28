@@ -173,7 +173,7 @@ public class WebController {
         float[] uv = this.view.renderTarget().uv_coords;
         int width = (int) view.width();
         int height = (int) view.height();
-        glClearColor(1,1,1,1);
+        glClearColor(0,0,0,1);
         glEnable(GL_TEXTURE_2D);
         // Set up the OpenGL state for rendering of a fullscreen quad
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
