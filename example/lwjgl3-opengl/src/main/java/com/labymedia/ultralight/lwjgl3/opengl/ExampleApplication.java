@@ -42,7 +42,6 @@ import static org.lwjgl.opengl.GL20.*;
  */
 public class ExampleApplication {
     private final long window;
-    private InputAdapter inputAdapter;
     private final CursorAdapter cursorManager;
     private final WebController webController;
 
@@ -160,7 +159,7 @@ public class ExampleApplication {
 
         webController.initGPUDriver();
 
-        this.inputAdapter = webController.getInputAdapter();
+        InputAdapter inputAdapter = webController.getInputAdapter();
 
         // Register all the GLFW callbacks required by this application
         setCallback(GLFW::glfwSetWindowContentScaleCallback, inputAdapter::windowContentScaleCallback);

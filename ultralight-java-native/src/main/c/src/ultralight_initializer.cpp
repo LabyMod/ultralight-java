@@ -160,7 +160,7 @@ namespace ultralight_java {
              NATIVE_METHOD(
                  "renderTarget",
                  "()Lcom/labymedia/ultralight/plugin/render/UltralightRenderTarget;",
-                 UltralightViewJNI::renderTarget)};
+                 UltralightViewJNI::render_target)};
 
         runtime.ultralight_surface.native_methods =
             {NATIVE_METHOD("width", "()J", UltralightSurfaceJNI::width),

@@ -1,7 +1,6 @@
 import org.apache.tools.ant.taskdefs.condition.Os
 import groovy.json.JsonOutput
 
-
 plugins {
     id 'application'
 }
@@ -22,7 +21,6 @@ def lwjglClassifier = {
 
 repositories {
     mavenCentral()
-    mavenLocal()
 }
 
 dependencies {

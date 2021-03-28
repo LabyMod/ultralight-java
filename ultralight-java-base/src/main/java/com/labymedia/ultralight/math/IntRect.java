@@ -245,6 +245,42 @@ public final class IntRect {
         );
     }
 
+    /**
+     * Retrieves the left position of this rect.
+     *
+     * @return The left position
+     */
+    public int getLeft() {
+        return left;
+    }
+
+    /**
+     * Retrieves the top position of this rect.
+     *
+     * @return The top position
+     */
+    public int getTop() {
+        return top;
+    }
+
+    /**
+     * Retrieves the right position of this rect.
+     *
+     * @return The right position
+     */
+    public int getRight() {
+        return right;
+    }
+
+    /**
+     * Retrieves the bottom position of this rect.
+     *
+     * @return The bottom position
+     */
+    public int getBottom() {
+        return bottom;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -259,21 +295,5 @@ public final class IntRect {
     @Override
     public int hashCode() {
         return Objects.hash(left, top, right, bottom);
-    }
-
-    public int getLeft() {
-        return left;
-    }
-
-    public int getTop() {
-        return top;
-    }
-
-    public int getRight() {
-        return right;
-    }
-
-    public int getBottom() {
-        return bottom;
     }
 }

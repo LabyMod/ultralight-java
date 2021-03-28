@@ -82,14 +82,14 @@ public class UltralightPlatform implements ObjectWithHandle {
     public native void setFileSystem(UltralightFileSystem fileSystem);
 
     /**
-     * Set the GPU driver implementation
+     * Set the GPU driver implementation.
      *
      * @param gpuDriver The GPU driver implementation to use
      */
     public native void setGPUDriver(UltralightGPUDriver gpuDriver);
 
     /**
-     * Set the GPU driver implementation
+     * Set the GPU driver implementation.
      *
      * @param handle The pointer to the GPU driver
      */
