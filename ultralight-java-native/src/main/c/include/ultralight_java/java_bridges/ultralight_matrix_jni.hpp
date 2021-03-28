@@ -25,8 +25,14 @@
 namespace ultralight_java {
     class UltralightMatrixJNI {
     public:
+        ///
+        /// Set to another matrix.
+        ///
         static void set1(JNIEnv *env, jobject instance, jobject matrix4x4);
 
+        ///
+        /// Set from raw 4x4 components.
+        ///
         static void set(
             JNIEnv *env,
             jobject instance,
@@ -47,16 +53,27 @@ namespace ultralight_java {
             jdouble m43,
             jdouble m44);
 
+        ///
+        /// Get this matrix as unaligned 4x4 float components (for use passing to
+        /// GPU driver APIs).
+        ///
         static jobject getMatrix4x4(JNIEnv *env, jobject instance);
+
+        ///
+        /// Set to an orthographic projection matrix suitable for use with our
+        /// vertex shaders. Optionally flip the y-coordinate space (eg, for OpenGL).
+        ///
+        static void setOrthographicProjection(
+            JNIEnv *env, jobject instance, jdouble width, jdouble height, jboolean flipY);
+
+        ///
+        /// Transform (multiply) by another Matrix
+        ///
+        static void transform(JNIEnv *env, jobject instance, jobject transformMatrix);
 
         static jobject create(JNIEnv *env, ultralight::Matrix matrix);
 
         static jlong construct(JNIEnv *env, jclass caller_class);
-
-        static void setOrthographicProjection(
-            JNIEnv *env, jobject instance, jdouble width, jdouble height, jboolean flipY);
-
-        static void transform(JNIEnv *env, jobject instance, jobject transformMatrix);
 
         static void _delete(JNIEnv *env, jclass caller_class, jlong handle);
     };

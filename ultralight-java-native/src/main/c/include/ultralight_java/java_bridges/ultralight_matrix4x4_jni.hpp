@@ -25,7 +25,13 @@
 namespace ultralight_java {
     class UltralightMatrix4x4JNI {
     public:
+        ///
+        /// Raw 4x4 matrix as an array
+        ///
         static jfloatArray get_data(JNIEnv *env, jobject instance);
+        ///
+        /// Set to identity matrix.
+        ///
         static void set_identity(JNIEnv *env, jobject instance);
         static jobject create(JNIEnv *env, ultralight::Matrix4x4 matrix);
         static jlong construct(JNIEnv *env, jclass caller_class);
