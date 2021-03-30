@@ -399,15 +399,15 @@ namespace ultralight_java {
         auto target = env->NewObject(
             runtime.ultralight_render_target.clazz,
             runtime.ultralight_render_target.constructor,
-            render_target.is_empty,
-            render_target.width,
-            render_target.height,
-            render_target.texture_id,
-            render_target.texture_width,
-            render_target.texture_height,
+            static_cast<jboolean>(render_target.is_empty),
+            static_cast<jlong>(render_target.width),
+            static_cast<jlong>(render_target.height),
+            static_cast<jlong>(render_target.texture_id),
+            static_cast<jlong>(render_target.texture_width),
+            static_cast<jlong>(render_target.texture_height),
             runtime.ultralight_bitmap_format.constants.to_java(env, render_target.texture_format),
             uv_coords,
-            render_target.render_buffer_id);
+            static_cast<jlong>(render_target.render_buffer_id));
 
         return target;
     }
