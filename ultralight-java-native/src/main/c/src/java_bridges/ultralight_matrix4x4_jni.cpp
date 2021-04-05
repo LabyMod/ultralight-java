@@ -23,6 +23,17 @@
 #include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {
+    jobject UltralightMatrix4x4JNI::create(JNIEnv *env, ultralight::Matrix4x4 matrix) {
+        return env->NewObject(
+            runtime.ultralight_matrix4x4.clazz,
+            runtime.ultralight_matrix4x4.constructor,
+            new ultralight::Matrix4x4(matrix));
+    }
+
+    jlong UltralightMatrix4x4JNI::construct(JNIEnv *, jclass) {
+        return reinterpret_cast<jlong>(new ultralight::Matrix4x4());
+    }
+
     jfloatArray UltralightMatrix4x4JNI::get_data(JNIEnv *env, jobject instance) {
         auto *matrix4x4 = reinterpret_cast<ultralight::Matrix4x4 *>(
             env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
@@ -35,18 +46,7 @@ namespace ultralight_java {
         matrix4x4->SetIdentity();
     }
 
-    jobject UltralightMatrix4x4JNI::create(JNIEnv *env, ultralight::Matrix4x4 matrix) {
-        return env->NewObject(
-            runtime.ultralight_matrix4x4.clazz,
-            runtime.ultralight_matrix4x4.constructor,
-            new ultralight::Matrix4x4(matrix));
-    }
-
-    jlong UltralightMatrix4x4JNI::construct(JNIEnv *env, jclass caller_class) {
-        return reinterpret_cast<jlong>(new ultralight::Matrix4x4());
-    }
-    void UltralightMatrix4x4JNI::_delete(JNIEnv *env, jclass caller_class, jlong handle) {
+    void UltralightMatrix4x4JNI::_delete(JNIEnv *, jclass, jlong handle) {
         delete reinterpret_cast<ultralight::Matrix4x4 *>(handle);
     }
-
 } // namespace ultralight_java

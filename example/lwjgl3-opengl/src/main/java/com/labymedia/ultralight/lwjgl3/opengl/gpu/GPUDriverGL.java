@@ -17,27 +17,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;/*
- * Ultralight Java - Java wrapper for the Ultralight web engine
- * Copyright (C) 2020 - 2021 LabyMedia and contributors
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 3 of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */
+package com.labymedia.ultralight.lwjgl3.opengl.gpu;
 
-import com.labymedia.ultralight.UltralightMatrix;
-import com.labymedia.ultralight.UltralightMatrix4x4;
+import com.labymedia.ultralight.math.UltralightMatrix;
+import com.labymedia.ultralight.math.UltralightMatrix4x4;
 import com.labymedia.ultralight.bitmap.UltralightBitmap;
 import com.labymedia.ultralight.bitmap.UltralightBitmapFormat;
 import com.labymedia.ultralight.math.IntRect;
@@ -48,10 +31,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -63,18 +43,9 @@ import static org.lwjgl.opengl.GL13.glActiveTexture;
 import static org.lwjgl.opengl.GL30.*;
 import static org.lwjgl.opengl.GL32.GL_TEXTURE_2D_MULTISAMPLE;
 import static org.lwjgl.opengl.GL32.glTexImage2DMultisample;
-import static org.lwjgl.opengl.GL43.GL_DEBUG_OUTPUT_SYNCHRONOUS;
-import static org.lwjgl.opengl.GLUtil.setupDebugMessageCallback;
 
 public class GPUDriverGL implements UltralightGPUDriver {
-
-    public static final int KCOMMANDTYPE_CLEARRENDERBUFFER = 0;
-    public static final int KCOMMANDTYPE_DRAWGEOMETRY = 1;
-
-    public static final short KSHADERTYPE_FILL = 0;
-    public static final short KSHADERTYPE_FILLPATH = 1;
-
-    private final Map<Short, ProgramEntry> programs = new HashMap<>();
+    private final Map<UltralightShaderType, ProgramEntry> programs = new HashMap<>();
     private final List<UltralightCommand> commands = new LinkedList<>();
     private final Map<Long, TextureEntry> textureMap = new HashMap<>();
     private final Map<Long, GeometryEntry> geometryMap = new HashMap<>();
@@ -109,10 +80,10 @@ public class GPUDriverGL implements UltralightGPUDriver {
         glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
 
         for (UltralightCommand command : commands) {
-            if (command.commandType == KCOMMANDTYPE_DRAWGEOMETRY) {
-                drawGeometry(command.geometryId, command.indicesCount, command.indicesOffset, command.gpuState);
-            } else if (command.commandType == KCOMMANDTYPE_CLEARRENDERBUFFER) {
-                clearRenderBuffer(command.gpuState.renderBufferId);
+            if (command.getCommandType() == UltralightCommandType.DRAW_GEOMETRY) {
+                drawGeometry(command.getGeometryId(), command.getIndicesCount(), command.getIndicesOffset(), command.getGpuState());
+            } else if (command.getCommandType() == UltralightCommandType.CLEAR_RENDER_BUFFER) {
+                clearRenderBuffer(command.getGpuState().getRenderBufferId());
             }
         }
 
@@ -256,12 +227,12 @@ public class GPUDriverGL implements UltralightGPUDriver {
         if (programs.isEmpty())
             loadPrograms();
 
-        bindRenderBuffer(state.renderBufferId);
+        bindRenderBuffer(state.getRenderBufferId());
 
-        setViewport(state.viewportWidth, state.viewportHeight);
+        setViewport(state.getViewportWidth(), state.getViewportHeight());
 
         GeometryEntry geometry = geometryMap.computeIfAbsent(geometryId, unused -> new GeometryEntry());
-        selectProgram(state.shaderType);
+        selectProgram(state.getShaderType());
         updateUniforms(state);
 
         CHECK_GL();
@@ -271,31 +242,31 @@ public class GPUDriverGL implements UltralightGPUDriver {
         glBindVertexArray(Math.toIntExact(vaoEntry));
         CHECK_GL();
 
-        bindTexture(0, state.texture1Id);
-        bindTexture(1, state.texture2Id);
-        bindTexture(2, state.texture3Id);
+        bindTexture(0, state.getTexture1Id());
+        bindTexture(1, state.getTexture2Id());
+        bindTexture(2, state.getTexture3Id());
 
         CHECK_GL();
-        if (state.enableScissor) {
+        if (state.shouldEnableScissor()) {
             glEnable(GL_SCISSOR_TEST);
-            IntRect r = state.scissorRect;
+            IntRect r = state.getScissorRect();
             glScissor(r.getLeft(), r.getTop(), (r.getRight() - r.getLeft()), (r.getBottom() - r.getTop()));
         } else {
             glDisable(GL_SCISSOR_TEST);
         }
 
-        if (state.enableBlend) {
+        if (state.shouldEnableBlend()) {
             glEnable(GL_BLEND);
-        }
-        else
+        } else {
             glDisable(GL_BLEND);
+        }
         CHECK_GL();
         glDrawElements(GL_TRIANGLES, Math.toIntExact(indicesCount), GL_UNSIGNED_INT, indicesOffset * Integer.BYTES);
         CHECK_GL();
         glBindVertexArray(0);
 
         if (context.isEnableOffscreenGl()) {
-            RenderBufferEntry renderBufferEntry = renderBufferMap.computeIfAbsent(state.renderBufferId, unused -> new RenderBufferEntry());
+            RenderBufferEntry renderBufferEntry = renderBufferMap.computeIfAbsent(state.getRenderBufferId(), unused -> new RenderBufferEntry());
 
             if (renderBufferEntry.bitmap != null)
                 renderBufferEntry.needsUpdate = true;
@@ -427,33 +398,33 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     void updateUniforms(UltralightGPUState state) {
-        boolean flip_y = state.renderBufferId != 0;
-        UltralightMatrix modelViewProjection = applyProjection(state.transformMatrix, state.viewportWidth, state.viewportHeight, flip_y);
+        boolean flip_y = state.getRenderBufferId() != 0;
+        UltralightMatrix modelViewProjection = applyProjection(state.getTransformMatrix(), state.getViewportWidth(), state.getViewportHeight(), flip_y);
 
         float[] params = new float[]{
-                (float) (glfwGetTime() / 1000.0), state.viewportWidth, state.viewportHeight, 1.0f
+                (float) (glfwGetTime() / 1000.0), state.getViewportWidth(), state.getViewportHeight(), 1.0f
         };
         setUniform4f("State", params);
         CHECK_GL();
         UltralightMatrix4x4 mat = modelViewProjection.getMatrix4x4();
         setUniformMatrix4fv("Transform", mat.getData());
         CHECK_GL();
-        setUniform4fv("Scalar4", state.uniformScalar);
+        setUniform4fv("Scalar4", state.getUniformScalar());
         CHECK_GL();
         float[] vectorData = new float[8 * 4];
 
         for (int i = 0; i < 8 * 4; i += 4) {
-            System.arraycopy(state.uniformVector[i / 4].getValue(), 0, vectorData, i, 4);
+            System.arraycopy(state.getUniformVector()[i / 4].getValue(), 0, vectorData, i, 4);
         }
 
         setUniform4fv("Vector", vectorData);
         CHECK_GL();
-        setUniform1ui("ClipSize", state.clipSize);
+        setUniform1ui("ClipSize", state.getClipSize());
         CHECK_GL();
 
         float[] clip = new float[8 * 16];
         for (int i = 0; i < 8 * 16; i += 16) {
-            System.arraycopy(state.clip[i / 16].getData(), 0, clip, i, 16);
+            System.arraycopy(state.getClip()[i / 16].getData(), 0, clip, i, 16);
         }
 
         setUniformMatrix4fv("Clip", clip);
@@ -488,11 +459,11 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     private void loadPrograms() {
-        loadProgram(KSHADERTYPE_FILL);
-        loadProgram(KSHADERTYPE_FILLPATH);
+        loadProgram(UltralightShaderType.FILL);
+        loadProgram(UltralightShaderType.FILL_PATH);
     }
 
-    void selectProgram(short type) {
+    void selectProgram(UltralightShaderType type) {
         CHECK_GL();
         ProgramEntry programEntry = this.programs.get(type);
         if (programEntry == null) {
@@ -504,15 +475,15 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
 
-    private void loadProgram(short type) {
+    private void loadProgram(UltralightShaderType type) {
         CHECK_GL();
         ProgramEntry prog = new ProgramEntry();
-        if (type == KSHADERTYPE_FILL) {
+        if (type == UltralightShaderType.FILL) {
             prog.vertShaderId = loadShaderFromSource(GL_VERTEX_SHADER,
                     readShader("shader_v2f_c4f_t2f_t2f_d28f.vs"), "shader_v2f_c4f_t2f_t2f_d28f.vert");
             prog.fragShaderId = loadShaderFromSource(GL_FRAGMENT_SHADER,
                     readShader("shader_fill_frag.fs"), "shader_fill.frag");
-        } else if (type == KSHADERTYPE_FILLPATH) {
+        } else if (type == UltralightShaderType.FILL_PATH) {
             prog.vertShaderId = loadShaderFromSource(GL_VERTEX_SHADER,
                     readShader("shader_v2f_c4f_t2f.vs"), "shader_v2f_c4f_t2f.vert");
             prog.fragShaderId = loadShaderFromSource(GL_FRAGMENT_SHADER,
@@ -527,7 +498,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         glBindAttribLocation(prog.programId, 1, "in_Color");
         glBindAttribLocation(prog.programId, 2, "in_TexCoord");
 
-        if (type == KSHADERTYPE_FILL) {
+        if (type == UltralightShaderType.FILL) {
             glBindAttribLocation(prog.programId, 3, "in_ObjCoord");
             glBindAttribLocation(prog.programId, 4, "in_Data0");
             glBindAttribLocation(prog.programId, 5, "in_Data1");
@@ -541,7 +512,7 @@ public class GPUDriverGL implements UltralightGPUDriver {
         glLinkProgram(prog.programId);
         glUseProgram(prog.programId);
 
-        if (type == KSHADERTYPE_FILL) {
+        if (type == UltralightShaderType.FILL) {
             glUniform1i(glGetUniformLocation(prog.programId, "Texture1"), 0);
             glUniform1i(glGetUniformLocation(prog.programId, "Texture2"), 1);
             glUniform1i(glGetUniformLocation(prog.programId, "Texture3"), 2);
@@ -754,9 +725,9 @@ public class GPUDriverGL implements UltralightGPUDriver {
         }
 
         RenderBufferEntry entry = renderBufferMap.computeIfAbsent(renderBufferId, (unused) -> new RenderBufferEntry());
-        entry.textureId = buffer.textureId;
+        entry.textureId = buffer.getTextureId();
 
-        TextureEntry textureEntry = textureMap.get(buffer.textureId);
+        TextureEntry textureEntry = textureMap.get(buffer.getTextureId());
         textureEntry.renderBufferId = renderBufferId;
 
         // We don't actually create FBOs here-- they are lazily-created
@@ -809,17 +780,17 @@ public class GPUDriverGL implements UltralightGPUDriver {
     public void createGeometry(long geometryId, UltralightVertexBuffer vertices, UltralightIndexBuffer indices) {
         CHECK_GL();
         GeometryEntry geometry = new GeometryEntry();
-        geometry.vertexFormat = vertices.format;
+        geometry.vertexFormat = vertices.getFormat();
 
         geometry.vboVertices = glGenBuffers();
 
         glBindBuffer(GL_ARRAY_BUFFER, geometry.vboVertices);
-        glBufferData(GL_ARRAY_BUFFER, vertices.data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.getData(), GL_DYNAMIC_DRAW);
         CHECK_GL();
 
         geometry.vboIndices = glGenBuffers();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry.vboIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.data,
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.getData(),
                 GL_STATIC_DRAW);
 
         geometryMap.put(geometryId, geometry);
@@ -831,10 +802,10 @@ public class GPUDriverGL implements UltralightGPUDriver {
         GeometryEntry geometry = geometryMap.get(geometryId);
         CHECK_GL();
         glBindBuffer(GL_ARRAY_BUFFER, geometry.vboVertices);
-        glBufferData(GL_ARRAY_BUFFER, vertices.data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, vertices.getData(), GL_DYNAMIC_DRAW);
         CHECK_GL();
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, geometry.vboIndices);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.data, GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.getData(), GL_STATIC_DRAW);
         CHECK_GL();
     }
 
@@ -867,12 +838,10 @@ public class GPUDriverGL implements UltralightGPUDriver {
     }
 
     @Override
-    public void updateCommandList(UltralightCommandList list) {
+    public void updateCommandList(UltralightCommand[] list) {
         CHECK_GL();
-        if (list.data.length != 0) {
-            for (UltralightCommand datum : list.data) {
-                this.commands.add(datum);
-            }
+        if (list.length != 0) {
+            Collections.addAll(this.commands, list);
         }
         CHECK_GL();
     }

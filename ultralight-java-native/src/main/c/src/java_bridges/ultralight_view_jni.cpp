@@ -390,18 +390,24 @@ namespace ultralight_java {
         return UltralightRefPtrJNI::create(env, std::move(ultralight::RefPtr<ultralight::View>(std::move(inspector))));
     }
 
-    jobject UltralightViewJNI::renderTarget(JNIEnv *env, jobject instance) {
+    jobject UltralightViewJNI::render_target(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
 
-        auto uv_coords = env->NewFloatArray(4);
+        const auto &render_target = view->render_target();
+        auto uv_coords = Util::create_float_array(env, 4, render_target.uv_coords.value);
 
-        env->SetFloatArrayRegion(uv_coords, 0, 4, view->render_target().uv_coords.value);
-
-        auto target = env->NewObject(runtime.ultralight_render_target.clazz,
-                                     runtime.ultralight_render_target.constructor,
-                                     view->render_target().texture_id,
-                                     view->render_target().render_buffer_id,
-                                     uv_coords);
+        auto target = env->NewObject(
+            runtime.ultralight_render_target.clazz,
+            runtime.ultralight_render_target.constructor,
+            static_cast<jboolean>(render_target.is_empty),
+            static_cast<jlong>(render_target.width),
+            static_cast<jlong>(render_target.height),
+            static_cast<jlong>(render_target.texture_id),
+            static_cast<jlong>(render_target.texture_width),
+            static_cast<jlong>(render_target.texture_height),
+            runtime.ultralight_bitmap_format.constants.to_java(env, render_target.texture_format),
+            uv_coords,
+            static_cast<jlong>(render_target.render_buffer_id));
 
         return target;
     }

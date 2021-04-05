@@ -17,12 +17,19 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.plugin.render;
 
-public class ProgramEntry {
+/**
+ * Command types, used by {@link UltralightCommand#getCommandType()}.
+ */
+public enum UltralightCommandType {
+    /**
+     * The command should clear the render buffer.
+     */
+    CLEAR_RENDER_BUFFER,
 
-    int programId;
-    int vertShaderId;
-    int fragShaderId;
-
+    /**
+     * The command should draw some geometry into the render buffer.
+     */
+    DRAW_GEOMETRY
 }

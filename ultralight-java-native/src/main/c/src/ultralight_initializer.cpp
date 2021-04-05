@@ -160,7 +160,7 @@ namespace ultralight_java {
              NATIVE_METHOD(
                  "renderTarget",
                  "()Lcom/labymedia/ultralight/plugin/render/UltralightRenderTarget;",
-                 UltralightViewJNI::renderTarget)};
+                 UltralightViewJNI::render_target)};
 
         runtime.ultralight_surface.native_methods =
             {NATIVE_METHOD("width", "()J", UltralightSurfaceJNI::width),
@@ -185,18 +185,28 @@ namespace ultralight_java {
         runtime.ultralight_matrix.native_methods =
             {NATIVE_METHOD(
                  "getMatrix4x4",
-                 "()Lcom/labymedia/ultralight/UltralightMatrix4x4;",
-                 UltralightMatrixJNI::getMatrix4x4),
+                 "()Lcom/labymedia/ultralight/math/UltralightMatrix4x4;",
+                 UltralightMatrixJNI::get_matrix_4x4),
              NATIVE_METHOD("delete", "(J)V", UltralightMatrixJNI::_delete),
              NATIVE_METHOD("construct", "()J", UltralightMatrixJNI::construct),
              NATIVE_METHOD("set", "(DDDDDDDDDDDDDDDD)V", UltralightMatrixJNI::set),
-             NATIVE_METHOD("set", "(Lcom/labymedia/ultralight/UltralightMatrix4x4;)V", UltralightMatrixJNI::set1),
-             NATIVE_METHOD("setOrthographicProjection", "(DDZ)V", UltralightMatrixJNI::setOrthographicProjection),
+             NATIVE_METHOD("set", "(Lcom/labymedia/ultralight/math/UltralightMatrix4x4;)V", UltralightMatrixJNI::set1),
+             NATIVE_METHOD("setOrthographicProjection", "(DDZ)V", UltralightMatrixJNI::set_orthographic_projection),
              NATIVE_METHOD(
-                 "transform", "(Lcom/labymedia/ultralight/UltralightMatrix;)V", UltralightMatrixJNI::transform)};
+                 "transform", "(Lcom/labymedia/ultralight/math/UltralightMatrix;)V", UltralightMatrixJNI::transform)};
 
         runtime.ultralight_bitmap_surface.native_methods = {NATIVE_METHOD(
             "bitmap", "()Lcom/labymedia/ultralight/bitmap/UltralightBitmap;", UltralightBitmapSurfaceJNI::bitmap)};
+
+        runtime.ultralight_command_type.constants = JavaEnum<ultralight::CommandType>(
+            ultralight::kCommandType_ClearRenderBuffer,
+            "CLEAR_RENDER_BUFFER",
+            ultralight::kCommandType_DrawGeometry,
+            "DRAW_GEOMETRY");
+
+        runtime.ultralight_shader_type.constants = JavaEnum<
+            ultralight::
+                ShaderType>(ultralight::kShaderType_Fill, "FILL", ultralight::kShaderType_FillPath, "FILL_PATH");
 
         runtime.ultralight_bitmap_format.constants = JavaEnum<ultralight::BitmapFormat>(
             ultralight::kBitmapFormat_A8_UNORM,

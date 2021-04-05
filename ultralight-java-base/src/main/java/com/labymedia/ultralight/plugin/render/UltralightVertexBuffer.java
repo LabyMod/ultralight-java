@@ -19,20 +19,49 @@
 
 package com.labymedia.ultralight.plugin.render;
 
+import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
 
 import java.nio.ByteBuffer;
 
+/**
+ * Vertex buffer.
+ *
+ * @see UltralightGPUDriver#createGeometry(long, UltralightVertexBuffer, UltralightIndexBuffer)
+ */
 @NativeType("ultralight::VertexBuffer")
 public class UltralightVertexBuffer {
-    public UltralightVertexBuffer(UltralightVertexBufferFormat format, ByteBuffer data) {
+    private final UltralightVertexBufferFormat format;
+    private final @NativeType("uint8_t[]")
+    ByteBuffer data;
+
+    /**
+     * Constructs a new {@link UltralightVertexBuffer} wrapping an existing native buffer.
+     *
+     * @param format The format of the buffer
+     * @param data The data to wrap of the buffer
+     */
+    @NativeCall
+    public UltralightVertexBuffer(UltralightVertexBufferFormat format, @NativeType("uint8_t[]") ByteBuffer data) {
         this.format = format;
         this.data = data;
     }
 
+    /**
+     * Retrieves the format of the the buffer.
+     *
+     * @return The format of the buffer
+     */
+    public UltralightVertexBufferFormat getFormat() {
+        return format;
+    }
 
-    public @NativeType("ultralight::VertexBufferFormat")
-    UltralightVertexBufferFormat format;
-    public @NativeType("uint8_t[]")
-    ByteBuffer data;
+    /**
+     * Retrieves the data of the buffer.
+     *
+     * @return The data of the buffer
+     */
+    public ByteBuffer getData() {
+        return data;
+    }
 }

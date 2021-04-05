@@ -19,27 +19,92 @@
 
 package com.labymedia.ultralight.plugin.render;
 
+import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
+import com.labymedia.ultralight.annotation.Unsigned;
 
+/**
+ * Command description.
+ */
 @NativeType("ultralight::Command")
 public class UltralightCommand {
-    public final @NativeType("uint8_t")
-    short commandType;
-    public final @NativeType("ultralight::GPUState")
-    UltralightGPUState gpuState;
+    private final UltralightCommandType commandType;
+    private final UltralightGPUState gpuState;
 
-    public final @NativeType("uint32_t")
-    long geometryId;
-    public final @NativeType("uint32_t")
-    long indicesCount;
-    public final @NativeType("uint32_t")
-    long indicesOffset;
+    // The following members are only used with UltralightCommandType.DRAW_GEOMETRY
+    private final @Unsigned @NativeType("uint32_t") long geometryId;
+    private final @Unsigned @NativeType("uint32_t") long indicesCount;
+    private final @Unsigned @NativeType("uint32_t") long indicesOffset;
 
-    public UltralightCommand(short commandType, UltralightGPUState gpuState, long geometryId, long indicesCount, long indicesOffset) {
+    /**
+     * Constructs a new {@link UltralightCommand}.
+     *
+     * @param commandType The type of the command
+     * @param gpuState The  GPU state parameters for the command
+     * @param geometryId The geometry ID to bind, only valid for draw geometry commands
+     * @param indicesCount The number of indices, only valid for draw geometry commands
+     * @param indicesOffset The index to start from, only valid for draw geometry commands
+     */
+    @NativeCall
+    public UltralightCommand(
+            UltralightCommandType commandType,
+            UltralightGPUState gpuState,
+            long geometryId,
+            long indicesCount,
+            long indicesOffset
+    ) {
         this.commandType = commandType;
         this.gpuState = gpuState;
         this.geometryId = geometryId;
         this.indicesCount = indicesCount;
         this.indicesOffset = indicesOffset;
+    }
+
+    /**
+     * Retrieves the type of this command.
+     *
+     * @return The type of this command
+     */
+    public UltralightCommandType getCommandType() {
+        return commandType;
+    }
+
+    /**
+     * Retrieves the GPU state parameters for this command.
+     *
+     * @return The GPU state parameters for this command
+     */
+    public UltralightGPUState getGpuState() {
+        return gpuState;
+    }
+
+    /**
+     * Retrieves the geometry id for this command. Only valid if {@link #getCommandType()} is
+     * {@link UltralightCommandType#DRAW_GEOMETRY}.
+     *
+     * @return The geometry ID to bind
+     */
+    public @Unsigned @NativeType("uint32_t") long getGeometryId() {
+        return geometryId;
+    }
+
+    /**
+     * Retrieves the indices count for this command. Only valid if {@link #getCommandType()} is
+     * {@link UltralightCommandType#DRAW_GEOMETRY}.
+     *
+     * @return The amount of indices to draw
+     */
+    public @Unsigned @NativeType("uint32_t") long getIndicesCount() {
+        return indicesCount;
+    }
+
+    /**
+     * Retrieves the index to start drawing from. Only valid if {@link #getCommandType()} is
+     * {@link UltralightCommandType#DRAW_GEOMETRY}.
+     *
+     * @return The index to start from
+     */
+    public @Unsigned @NativeType("uint32_t") long getIndicesOffset() {
+        return indicesOffset;
     }
 }

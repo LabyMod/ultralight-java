@@ -28,7 +28,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.concurrent.CountDownLatch;
 
 /**
  * Entry pointer for the example application.
@@ -59,11 +58,6 @@ public class ExampleMain {
         // This only extracts the native library for ultralight-java-base, but not the other Ultralight libraries.
         // It is your task to get them into the run directory, possibly by extracting them on your own.
         UltralightJava.extractNativeLibrary(nativesDir);
-        /*try {
-            GPUDriverUtil.extractNativeLibrary(nativesDir);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }*/
 
         // Load the native libraries from the given directory. This method makes sure everything is loaded in the
         // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as

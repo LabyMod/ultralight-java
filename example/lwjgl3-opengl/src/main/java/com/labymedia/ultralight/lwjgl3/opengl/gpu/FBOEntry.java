@@ -17,16 +17,10 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.plugin.render;
+package com.labymedia.ultralight.lwjgl3.opengl.gpu;
 
-public interface UltralightGPUDriverImpl extends UltralightGPUDriver{
-    boolean hasCommandsPending();
-
-    void drawCommandList();
-
-    int batchCount();
-
-    void drawGeometry(long geometryId, long indicesCount, long indicesOffset, UltralightGPUState gpuState);
-
-    void clearRenderBuffer(long renderBufferId);
+public class FBOEntry {
+    long fboId;
+    long msaaFboId;
+    boolean needsResolve;
 }

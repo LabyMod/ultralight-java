@@ -313,6 +313,13 @@ namespace ultralight_java {
          */
         static jobject inspector(JNIEnv *env, jobject instance);
 
-        static jobject renderTarget(JNIEnv *env, jobject instance);
+        /**
+         * Retrieves the render target for this view.
+         *
+         * @param env The JNI environment to use for accessing java
+         * @param instance The java instance of the view
+         * @return The java object for the render target of this view
+         */
+        static jobject render_target(JNIEnv *env, jobject instance);
     };
 }

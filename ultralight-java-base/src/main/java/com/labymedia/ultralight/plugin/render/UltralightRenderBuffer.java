@@ -19,11 +19,40 @@
 
 package com.labymedia.ultralight.plugin.render;
 
+import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
+import com.labymedia.ultralight.annotation.Unsigned;
 
+/**
+ * RenderBuffer description.
+ *
+ * @see UltralightGPUDriver#createRenderBuffer(long, UltralightRenderBuffer)
+ */
 @NativeType("ultralight::RenderBuffer")
 public class UltralightRenderBuffer {
-    public UltralightRenderBuffer(long textureId, long width, long height, boolean hasStencilBuffer, boolean hasDepthBuffer) {
+    private final @Unsigned @NativeType("uint32_t") long textureId;
+    private final @Unsigned @NativeType("uint32_t") long width;
+    private final @Unsigned @NativeType("uint32_t") long height;
+    private final boolean hasStencilBuffer;
+    private final boolean hasDepthBuffer;
+
+    /**
+     * Constructs a new {@link UltralightRenderBuffer}.
+     *
+     * @param textureId        The backing texture for this {@link UltralightRenderBuffer}
+     * @param width            The width of the RenderBuffer texture
+     * @param height           The height of the RenderBuffer texture
+     * @param hasStencilBuffer Currently unused, always {@code false}
+     * @param hasDepthBuffer   Currently unused, always {@code false}
+     */
+    @NativeCall
+    public UltralightRenderBuffer(
+            @Unsigned @NativeType("uint32_t") long textureId,
+            @Unsigned @NativeType("uint32_t") long width,
+            @Unsigned @NativeType("uint32_t") long height,
+            boolean hasStencilBuffer,
+            boolean hasDepthBuffer
+    ) {
         this.textureId = textureId;
         this.width = width;
         this.height = height;
@@ -31,8 +60,48 @@ public class UltralightRenderBuffer {
         this.hasDepthBuffer = hasDepthBuffer;
     }
 
-    public @NativeType("uint32_t")
-    long textureId, width, height;
-    public @NativeType("bool")
-    boolean hasStencilBuffer, hasDepthBuffer;
+    /**
+     * Retrieves the id of the backing texture of this render buffer.
+     *
+     * @return The id of the backing texture
+     */
+    public long getTextureId() {
+        return textureId;
+    }
+
+    /**
+     * Retrieves the width of this render buffer.
+     *
+     * @return The width of this render buffer
+     */
+    public long getWidth() {
+        return width;
+    }
+
+    /**
+     * Retrieves the height of this render buffer.
+     *
+     * @return The height of this render buffer
+     */
+    public long getHeight() {
+        return height;
+    }
+
+    /**
+     * Determines whether this render buffer has a stencil buffer.
+     *
+     * @return Currently always {@code false}
+     */
+    public boolean hasStencilBuffer() {
+        return hasStencilBuffer;
+    }
+
+    /**
+     * Determines whether this render buffer has a depth buffer.
+     *
+     * @return Currently always {@code false}
+     */
+    public boolean hasDepthBuffer() {
+        return hasDepthBuffer;
+    }
 }

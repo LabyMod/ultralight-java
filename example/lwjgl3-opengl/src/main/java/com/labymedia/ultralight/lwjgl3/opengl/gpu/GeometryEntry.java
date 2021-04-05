@@ -17,16 +17,16 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.plugin.render;
+package com.labymedia.ultralight.lwjgl3.opengl.gpu;
 
-import com.labymedia.ultralight.annotation.NativeType;
+import com.labymedia.ultralight.plugin.render.UltralightVertexBufferFormat;
 
-@NativeType("ultralight::CommandList")
-public class UltralightCommandList {
-    public UltralightCommandList(UltralightCommand[] data) {
-        this.data = data;
-    }
+import java.util.HashMap;
+import java.util.Map;
 
-    public final @NativeType("ultralight::Command")
-    UltralightCommand[] data;
+public class GeometryEntry {
+    Map<Long, Long> vaoMap = new HashMap<>();
+    UltralightVertexBufferFormat vertexFormat;
+    int vboVertices = 0; // VBO id for vertices
+    int vboIndices = 0; // VBO id for indices
 }

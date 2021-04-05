@@ -17,13 +17,9 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.plugin.render;
 
-public class TextureEntry {
-    long texId;
-    long msaaTexId;
-    long renderBufferId;
-    long width;
-    long height;
-    boolean isSRGB;
+public enum UltralightShaderType {
+    FILL,
+    FILL_PATH
 }
