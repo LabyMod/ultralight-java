@@ -67,6 +67,7 @@ public class WebController {
 
         this.platform.setConfig(
                 new UltralightConfig()
+                        .forceRepaint(true)
                         .resourcePath("./resources/")
                         .fontHinting(FontHinting.NORMAL)
         );

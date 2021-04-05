@@ -38,6 +38,7 @@ dependencies {
     implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
 
+    implementation group:'com.google.code.gson', name:'gson', version: '2.8.6'
 }
 
 def runDir = file("run")
