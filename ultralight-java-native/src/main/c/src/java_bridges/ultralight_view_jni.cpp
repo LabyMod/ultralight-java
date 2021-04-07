@@ -387,7 +387,8 @@ namespace ultralight_java {
         }
 
         auto inspector = view->inspector();
-        return UltralightRefPtrJNI::create(env, std::move(ultralight::RefPtr<ultralight::View>(std::move(inspector))));
+        auto pointer = UltralightRefPtrJNI::create(env, std::move(ultralight::RefPtr<ultralight::View>(std::move(inspector))));
+        return env->NewObject(runtime.ultralight_view.clazz, runtime.ultralight_view.constructor, pointer);
     }
 
     jobject UltralightViewJNI::render_target(JNIEnv *env, jobject instance) {
