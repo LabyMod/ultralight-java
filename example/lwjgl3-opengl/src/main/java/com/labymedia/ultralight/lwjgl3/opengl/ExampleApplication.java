@@ -50,13 +50,13 @@ public class ExampleApplication {
         setCallback(GLFW::glfwSetErrorCallback, this::onGLFWError);
 
         // Prepare GLFW for use
-        if(!glfwInit()) {
+        if (!glfwInit()) {
             throw new IllegalStateException("Failed to initialize GLFW");
         }
 
         // Create a GLFW window
         window = glfwCreateWindow(640, 480, "Ultralight GLFW", MemoryUtil.NULL, MemoryUtil.NULL);
-        if(window == MemoryUtil.NULL) {
+        if (window == MemoryUtil.NULL) {
             // Window creation failed
             stop();
             throw new IllegalStateException("Failed to create a GLFW window");
@@ -65,10 +65,11 @@ public class ExampleApplication {
         // Make sure to update the framebuffer size when resizing
         setCallback(GLFW::glfwSetFramebufferSizeCallback, this::updateSize);
 
+        glfwMakeContextCurrent(this.window);
+
         // Set up various internal controllers
         this.cursorManager = new CursorAdapter(window);
         this.webController = new WebController(cursorManager, window);
-
     }
 
     /**
@@ -76,22 +77,22 @@ public class ExampleApplication {
      */
     public void centerWindow() {
         // Create a memory stack so we don't have to worry about free's
-        try(MemoryStack stack = MemoryStack.stackPush()) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             // Retrieve current monitor of the window
             long monitor = glfwGetWindowMonitor(window);
-            if(monitor == MemoryUtil.NULL) {
+            if (monitor == MemoryUtil.NULL) {
                 // The window is not on any monitor, get the primary one
                 monitor = glfwGetPrimaryMonitor();
             }
 
             // If there is no monitor, we can't center the window
-            if(monitor == MemoryUtil.NULL) {
+            if (monitor == MemoryUtil.NULL) {
                 return;
             }
 
             // Retrieve the video mode of the monitor
             GLFWVidMode videoMode = glfwGetVideoMode(monitor);
-            if(videoMode == null) {
+            if (videoMode == null) {
                 // The monitor has no video mode?
                 return;
             }
@@ -131,7 +132,7 @@ public class ExampleApplication {
      * Stops the application and destroys allocated resources
      */
     public void stop() {
-        if(window != MemoryUtil.NULL) {
+        if (window != MemoryUtil.NULL) {
             // Delete the window if it is not null
             glfwDestroyWindow(window);
         }
@@ -174,7 +175,7 @@ public class ExampleApplication {
         // Manually update focus for the first time
         inputAdapter.focusCallback(window, glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0);
 
-        try(MemoryStack stack = MemoryStack.stackPush()) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             // Update window size for the first time
             IntBuffer sizeBuffer = stack.callocInt(2);
 
@@ -202,18 +203,18 @@ public class ExampleApplication {
 
             // Retrieve the size into the int buffer
             glfwGetFramebufferSize(window,
-                (IntBuffer) framebufferSizeBuffer.slice().position(0), (IntBuffer) sizeBuffer.slice().position(1));
+                    (IntBuffer) framebufferSizeBuffer.slice().position(0), (IntBuffer) sizeBuffer.slice().position(1));
 
             // Calculate scale
             float xScale = ((float) (framebufferSizeBuffer.get(0))) / ((float) (sizeBuffer.get(0)));
             float yScale = ((float) (framebufferSizeBuffer.get(1))) / ((float) (sizeBuffer.get(1)));
 
             // Fix up scale in case it gets corrupted... somehow
-            if(xScale == 0.0f) {
+            if (xScale == 0.0f) {
                 xScale = 1.0f;
             }
 
-            if(yScale == 0.0f) {
+            if (yScale == 0.0f) {
                 yScale = 1.0f;
             }
 
@@ -236,7 +237,7 @@ public class ExampleApplication {
         OpenGLDrawer drawer = new OpenGLDrawer();
 
         // Keep running until a window close is requested
-        while(!glfwWindowShouldClose(window)) {
+        while (!glfwWindowShouldClose(window)) {
             // Poll events to keep the window responsive
             glfwPollEvents();
 
@@ -253,7 +254,7 @@ public class ExampleApplication {
             // Super bad implementation of FPS display...
             double currentTime = glfwGetTime();
             frameCount++;
-            if(currentTime - lastTime >= 1.0) {
+            if (currentTime - lastTime >= 1.0) {
                 double msPerFrame = 1000.0 / ((double) frameCount);
                 glfwSetWindowTitle(window, "Ultralight GLFW (" + msPerFrame + " | " + frameCount + ")");
                 frameCount = 0;
@@ -301,7 +302,7 @@ public class ExampleApplication {
      */
     private <T, C extends Callback> void setCallback(Function<T, C> setter, T newValue) {
         C oldValue = setter.apply(newValue);
-        if(oldValue != null) {
+        if (oldValue != null) {
             oldValue.free();
         }
     }
@@ -316,7 +317,7 @@ public class ExampleApplication {
      */
     private <T, C extends Callback> void setCallback(BiFunction<Long, T, C> setter, T newValue) {
         C oldValue = setter.apply(window, newValue);
-        if(oldValue != null) {
+        if (oldValue != null) {
             oldValue.free();
         }
     }
