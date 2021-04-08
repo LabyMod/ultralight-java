@@ -32,7 +32,9 @@ import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
+import org.lwjgl.glfw.GLFW;
 
+import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.opengl.GL20.*;
 
 /**
@@ -66,6 +68,7 @@ public class WebController {
 
         this.platform.setConfig(
                 new UltralightConfig()
+                        .forceRepaint(false)
                         .resourcePath("./resources/")
                         .fontHinting(FontHinting.NORMAL)
         );
@@ -73,8 +76,6 @@ public class WebController {
         this.platform.setFileSystem(new ExampleFileSystem());
         this.platform.setLogger(new ExampleLogger());
         this.platform.setClipboard(new ClipboardAdapter());
-
-
     }
 
     public void initGPUDriver() {
@@ -161,11 +162,18 @@ public class WebController {
         }
 
         glPopAttrib();
+       this.renderHtmlTexture(this.view, this.window);
+        glfwMakeContextCurrent(window);
 
-        long text = this.view.renderTarget().getTextureId();
+    }
+
+    private void renderHtmlTexture(UltralightView view, long window) {
+        driver.getContext().setActiveWindow(window);
+        glfwMakeContextCurrent(window);
+        long text = view.renderTarget().getTextureId();
         int width = (int) view.width();
         int height = (int) view.height();
-        glClearColor(0,0,0,1);
+        glClearColor(0, 0, 0, 1);
         glEnable(GL_TEXTURE_2D);
         // Set up the OpenGL state for rendering of a fullscreen quad
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
@@ -176,10 +184,9 @@ public class WebController {
         glMatrixMode(GL_PROJECTION);
         glPushMatrix();
         glLoadIdentity();
-        glOrtho(0, this.view.width(), this.view.height(), 0, -1, 1);
+        glOrtho(0, view.width(), view.height(), 0, -1, 1);
         glMatrixMode(GL_MODELVIEW);
         glPushMatrix();
-
         // Disable lighting and scissoring, they could mess up th renderer
         glLoadIdentity();
         glDisable(GL_LIGHTING);
