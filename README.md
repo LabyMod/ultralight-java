@@ -38,7 +38,7 @@ Using the library with maven:
   <groupId>com.labymedia</groupId>
   <artifactId>ultralight-java-base</artifactId>
   <!-- Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-base !-->
-  <version>0.4.1</version>
+  <version>%VERSION%</version>
 </dependency>
 ```
 
@@ -48,7 +48,7 @@ If you need Javascript interop:
   <groupId>com.labymedia</groupId>
   <artifactId>ultralight-java-databind</artifactId>
   <!-- Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-databind !-->
-  <version>0.4.1</version>
+  <version>%VERSION%</version>
 </dependency>
 ```
 
@@ -56,11 +56,11 @@ If you need Javascript interop:
 ```kotlin
 dependencies {
   // Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-base
-  implementation("com.labymedia", "ultralight-java-base", "0.4.1")
+  implementation("com.labymedia", "ultralight-java-base", "%VERSION%")
 
   // // Replace with latest version from https://search.maven.org/artifact/com.labymedia/ultralight-java-databind
   // Remove the comments if you need Javascript interop
-  // implementation("com.labymedia", "ultralight-java-databind", "0.4.1")
+  // implementation("com.labymedia", "ultralight-java-databind", "%VERSION%")
 }
 ```
 
