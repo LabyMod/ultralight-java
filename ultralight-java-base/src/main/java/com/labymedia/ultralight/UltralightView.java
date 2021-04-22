@@ -322,6 +322,12 @@ public class UltralightView implements ObjectWithHandle {
     public native boolean needsPaint();
 
     /**
+     * Sets the viewport scale factor.
+     * @param deviceScale the scale factor to set
+     */
+    public native void setDeviceScale(double deviceScale);
+
+    /**
      * Get the inspector for this View, this is useful for debugging and inspecting pages locally. This will only
      * succeed if you have the inspector assets in your filesystem-- the inspector will look for
      * file:///inspector/Main.html when it first loads.
