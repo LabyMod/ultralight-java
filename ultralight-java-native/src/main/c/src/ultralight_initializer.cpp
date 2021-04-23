@@ -155,6 +155,7 @@ namespace ultralight_java {
                  "(Lcom/labymedia/ultralight/plugin/loading/UltralightLoadListener;)V",
                  UltralightViewJNI::set_load_listener),
              NATIVE_METHOD("setNeedsPaint", "(Z)V", UltralightViewJNI::set_needs_paint),
+             NATIVE_METHOD("setDeviceScale", "(D)V", UltralightViewJNI::set_device_scale),
              NATIVE_METHOD("needsPaint", "()Z", UltralightViewJNI::needs_paint),
              NATIVE_METHOD("inspector", "()Lcom/labymedia/ultralight/UltralightView;", UltralightViewJNI::inspector),
              NATIVE_METHOD(
