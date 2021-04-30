@@ -19,15 +19,34 @@
 
 package com.labymedia.ultralight.databind;
 
-import com.labymedia.ultralight.javascript.*;
-import com.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import com.labymedia.ultralight.databind.cache.JavascriptClassCache;
 import com.labymedia.ultralight.databind.call.CallData;
 import com.labymedia.ultralight.databind.call.MethodChooser;
+import com.labymedia.ultralight.databind.call.property.PropertyCaller;
 import com.labymedia.ultralight.databind.utils.JavascriptConversionUtils;
+import com.labymedia.ultralight.javascript.JavascriptClass;
+import com.labymedia.ultralight.javascript.JavascriptClassAttributes;
+import com.labymedia.ultralight.javascript.JavascriptClassDefinition;
+import com.labymedia.ultralight.javascript.JavascriptContext;
+import com.labymedia.ultralight.javascript.JavascriptObject;
+import com.labymedia.ultralight.javascript.JavascriptValue;
+import com.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 
-import java.lang.reflect.*;
-import java.util.*;
+import java.lang.reflect.AccessibleObject;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Member;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Queue;
+import java.util.Set;
 
 /**
  * Representation of a translated Java class.
@@ -38,6 +57,7 @@ public final class DatabindJavascriptClass {
     private final DatabindConfiguration configuration;
     private final JavascriptConversionUtils conversionUtils;
     private final MethodChooser methodChooser;
+    private final PropertyCaller propertyCaller;
 
     private final Set<Constructor<?>> constructors = new HashSet<>();
     private final Map<String, Set<Method>> methods = new HashMap<>();
@@ -64,6 +84,7 @@ public final class DatabindJavascriptClass {
         this.configuration = configuration;
         this.conversionUtils = conversionUtils;
         this.methodChooser = configuration.methodChooser();
+        this.propertyCaller = configuration.propertyCallerFactory().create();
     }
 
     /**
@@ -94,7 +115,7 @@ public final class DatabindJavascriptClass {
         for (Method method : methods) {
             String name = method.getName();
 
-            if(method.getName().equals("valueOf") && method.getDeclaringClass().isEnum()) {
+            if (method.getName().equals("valueOf") && method.getDeclaringClass().isEnum()) {
                 // Skip the valueOf method of enums because it breaks Javascript internals
                 continue;
             }
@@ -153,16 +174,8 @@ public final class DatabindJavascriptClass {
                 arguments
         );
 
-        try {
-            // Invoke constructor with constructed arguments
-            return context.makeObject(bake(), new Data(method.newInstance(parameters.toArray()), null));
-        } catch(IllegalAccessException exception) {
-            throw new JavascriptInteropException("Unable to access constructor: " + method.getName(), exception);
-        } catch(InvocationTargetException exception) {
-            throw new JavascriptInteropException("Constructor threw an exception", exception);
-        } catch(InstantiationException exception) {
-            throw new JavascriptInteropException("Unable to create instance", exception);
-        }
+        // Invoke constructor with constructed arguments
+        return context.makeObject(bake(), new Data(this.propertyCaller.callConstructor(method, parameters.toArray()), null));
     }
 
     /**
@@ -219,11 +232,7 @@ public final class DatabindJavascriptClass {
         Field field = fields.get(propertyName);
 
         if (field != null) {
-            try {
-                return conversionUtils.toJavascript(context, field.get(privateData.instance), field.getType());
-            } catch(IllegalAccessException exception) {
-                throw new JavascriptInteropException("Unable to access field: " + field.getName(), exception);
-            }
+            return conversionUtils.toJavascript(context, this.propertyCaller.callFieldGet(privateData.instance, field), field.getType());
         }
 
         Set<Method> methodSet = methods.get(propertyName);
@@ -236,6 +245,7 @@ public final class DatabindJavascriptClass {
                 DatabindJavascriptMethodHandler.create(
                         configuration,
                         conversionUtils,
+                        propertyCaller,
                         methodSet,
                         propertyName).bake(),
                 new DatabindJavascriptMethodHandler.Data(privateData.instance, null));
@@ -261,13 +271,7 @@ public final class DatabindJavascriptClass {
         Field field = fields.get(propertyName);
 
         if (field != null) {
-            try {
-                field.set(privateData.instance, conversionUtils.fromJavascript(value, field.getType()));
-                return true;
-            } catch(IllegalAccessException exception) {
-                throw new JavascriptInteropException("Unable to access field: " + field.getName() +
-                        " (" + exception.getMessage() + ")", exception);
-            }
+            this.propertyCaller.callFieldSet(privateData.instance, field, conversionUtils.fromJavascript(value, field.getType()));
         }
 
         if (methods.containsKey(propertyName)) {

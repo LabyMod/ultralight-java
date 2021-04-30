@@ -5,3 +5,4 @@ include 'ultralight-java-native'
 include 'ultralight-java-databind'
 
 include 'example:lwjgl3-opengl'
+include 'ultralight-java-databind-generated-callers'

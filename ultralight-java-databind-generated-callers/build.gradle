@@ -1,0 +1,31 @@
+plugins {
+    id 'java-library'
+    id 'maven-publish'
+}
+
+group 'com.labymedia'
+
+jar {
+    manifest {
+        attributes(
+                'Automatic-Module-Name': 'com.labymedia.ultralight.databind'
+        )
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':ultralight-java-base')
+    implementation project(':ultralight-java-databind')
+    implementation group: 'org.javassist', name: 'javassist', version: '3.27.0-GA'
+}
+
+commonPublish(project) {
+    pom {
+        name = "UltralightJava Databind"
+        description = "Automatic bindings from Java to Javascript for UltralightJava"
+    }
+}

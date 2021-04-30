@@ -21,12 +21,16 @@ package com.labymedia.ultralight.databind;
 
 import com.labymedia.ultralight.databind.call.CallData;
 import com.labymedia.ultralight.databind.call.MethodChooser;
+import com.labymedia.ultralight.databind.call.property.PropertyCaller;
 import com.labymedia.ultralight.databind.utils.JavascriptConversionUtils;
-import com.labymedia.ultralight.javascript.*;
+import com.labymedia.ultralight.javascript.JavascriptClass;
+import com.labymedia.ultralight.javascript.JavascriptClassAttributes;
+import com.labymedia.ultralight.javascript.JavascriptClassDefinition;
+import com.labymedia.ultralight.javascript.JavascriptContext;
+import com.labymedia.ultralight.javascript.JavascriptObject;
+import com.labymedia.ultralight.javascript.JavascriptValue;
 import com.labymedia.ultralight.javascript.interop.JavascriptInteropException;
-import com.labymedia.ultralight.javascript.*;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
@@ -41,6 +45,8 @@ public final class DatabindJavascriptMethodHandler {
     private final MethodChooser methodChooser;
     private final JavascriptConversionUtils conversionUtils;
 
+    private final PropertyCaller propertyCaller;
+
     private final Set<Method> methodSet;
 
     /**
@@ -48,12 +54,14 @@ public final class DatabindJavascriptMethodHandler {
      *
      * @param configuration   The configuration to use
      * @param conversionUtils The conversion utilities to use for converting objects
+     * @param propertyCaller
      * @param methodSet       The methods which can be invoked by this handler
      * @param name            The name of this handler class
      */
     private DatabindJavascriptMethodHandler(
             DatabindConfiguration configuration,
             JavascriptConversionUtils conversionUtils,
+            PropertyCaller propertyCaller,
             Set<Method> methodSet,
             String name
     ) {
@@ -64,6 +72,7 @@ public final class DatabindJavascriptMethodHandler {
         this.name = name;
         this.methodChooser = configuration.methodChooser();
         this.conversionUtils = conversionUtils;
+        this.propertyCaller = propertyCaller;
         this.methodSet = methodSet;
     }
 
@@ -110,21 +119,15 @@ public final class DatabindJavascriptMethodHandler {
                 arguments
         );
 
-        try {
-            Object ret = method.invoke(privateData.instance(), parameters.toArray());
-            Class<?> suggestedReturnType = method.getReturnType();
+        Object ret = this.propertyCaller.callMethod(privateData.instance(), method, parameters.toArray());
+        Class<?> suggestedReturnType = method.getReturnType();
 
-            if (ret != null) {
-               suggestedReturnType = ret.getClass();
-            }
-
-            // Invoke method with constructed arguments
-            return conversionUtils.toJavascript(context, ret, suggestedReturnType);
-        } catch (IllegalAccessException exception) {
-            throw new JavascriptInteropException("Unable to access method: " + method.getName(), exception);
-        } catch (InvocationTargetException exception) {
-            throw new JavascriptInteropException(method.getName() + " threw an exception", exception);
+        if (ret != null) {
+            suggestedReturnType = ret.getClass();
         }
+
+        // Invoke method with constructed arguments
+        return conversionUtils.toJavascript(context, ret, suggestedReturnType);
     }
 
     /**
@@ -161,6 +164,7 @@ public final class DatabindJavascriptMethodHandler {
      *
      * @param configuration   The configuration to use
      * @param conversionUtils The conversion utilities to user for converting objects
+     * @param propertyCaller
      * @param methodSet       The sets of methods invocable by this handler
      * @param name            The name of this handler class
      * @return The created handler
@@ -168,10 +172,11 @@ public final class DatabindJavascriptMethodHandler {
     static DatabindJavascriptMethodHandler create(
             DatabindConfiguration configuration,
             JavascriptConversionUtils conversionUtils,
+            PropertyCaller propertyCaller,
             Set<Method> methodSet,
             String name
     ) {
-        DatabindJavascriptMethodHandler javascriptClass = new DatabindJavascriptMethodHandler(configuration, conversionUtils, methodSet, name);
+        DatabindJavascriptMethodHandler javascriptClass = new DatabindJavascriptMethodHandler(configuration, conversionUtils, propertyCaller, methodSet, name);
         javascriptClass.registerCallbacks();
         return javascriptClass;
     }

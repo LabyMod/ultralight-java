@@ -23,6 +23,8 @@ import com.labymedia.ultralight.databind.cache.JavascriptClassCache;
 import com.labymedia.ultralight.databind.cache.NaiveJavascriptClassCache;
 import com.labymedia.ultralight.databind.call.HeuristicMethodChooser;
 import com.labymedia.ultralight.databind.call.MethodChooser;
+import com.labymedia.ultralight.databind.call.property.PropertyCaller;
+import com.labymedia.ultralight.databind.call.property.ReflectivePropertyCaller;
 import com.labymedia.ultralight.databind.context.ContextProviderFactory;
 
 /**
@@ -31,6 +33,7 @@ import com.labymedia.ultralight.databind.context.ContextProviderFactory;
 public final class DatabindConfiguration {
     private final JavascriptClassCache classCache;
     private final MethodChooser methodChooser;
+    private final PropertyCaller.Factory propertyCallerFactory;
     private final boolean automaticPrototype;
     private final ContextProviderFactory contextProviderFactory;
 
@@ -40,18 +43,20 @@ public final class DatabindConfiguration {
      *
      * @param classCache             The class cache used by this configuration
      * @param methodChooser          The method chooser used by this configuration
+     * @param propertyCallerFactory
      * @param automaticPrototype     If {@code true}, automatic prototyping is enabled
      * @param contextProviderFactory The factory for binding context providers, or {@code null}, if this feature
-     *                               is not required
      */
     private DatabindConfiguration(
             JavascriptClassCache classCache,
             MethodChooser methodChooser,
+            PropertyCaller.Factory propertyCallerFactory,
             boolean automaticPrototype,
             ContextProviderFactory contextProviderFactory
     ) {
         this.classCache = classCache;
         this.methodChooser = methodChooser;
+        this.propertyCallerFactory = propertyCallerFactory;
         this.automaticPrototype = automaticPrototype;
         this.contextProviderFactory = contextProviderFactory;
     }
@@ -72,6 +77,10 @@ public final class DatabindConfiguration {
      */
     public MethodChooser methodChooser() {
         return methodChooser;
+    }
+
+    public PropertyCaller.Factory propertyCallerFactory() {
+        return propertyCallerFactory;
     }
 
     /**
@@ -107,6 +116,7 @@ public final class DatabindConfiguration {
     public static class Builder {
         private JavascriptClassCache classCache;
         private MethodChooser methodChooser;
+        private PropertyCaller.Factory propertyCallerFactory;
         private boolean automaticPrototype;
         private ContextProviderFactory contextProviderFactory;
 
@@ -117,6 +127,7 @@ public final class DatabindConfiguration {
         private Builder() {
             this.classCache = new NaiveJavascriptClassCache();
             this.methodChooser = new HeuristicMethodChooser();
+            this.propertyCallerFactory = new ReflectivePropertyCaller.Factory();
             this.automaticPrototype = true;
         }
 
@@ -139,6 +150,11 @@ public final class DatabindConfiguration {
          */
         public Builder methodChooser(MethodChooser methodChooser) {
             this.methodChooser = methodChooser;
+            return this;
+        }
+
+        public Builder propertyCallerFactory(PropertyCaller.Factory propertyCallerFactory) {
+            this.propertyCallerFactory = propertyCallerFactory;
             return this;
         }
 
@@ -171,7 +187,7 @@ public final class DatabindConfiguration {
          * @return The built {@link DatabindConfiguration}
          */
         public DatabindConfiguration build() {
-            return new DatabindConfiguration(classCache, methodChooser, automaticPrototype, contextProviderFactory);
+            return new DatabindConfiguration(classCache, methodChooser, propertyCallerFactory, automaticPrototype, contextProviderFactory);
         }
     }
 }
