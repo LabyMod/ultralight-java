@@ -26,8 +26,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+/**
+ * Calls properties on java objects or classes via reflection. Default implementation of {@link PropertyCaller}.
+ */
 public class ReflectivePropertyCaller implements PropertyCaller {
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object callMethod(Object instance, Method method, Object[] parameters) throws JavascriptInteropException {
         try {
@@ -39,6 +45,9 @@ public class ReflectivePropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object callConstructor(Constructor<?> constructor, Object[] parameters) throws JavascriptInteropException {
         try {
@@ -52,6 +61,9 @@ public class ReflectivePropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object callFieldGet(Object instance, Field field) throws JavascriptInteropException {
         try {
@@ -61,6 +73,9 @@ public class ReflectivePropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void callFieldSet(Object instance, Field field, Object value) throws JavascriptInteropException {
         try {
@@ -70,8 +85,14 @@ public class ReflectivePropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * Factory for {@link ReflectivePropertyCaller}
+     */
     public static class Factory implements PropertyCaller.Factory {
 
+        /**
+         * @return A new {@link ReflectivePropertyCaller} instance.
+         */
         @Override
         public ReflectivePropertyCaller create() {
             return new ReflectivePropertyCaller();

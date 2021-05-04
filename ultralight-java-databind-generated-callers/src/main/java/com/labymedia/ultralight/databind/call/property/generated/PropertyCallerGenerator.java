@@ -43,7 +43,7 @@ public class PropertyCallerGenerator {
 
     private static final Method CALL_METHOD = GENERATION_INTERFACE.getDeclaredMethods()[0];
 
-    private static final String CLASS_NAME_BASE = "Generated" + GENERATION_INTERFACE + "_%s";
+    private static final String CLASS_NAME_BASE = "Generated" + GENERATION_INTERFACE.getSimpleName() + "_%s";
 
     private static final String INSTANCE_PARAMETER_NAME = "instance";
 
@@ -71,6 +71,12 @@ public class PropertyCallerGenerator {
         this.classPool = ClassPool.getDefault();
     }
 
+    /**
+     * Generates a new {@link SingleGeneratedPropertyCaller} for a certain method.
+     *
+     * @param method The method which the caller should call
+     * @return The new {@link SingleGeneratedPropertyCaller}
+     */
     public SingleGeneratedPropertyCaller generateMethodCaller(Method method) throws NotFoundException, CannotCompileException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         boolean returnsVoid = method.getReturnType().equals(void.class);
 
@@ -90,6 +96,12 @@ public class PropertyCallerGenerator {
         return this.generateCaller(methodContentBuilder.toString());
     }
 
+    /**
+     * Generates a new {@link SingleGeneratedPropertyCaller} for a certain constructor.
+     *
+     * @param constructor The constructor which the caller should call
+     * @return The new {@link SingleGeneratedPropertyCaller}
+     */
     public SingleGeneratedPropertyCaller generateConstructorCaller(Constructor<?> constructor) throws NotFoundException, CannotCompileException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         String declaringClassName = constructor.getDeclaringClass().getName();
 
@@ -100,6 +112,12 @@ public class PropertyCallerGenerator {
         return this.generateCaller(methodContentBuilder.toString());
     }
 
+    /**
+     * Generates a new {@link SingleGeneratedPropertyCaller} for a certain field, allows get and set operations.
+     *
+     * @param field The field which the caller should call
+     * @return The new {@link SingleGeneratedPropertyCaller}
+     */
     public SingleGeneratedPropertyCaller generateFieldCaller(Field field) throws NotFoundException, CannotCompileException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Class<?> type = field.getType();
 
@@ -126,6 +144,11 @@ public class PropertyCallerGenerator {
         return this.generateCaller(methodContentBuilder.toString());
     }
 
+    /**
+     * Generates a new {@link SingleGeneratedPropertyCaller}.
+     *
+     * @param methodContent The content of the {@link SingleGeneratedPropertyCaller#callProperty(Object, Object[])} method as string
+     */
     private SingleGeneratedPropertyCaller generateCaller(String methodContent) throws NotFoundException, CannotCompileException, IOException, NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
         CtClass ctClass = this.classPool.makeClass(
                 String.format(CLASS_NAME_BASE, UUID.randomUUID().toString().replace("-", "")));
@@ -142,6 +165,14 @@ public class PropertyCallerGenerator {
         return (SingleGeneratedPropertyCaller) generatedClass.getConstructor().newInstance();
     }
 
+    /**
+     * Appends the casted property instance to a certain string builder, or if static the class name holding the property.
+     *
+     * @param builder           The string builder
+     * @param type              The type of the instance
+     * @param propertyModifiers The modifiers of the property
+     * @return The string builder
+     */
     private StringBuilder castInstance(StringBuilder builder, Class<?> type, int propertyModifiers) {
         boolean isStatic = Modifier.isStatic(propertyModifiers);
 
@@ -158,6 +189,14 @@ public class PropertyCallerGenerator {
         return builder;
     }
 
+    /**
+     * Appends a casted parameter to a certain string builder, wrapping and unwrapping primitive values to avoid verify errors.
+     *
+     * @param builder The string builder
+     * @param type    The type of the parameter
+     * @param index   The index of the parameter in the object array
+     * @return The string builder
+     */
     private StringBuilder castParameter(StringBuilder builder, Class<?> type, int index) {
         Class<?> wrappedType = PRIMITIVE_TO_WRAPPER.get(type);
         boolean isWrapped = wrappedType != null;
@@ -180,6 +219,12 @@ public class PropertyCallerGenerator {
         return builder;
     }
 
+    /**
+     * Converts a type to a string, usable for casting
+     *
+     * @param type The type
+     * @return The type used for casting as a string
+     */
     private String getCastType(Class<?> type) {
         Class<?> wrappedType = PRIMITIVE_TO_WRAPPER.get(type);
         Class<?> rawType = type.getComponentType() != null ? type.getComponentType() : type;
@@ -192,6 +237,14 @@ public class PropertyCallerGenerator {
         return builder.toString();
     }
 
+    /**
+     * Appends a wrapping of a primitive to a certain string builder.
+     *
+     * @param builder          The string builder
+     * @param type             The type of the property
+     * @param propertyReturner A consumer returning the value to be wrapped, as a java expression
+     * @return The string builder
+     */
     private StringBuilder wrapPrimitiveType(StringBuilder builder, Class<?> type, Consumer<StringBuilder> propertyReturner) {
         Class<?> wrappedType = PRIMITIVE_TO_WRAPPER.get(type);
         boolean isWrapped = wrappedType != null;
@@ -210,6 +263,13 @@ public class PropertyCallerGenerator {
         return builder;
     }
 
+    /**
+     * Appends casted parameters to a certain string builder.
+     *
+     * @param builder        The string builder
+     * @param parameterTypes The types of the parameters
+     * @return The string builder
+     */
     private StringBuilder appendParameters(StringBuilder builder, Class<?>[] parameterTypes) {
         for (int i = 0; i < parameterTypes.length; i++) {
             Class<?> parameterType = parameterTypes[i];
@@ -223,12 +283,22 @@ public class PropertyCallerGenerator {
         return builder;
     }
 
+    /**
+     * Class loader making defining new classes possible
+     */
     private static class DefinableClassLoader extends SecureClassLoader {
 
         public DefinableClassLoader(ClassLoader parent) {
             super(parent);
         }
 
+        /**
+         * Defines a new class.
+         *
+         * @param className The name of the class
+         * @param byteCode  The bytecode of the class
+         * @return The new class
+         */
         public Class<?> defineClass(String className, byte[] byteCode) {
             return super.defineClass(className, byteCode, 0, byteCode.length);
         }

@@ -19,7 +19,17 @@
 
 package com.labymedia.ultralight.databind.call.property.generated;
 
+/**
+ * Represents a bytecode-generated caller which directly calls a certain property on a java object or class without reflection.
+ */
 public interface SingleGeneratedPropertyCaller {
 
+    /**
+     * Calls the property of the object or class directly.
+     *
+     * @param instance   The instance the property belongs to or {@code null} if the property belongs to a class.
+     * @param parameters The parameters the property should be called with or {@code null} if the property does not support arguments.
+     * @return The result of the call or {@code null} if the property has no result
+     */
     Object callProperty(Object instance, Object[] parameters);
 }

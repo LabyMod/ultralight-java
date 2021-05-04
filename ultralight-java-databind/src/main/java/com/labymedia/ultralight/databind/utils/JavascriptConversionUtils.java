@@ -88,12 +88,14 @@ public final class JavascriptConversionUtils {
             return context.makeString((String) object);
         } else if (javaClass.isArray()) {
             // Arrays required a recursive conversion
-            Object[] array = (Object[]) object;
-            JavascriptValue[] values = new JavascriptValue[array.length];
+            // Reflective access to handle primitive arrays too
+            int length = Array.getLength(object);
+            JavascriptValue[] values = new JavascriptValue[length];
 
-            for (int i = 0; i < array.length; i++) {
+            for (int i = 0; i < length; i++) {
                 // Recursive call
-                values[i] = toJavascript(context, array[i], array[i].getClass());
+                Object value = Array.get(object, i);
+                values[i] = toJavascript(context, value, value.getClass());
             }
 
             return context.makeArray(values);

@@ -19,8 +19,14 @@
 
 package com.labymedia.ultralight.databind.call.property.generated;
 
+/**
+ * Exception thrown when there was a problem generating a new {@link SingleGeneratedPropertyCaller}.
+ */
 public class CallerGenerationException extends RuntimeException {
 
+    /**
+     * {@inheritDoc}
+     */
     public CallerGenerationException(String message, Throwable cause) {
         super(message, cause);
     }

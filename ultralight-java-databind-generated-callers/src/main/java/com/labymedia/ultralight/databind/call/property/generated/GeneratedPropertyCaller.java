@@ -20,6 +20,7 @@
 package com.labymedia.ultralight.databind.call.property.generated;
 
 import com.labymedia.ultralight.databind.call.property.PropertyCaller;
+import com.labymedia.ultralight.databind.call.property.ReflectivePropertyCaller;
 import com.labymedia.ultralight.javascript.interop.JavascriptInteropException;
 import javassist.CannotCompileException;
 import javassist.NotFoundException;
@@ -32,12 +33,30 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Calls properties on java objects or classes via lazy-bytecode-generated {@link SingleGeneratedPropertyCaller}s.
+ * This implementation is recommended if there are a lot of calls in a short time on the same property.
+ * Although this implementation is faster than {@link ReflectivePropertyCaller},
+ * the first call might be slower because of the lazy generation.
+ */
 public class GeneratedPropertyCaller implements PropertyCaller {
 
+    /**
+     * All already generated {@link SingleGeneratedPropertyCaller}s for methods.
+     */
     private final Map<Method, SingleGeneratedPropertyCaller> methodCallers;
+    /**
+     * All already generated {@link SingleGeneratedPropertyCaller}s for constructors.
+     */
     private final Map<Constructor<?>, SingleGeneratedPropertyCaller> constructorCallers;
+    /**
+     * All already generated {@link SingleGeneratedPropertyCaller}s for fields.
+     */
     private final Map<Field, SingleGeneratedPropertyCaller> fieldCallers;
 
+    /**
+     * Generator for new {@link SingleGeneratedPropertyCaller}s.
+     */
     private final PropertyCallerGenerator callerGenerator;
 
     private GeneratedPropertyCaller() {
@@ -48,6 +67,9 @@ public class GeneratedPropertyCaller implements PropertyCaller {
         this.callerGenerator = new PropertyCallerGenerator();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object callMethod(Object instance, Method method, Object[] parameters) throws JavascriptInteropException {
         SingleGeneratedPropertyCaller propertyCaller = this.methodCallers.computeIfAbsent(method, key -> {
@@ -65,6 +87,9 @@ public class GeneratedPropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object callConstructor(Constructor<?> constructor, Object[] parameters) throws JavascriptInteropException {
         SingleGeneratedPropertyCaller propertyCaller = this.constructorCallers.computeIfAbsent(constructor, key -> {
@@ -82,6 +107,9 @@ public class GeneratedPropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Object callFieldGet(Object instance, Field field) throws JavascriptInteropException {
         SingleGeneratedPropertyCaller propertyCaller = this.fieldCallers.computeIfAbsent(field, key -> {
@@ -99,6 +127,9 @@ public class GeneratedPropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void callFieldSet(Object instance, Field field, Object value) throws JavascriptInteropException {
         SingleGeneratedPropertyCaller propertyCaller = this.fieldCallers.computeIfAbsent(field, key -> {
@@ -116,8 +147,14 @@ public class GeneratedPropertyCaller implements PropertyCaller {
         }
     }
 
+    /**
+     * Factory for {@link GeneratedPropertyCaller}.
+     */
     public static class Factory implements PropertyCaller.Factory {
 
+        /**
+         * @return A new {@link GeneratedPropertyCaller} instance
+         */
         @Override
         public GeneratedPropertyCaller create() {
             return new GeneratedPropertyCaller();
