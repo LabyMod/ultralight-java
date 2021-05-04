@@ -32,9 +32,11 @@ dependencies {
 
     implementation project(':ultralight-java-base')
     implementation project(':ultralight-java-databind')
+    implementation project(':ultralight-java-gpu')
 
     implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
+
 }
 
 def runDir = file("run")

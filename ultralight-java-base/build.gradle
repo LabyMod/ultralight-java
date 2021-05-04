@@ -14,7 +14,8 @@ jar {
 }
 
 processResources {
-    from(nativeBinaries) {
+    dependsOn(':ultralight-java-native:build')
+    from(file(System.getProperties().getOrDefault("ultralight-java.base.native-binaries-folder", project(":ultralight-java-native").buildDir.toPath().toString() + "/nativeBinaries").toString())) {
         into "native-binaries"
     }
 }

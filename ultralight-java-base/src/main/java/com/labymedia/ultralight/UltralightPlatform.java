@@ -28,6 +28,7 @@ import com.labymedia.ultralight.plugin.clipboard.UltralightClipboard;
 import com.labymedia.ultralight.plugin.filesystem.UltralightFileSystem;
 import com.labymedia.ultralight.plugin.logging.UltralightLogger;
 import com.labymedia.ultralight.plugin.render.UltralightGPUDriver;
+import com.labymedia.ultralight.plugin.render.UltralightGPUDriverNative;
 
 /**
  * Platform singleton to configure Ultralight and provide user-defined implementations for various platform operations.
@@ -113,6 +114,9 @@ public class UltralightPlatform implements ObjectWithHandle {
      */
     public native void setLogger(UltralightLogger logger);
 
+    public void setGPUDriver(UltralightGPUDriverNative ultralightGPUDriverNative){
+        this.setGPUDriverPointer(ultralightGPUDriverNative.getDriverHandle());
+    }
     /**
      * Retrieves the native underlying pointer to the Platform object.
      *
