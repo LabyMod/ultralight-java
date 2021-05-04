@@ -15,7 +15,7 @@ jar {
 
 processResources {
     dependsOn(':ultralight-java-gpu-native:build')
-    from(file(System.getProperties().getOrDefault("ultralight-java.gpu.native-binaries-folder", project(":ultralight-java-gpu-native").buildDir.toPath().toString() + "/nativeBinaries").toString())) {
+    from(file(project.getProperties().getOrDefault("ultralight-java.gpu.native-binaries-folder", project(":ultralight-java-gpu-native").buildDir.toPath().toString() + "/nativeBinaries").toString())) {
         into "native-binaries"
     }
 }
