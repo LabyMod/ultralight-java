@@ -34,7 +34,8 @@ task build(type: CMakeBuildTask) {
         }
 
 
-        def nativeBinariesDir = file(System.getProperties().getOrDefault("ultralight-java.base.native-binaries-folder", "$buildDir/nativeBinaries").toString())
+        def nativeBinariesDir = rootProject.file(project.getProperties().getOrDefault("ultralight-java.base.native-binaries-folder", "$buildDir/nativeBinaries").toString())
+        println("Build native binaries to folder $nativeBinariesDir");
         variables = [
                 "CMAKE_BUILD_TYPE"              : java.util.Optional.of("Release"),
                 "CMAKE_RUNTIME_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),

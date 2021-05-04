@@ -203,7 +203,6 @@ namespace ultralight_java {
     }
 
     void UltralightPlatformJNI::set_gpu_driver_pointer(JNIEnv *env, jobject java_instance, jlong handle) {
-        printf("Set Gpu Driver Pointer %d\n\r", handle);
         auto *platform = reinterpret_cast<ultralight::Platform *>(
             env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
