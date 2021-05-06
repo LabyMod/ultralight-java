@@ -54,7 +54,7 @@ public final class DatabindJavascriptMethodHandler {
      *
      * @param configuration   The configuration to use
      * @param conversionUtils The conversion utilities to use for converting objects
-     * @param propertyCaller
+     * @param propertyCaller  The property caller used for calling properties on java objects and classes
      * @param methodSet       The methods which can be invoked by this handler
      * @param name            The name of this handler class
      */
@@ -164,7 +164,7 @@ public final class DatabindJavascriptMethodHandler {
      *
      * @param configuration   The configuration to use
      * @param conversionUtils The conversion utilities to user for converting objects
-     * @param propertyCaller
+     * @param propertyCaller  The property caller used for calling properties on java objects and classes
      * @param methodSet       The sets of methods invocable by this handler
      * @param name            The name of this handler class
      * @return The created handler

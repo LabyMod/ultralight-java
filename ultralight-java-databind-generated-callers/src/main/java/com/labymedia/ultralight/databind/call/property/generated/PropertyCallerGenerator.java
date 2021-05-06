@@ -37,6 +37,9 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.function.Consumer;
 
+/**
+ * Generates certain {@link SingleGeneratedPropertyCaller}s.
+ */
 public class PropertyCallerGenerator {
 
     private static final Class<?> GENERATION_INTERFACE = SingleGeneratedPropertyCaller.class;
@@ -121,6 +124,7 @@ public class PropertyCallerGenerator {
     public SingleGeneratedPropertyCaller generateFieldCaller(Field field) throws NotFoundException, CannotCompileException, IOException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         Class<?> type = field.getType();
 
+        // when the caller is called with arguments, the field value will be set to the first argument
         StringBuilder methodContentBuilder = new StringBuilder("if (")
                 .append(PARAMETERS_PARAMETER_NAME)
                 .append(" != null && ")
@@ -136,6 +140,7 @@ public class PropertyCallerGenerator {
                 .append(";")
                 .append(" return null; } return ");
 
+        // when no arguments are present, just return the field value
         this.wrapPrimitiveType(methodContentBuilder, type, builder ->
                 this.castInstance(builder, field.getDeclaringClass(), field.getModifiers())
                         .append(".")
@@ -211,6 +216,9 @@ public class PropertyCallerGenerator {
                 .append(")");
 
         if (isWrapped) {
+            // unwrapping the wrapper type to its primitive
+            // this is necessary to avoid verify errors,
+            // the javassist compiler has some issues with primitives and their wrappers
             builder.append(".")
                     .append(type.getName())
                     .append("Value()");
@@ -250,6 +258,9 @@ public class PropertyCallerGenerator {
         boolean isWrapped = wrappedType != null;
 
         if (isWrapped) {
+            // wrapping primitive type to its wrapper
+            // this is necessary to avoid verify errors,
+            // the javassist compiler has some issues with primitives and their wrappers
             builder.append(wrappedType.getName())
                     .append(".valueOf(");
         }

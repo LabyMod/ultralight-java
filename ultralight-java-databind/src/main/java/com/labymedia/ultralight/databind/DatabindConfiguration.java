@@ -43,7 +43,7 @@ public final class DatabindConfiguration {
      *
      * @param classCache             The class cache used by this configuration
      * @param methodChooser          The method chooser used by this configuration
-     * @param propertyCallerFactory
+     * @param propertyCallerFactory  The factory creating the property caller used for calling properties on java objects and classes
      * @param automaticPrototype     If {@code true}, automatic prototyping is enabled
      * @param contextProviderFactory The factory for binding context providers, or {@code null}, if this feature
      */
@@ -79,6 +79,11 @@ public final class DatabindConfiguration {
         return methodChooser;
     }
 
+    /**
+     * Retrieves the property caller used for calling properties on java objects and classes.
+     *
+     * @return The property caller used for calling properties on java objects and classes
+     */
     public PropertyCaller.Factory propertyCallerFactory() {
         return propertyCallerFactory;
     }
@@ -153,6 +158,12 @@ public final class DatabindConfiguration {
             return this;
         }
 
+        /**
+         * Sets the property caller used for calling properties on java objects and classes.
+         *
+         * @param propertyCallerFactory The property caller to use
+         * @return this
+         */
         public Builder propertyCallerFactory(PropertyCaller.Factory propertyCallerFactory) {
             this.propertyCallerFactory = propertyCallerFactory;
             return this;
