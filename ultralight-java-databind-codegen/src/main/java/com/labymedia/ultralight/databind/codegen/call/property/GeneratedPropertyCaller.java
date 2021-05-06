@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.databind.call.property.generated;
+package com.labymedia.ultralight.databind.codegen.call.property;
 
 import com.labymedia.ultralight.databind.call.property.PropertyCaller;
 import com.labymedia.ultralight.databind.call.property.ReflectivePropertyCaller;

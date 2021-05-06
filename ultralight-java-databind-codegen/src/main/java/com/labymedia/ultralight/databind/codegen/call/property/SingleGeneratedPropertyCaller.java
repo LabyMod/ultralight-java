@@ -17,7 +17,7 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.databind.call.property.generated;
+package com.labymedia.ultralight.databind.codegen.call.property;
 
 /**
  * Represents a bytecode-generated caller which directly calls a certain property on a java object or class without reflection.

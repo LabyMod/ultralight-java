@@ -3,6 +3,6 @@ rootProject.name = 'ultralight-java'
 include 'ultralight-java-base'
 include 'ultralight-java-native'
 include 'ultralight-java-databind'
-include 'ultralight-java-databind-generated-callers'
+include 'ultralight-java-databind-codegen'
 
 include 'example:lwjgl3-opengl'
