@@ -33,10 +33,10 @@ public interface PropertyCaller {
     /**
      * Calls a method on a certain instance.
      *
-     * @param instance   The instance the method belongs to or {@code null}, if static
+     * @param instance   The instance the method belongs to, or {@code null}, if static
      * @param method     The method which should be called
      * @param parameters The parameters the method should be called with
-     * @return The return value of the method or {@code null} if void
+     * @return The return value of the method, or {@code null}, if void
      * @throws JavascriptInteropException If an error occurred while calling the method
      */
     Object callMethod(Object instance, Method method, Object[] parameters) throws JavascriptInteropException;
@@ -54,7 +54,7 @@ public interface PropertyCaller {
     /**
      * Returns the value from a certain field.
      *
-     * @param instance The instance the field belongs to or {@code null} if static
+     * @param instance The instance the field belongs to, or {@code null}, if static
      * @param field    The field whose value should be returned
      * @return The value of the field
      * @throws JavascriptInteropException If an error occurred while getting the value from the field
@@ -64,7 +64,7 @@ public interface PropertyCaller {
     /**
      * Sets a value of a certain field.
      *
-     * @param instance The instance the field belongs to or {@code null} if static
+     * @param instance The instance the field belongs to, or {@code null}, if static
      * @param field    The field whose value should be set
      * @param value    The value to be set
      * @throws JavascriptInteropException If an error occurred while setting the value of the field

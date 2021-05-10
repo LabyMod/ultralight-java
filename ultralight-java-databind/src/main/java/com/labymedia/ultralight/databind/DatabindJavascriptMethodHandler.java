@@ -119,14 +119,14 @@ public final class DatabindJavascriptMethodHandler {
                 arguments
         );
 
-        Object ret = this.propertyCaller.callMethod(privateData.instance(), method, parameters.toArray());
+        // Invoke method with constructed arguments
+        Object ret = propertyCaller.callMethod(privateData.instance(), method, parameters.toArray());
         Class<?> suggestedReturnType = method.getReturnType();
 
         if (ret != null) {
             suggestedReturnType = ret.getClass();
         }
 
-        // Invoke method with constructed arguments
         return conversionUtils.toJavascript(context, ret, suggestedReturnType);
     }
 

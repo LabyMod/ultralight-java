@@ -63,6 +63,8 @@ public final class DatabindJavascriptClass {
     private final Map<String, Set<Method>> methods = new HashMap<>();
     private final Map<String, Field> fields = new HashMap<>();
 
+    private final Map<String, JavascriptClass> methodClassCache = new HashMap<>();
+
     /**
      * Constructs a new {@link DatabindJavascriptClass}.
      *
@@ -242,12 +244,13 @@ public final class DatabindJavascriptClass {
         }
 
         return context.makeObject(
-                DatabindJavascriptMethodHandler.create(
+                // caching classes of methods to avoid creating a new class on every call
+                methodClassCache.computeIfAbsent(propertyName, key -> DatabindJavascriptMethodHandler.create(
                         configuration,
                         conversionUtils,
                         propertyCaller,
                         methodSet,
-                        propertyName).bake(),
+                        propertyName).bake()),
                 new DatabindJavascriptMethodHandler.Data(privateData.instance, null));
     }
 

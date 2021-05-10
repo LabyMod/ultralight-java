@@ -43,9 +43,11 @@ public final class DatabindConfiguration {
      *
      * @param classCache             The class cache used by this configuration
      * @param methodChooser          The method chooser used by this configuration
-     * @param propertyCallerFactory  The factory creating the property caller used for calling properties on java objects and classes
+     * @param propertyCallerFactory  The factory creating the property caller used for calling properties on
+     *                               java objects and classes
      * @param automaticPrototype     If {@code true}, automatic prototyping is enabled
      * @param contextProviderFactory The factory for binding context providers, or {@code null}, if this feature
+     *                               is not required
      */
     private DatabindConfiguration(
             JavascriptClassCache classCache,
@@ -198,7 +200,8 @@ public final class DatabindConfiguration {
          * @return The built {@link DatabindConfiguration}
          */
         public DatabindConfiguration build() {
-            return new DatabindConfiguration(classCache, methodChooser, propertyCallerFactory, automaticPrototype, contextProviderFactory);
+            return new DatabindConfiguration(
+                    classCache, methodChooser, propertyCallerFactory, automaticPrototype, contextProviderFactory);
         }
     }
 }
