@@ -36,4 +36,4 @@ namespace ultralight_java {
          */
         static jobject bitmap(JNIEnv *env, jobject instance);
     };
-}
+} // namespace ultralight_java

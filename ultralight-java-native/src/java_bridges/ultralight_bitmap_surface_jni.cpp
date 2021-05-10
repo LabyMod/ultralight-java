@@ -25,14 +25,16 @@
 namespace ultralight_java {
     jobject UltralightBitmapSurfaceJNI::bitmap(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::BitmapSurface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
         auto bitmap = surface->bitmap();
-        return env->NewObject(runtime.ultralight_bitmap.clazz, runtime.ultralight_bitmap.constructor,
-                              UltralightRefPtrJNI::create<ultralight::Bitmap>(env, std::move(
-                                      ultralight::RefPtr<ultralight::Bitmap>(std::move(bitmap)))));
+        return env->NewObject(
+            runtime.ultralight_bitmap.clazz,
+            runtime.ultralight_bitmap.constructor,
+            UltralightRefPtrJNI::create<
+                ultralight::Bitmap>(env, std::move(ultralight::RefPtr<ultralight::Bitmap>(std::move(bitmap)))));
     }
-}
+} // namespace ultralight_java

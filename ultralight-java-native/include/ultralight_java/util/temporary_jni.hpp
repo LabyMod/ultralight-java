@@ -59,10 +59,10 @@ namespace ultralight_java {
         JNIEnv *operator*();
 
         /**
-          * Retrieves the JNI environment contained by this temporary environment.
-          *
-          * @return The contained JNI environment
-          */
+         * Retrieves the JNI environment contained by this temporary environment.
+         *
+         * @return The contained JNI environment
+         */
         JNIEnv *operator->();
     };
-}
+} // namespace ultralight_java

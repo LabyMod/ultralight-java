@@ -21,14 +21,14 @@
 
 #include <Ultralight/Ultralight.h>
 
-#include "ultralight_java/util/util.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
+#include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {
     jlong UltralightSurfaceJNI::width(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return 0;
         }
 
@@ -37,8 +37,8 @@ namespace ultralight_java {
 
     jlong UltralightSurfaceJNI::height(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return 0;
         }
 
@@ -47,8 +47,8 @@ namespace ultralight_java {
 
     jlong UltralightSurfaceJNI::rowBytes(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return 0;
         }
 
@@ -57,8 +57,8 @@ namespace ultralight_java {
 
     jlong UltralightSurfaceJNI::size(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return 0;
         }
 
@@ -67,8 +67,8 @@ namespace ultralight_java {
 
     jobject UltralightSurfaceJNI::lockPixels(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
@@ -77,8 +77,8 @@ namespace ultralight_java {
 
     void UltralightSurfaceJNI::unlockPixels(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -87,8 +87,8 @@ namespace ultralight_java {
 
     void UltralightSurfaceJNI::resize(JNIEnv *env, jobject instance, jlong width, jlong height) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -96,14 +96,14 @@ namespace ultralight_java {
     }
 
     void UltralightSurfaceJNI::setDirtyBounds(JNIEnv *env, jobject instance, jobject rect) {
-        if (!rect) {
+        if(!rect) {
             env->ThrowNew(runtime.null_pointer_exception.clazz, "rect can't be null");
             return;
         }
 
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return;
         }
 
@@ -112,8 +112,8 @@ namespace ultralight_java {
 
     jobject UltralightSurfaceJNI::dirtyBounds(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return nullptr;
         }
 
@@ -122,11 +122,11 @@ namespace ultralight_java {
 
     void UltralightSurfaceJNI::clearDirtyBounds(JNIEnv *env, jobject instance) {
         auto *surface = reinterpret_cast<ultralight::Surface *>(
-                env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
-        if (env->ExceptionCheck()) {
+            env->CallLongMethod(instance, runtime.object_with_handle.get_handle_method));
+        if(env->ExceptionCheck()) {
             return;
         }
 
         surface->ClearDirtyBounds();
     }
-}
+} // namespace ultralight_java

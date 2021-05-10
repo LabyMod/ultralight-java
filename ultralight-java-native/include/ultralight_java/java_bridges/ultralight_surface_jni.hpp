@@ -116,4 +116,4 @@ namespace ultralight_java {
          */
         static void clearDirtyBounds(JNIEnv *env, jobject instance);
     };
-}
+} // namespace ultralight_java

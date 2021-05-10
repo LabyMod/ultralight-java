@@ -20,7 +20,8 @@
 #include "ultralight_java/java_bridges/proxied_java_exception.hpp"
 
 namespace ultralight_java {
-    ProxiedJavaException::ProxiedJavaException(JNIReferenceWrapper thrown) : thrown(std::move(thrown)) {}
+    ProxiedJavaException::ProxiedJavaException(JNIReferenceWrapper thrown) : thrown(std::move(thrown)) {
+    }
 
     void ProxiedJavaException::throw_if_any(JNIEnv *env) {
         if(!env->ExceptionCheck()) {
@@ -39,4 +40,4 @@ namespace ultralight_java {
     void ProxiedJavaException::throw_to_java(JNIEnv *env) {
         env->Throw(reinterpret_cast<jthrowable>(*thrown));
     }
-}
+} // namespace ultralight_java

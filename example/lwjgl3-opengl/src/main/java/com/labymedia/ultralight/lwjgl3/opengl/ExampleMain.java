@@ -43,7 +43,7 @@ public class ExampleMain {
 
         // Get the existing native library path
         String libraryPath = System.getProperty("java.library.path");
-        if(libraryPath != null) {
+        if (libraryPath != null) {
             // There is a path set already, append our natives dir
             libraryPath += File.pathSeparator + nativesDir.toAbsolutePath().toString();
         } else {
@@ -62,7 +62,7 @@ public class ExampleMain {
         try {
             UltralightGPUDriverNativeUtil.extractAndLoadNativeLibraries(nativesDir);
         } catch (IOException exception) {
-            exception.printStackTrace();
+            throw new RuntimeException(exception);
         }
         // Load the native libraries from the given directory. This method makes sure everything is loaded in the
         // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as
@@ -100,7 +100,7 @@ public class ExampleMain {
                     Paths.get("./style.css"),
                     StandardCopyOption.REPLACE_EXISTING
             );
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

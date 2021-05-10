@@ -96,7 +96,7 @@ class FunctionalInvocationHandler implements InvocationHandler {
 
         contextProvider.syncWithJavascript((contextLock) -> {
             try {
-                synchronized(lock) {
+                synchronized (lock) {
                     JavascriptContext context = contextLock.getContext();
 
                     // Revive the Javascript value, this will effectively invalidate the protected value
@@ -117,7 +117,7 @@ class FunctionalInvocationHandler implements InvocationHandler {
                             returnValue != null ? returnValue.getClass() : method.getReturnType()
                     );
                 }
-            } catch(Throwable t) {
+            } catch (Throwable t) {
                 // Capture exceptions to prevent deadlocking
                 result.throwable = t;
             }

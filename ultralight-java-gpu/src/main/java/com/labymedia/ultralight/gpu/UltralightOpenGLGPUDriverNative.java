@@ -21,55 +21,84 @@ package com.labymedia.ultralight.gpu;
 
 import com.labymedia.ultralight.plugin.render.UltralightGPUDriverNative;
 
+/**
+ * Default native OpenGL implementation of the ultralight gpu driver
+ */
 public class UltralightOpenGLGPUDriverNative implements UltralightGPUDriverNative {
 
-  private final long contextHandle;
-  private final long driverHandle;
-  private final UltralightGPUDriverNativeUtil util;
+    private final long contextHandle;
+    private final long driverHandle;
+    private final UltralightGPUDriverNativeUtil util;
 
 
-  public UltralightOpenGLGPUDriverNative(long window, boolean msaa) {
-    this.util = UltralightGPUDriverNativeUtil.getInstance();
-    this.contextHandle = util.createOpenGLContext(window, msaa);
-    this.driverHandle = util.getDriverFromContext(this.contextHandle);
-  }
+    public UltralightOpenGLGPUDriverNative(long window, boolean msaa) {
+        this.util = UltralightGPUDriverNativeUtil.getInstance();
+        this.contextHandle = util.createOpenGLContext(window, msaa);
+        this.driverHandle = util.getDriverFromContext(this.contextHandle);
+    }
 
-  public long getContextHandle() {
-    return this.contextHandle;
-  }
+    public long getContextHandle() {
+        return this.contextHandle;
+    }
 
-  @Override
-  public long getDriverHandle() {
-    return this.driverHandle;
-  }
+    /**
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
+     */
+    @Override
+    public long getDriverHandle() {
+        return this.driverHandle;
+    }
 
-  @Override
-  public void beginSynchronize() {
-    this.util.beginSynchronize(this.driverHandle);
-  }
+    /**
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
+     */
+    @Override
+    public void beginSynchronize() {
+        this.util.beginSynchronize(this.driverHandle);
+    }
 
-  @Override
-  public void endSynchronize() {
-    this.util.endSynchronize(this.driverHandle);
-  }
+    /**
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
+     */
+    @Override
+    public void endSynchronize() {
+        this.util.endSynchronize(this.driverHandle);
+    }
 
-  @Override
-  public boolean hasCommandsPending() {
-    return this.util.hasCommandsPending(this.driverHandle);
-  }
+    /**
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
+     */
+    @Override
+    public boolean hasCommandsPending() {
+        return this.util.hasCommandsPending(this.driverHandle);
+    }
 
-  @Override
-  public void drawCommandList() {
-    this.util.drawCommandList(this.driverHandle);
-  }
+    /**
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
+     */
+    @Override
+    public void drawCommandList() {
+        this.util.drawCommandList(this.driverHandle);
+    }
 
-  @Override
-  public void bindTexture(long textureId, long texture) {
-    this.util.bindTexture(this.driverHandle, textureId, texture);
-  }
+    /**
+     * Bind OpenGL texture for a given OpenGL Context handle to a specified texture index.
+     *
+     * @param textureId GL_ACTIVE_TEXTURE id
+     * @param texture   Ultralight renderTarget texture id
+     */
+    @Override
+    public void bindTexture(long textureId, long texture) {
+        this.util.bindTexture(this.driverHandle, textureId, texture);
+    }
 
-  @Override
-  public void setActiveWindow(long window) {
-    this.util.setActiveWindow(this.driverHandle, window);
-  }
+    /**
+     * Set which GLFW context should be active.
+     *
+     * @param window GLFW window handle
+     */
+    @Override
+    public void setActiveWindow(long window) {
+        this.util.setActiveWindow(this.driverHandle, window);
+    }
 }

@@ -86,7 +86,7 @@ public class ExampleFileSystem implements UltralightFileSystem {
                 long size = channel.size();
                 log(false, "File size of handle %d is %d", handle, size);
                 return size;
-            } catch(IOException e) {
+            } catch (IOException e) {
                 log(true, "Exception while retrieving size of handle %d", handle);
                 e.printStackTrace();
                 return -1;
@@ -115,7 +115,7 @@ public class ExampleFileSystem implements UltralightFileSystem {
             String mimeType = Files.probeContentType(realPath);
             log(false, "Mime type of %s is %s", path, mimeType);
             return mimeType;
-        } catch(IOException e) {
+        } catch (IOException e) {
             log(true, "Exception while retrieving mime type of %s", path);
             e.printStackTrace();
             return null;
@@ -143,7 +143,7 @@ public class ExampleFileSystem implements UltralightFileSystem {
         try {
             // Actual open operation
             channel = FileChannel.open(realPath, openForWriting ? StandardOpenOption.WRITE : StandardOpenOption.READ);
-        } catch(IOException e) {
+        } catch (IOException e) {
             log(true, "Exception while opening %s", path);
             e.printStackTrace();
             return INVALID_FILE_HANDLE;
@@ -175,7 +175,7 @@ public class ExampleFileSystem implements UltralightFileSystem {
             try {
                 channel.close();
                 log(false, "Handle %d has been closed", handle);
-            } catch(IOException e) {
+            } catch (IOException e) {
                 log(true, "Exception while closing handle %d", handle);
                 e.printStackTrace();
             } finally {
@@ -222,7 +222,7 @@ public class ExampleFileSystem implements UltralightFileSystem {
             long read = channel.read((ByteBuffer) data.slice().limit((int) length));
             log(false, "Read %d bytes out of %d requested from handle %d", read, length, handle);
             return read;
-        } catch(IOException e) {
+        } catch (IOException e) {
             log(true, "Exception occurred while reading %d bytes from handle %d", length, handle);
             e.printStackTrace();
             return -1;
@@ -238,7 +238,7 @@ public class ExampleFileSystem implements UltralightFileSystem {
     private Path getPath(String path) {
         try {
             return Paths.get(path);
-        } catch(InvalidPathException e) {
+        } catch (InvalidPathException e) {
             return null;
         }
     }

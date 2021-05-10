@@ -67,9 +67,9 @@ public enum Architecture {
         String arch = System.getProperty("os.arch", "unknown").toLowerCase();
         String dataModel = System.getProperty("sun.arch.data.model", "unknown").toLowerCase();
 
-        if(arch.equals("unknown") && dataModel.equals("unknown")) {
+        if (arch.equals("unknown") && dataModel.equals("unknown")) {
             return UNKNOWN;
-        } else if(arch.contains("64") || dataModel.contains("64")) {
+        } else if (arch.contains("64") || dataModel.contains("64")) {
             // TODO: Technically incorrect, for now we just assume its some kind of amd64 PC
             return AMD64;
         } else {

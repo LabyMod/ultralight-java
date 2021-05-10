@@ -24,8 +24,8 @@ import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.annotation.Unsigned;
 import com.labymedia.ultralight.config.UltralightViewConfig;
-import com.labymedia.ultralight.math.IntRect;
 import com.labymedia.ultralight.input.UltralightCursor;
+import com.labymedia.ultralight.math.IntRect;
 
 /**
  * Interface for View-related events
@@ -94,7 +94,7 @@ public interface UltralightViewListener {
      * @param popupRect Popups can optionally request certain dimensions and coordinates via window.open(). You can
      *                  choose to respect these or not by resizing/moving the View to this rect.
      * @return Returns a {@link UltralightView} to use to satisfy the the request (or return {@code null} if you want to
-     *         block the action).
+     * block the action).
      */
     UltralightView onCreateChildView(String openerUrl, String targetUrl, boolean isPopup, IntRect popupRect);
 }

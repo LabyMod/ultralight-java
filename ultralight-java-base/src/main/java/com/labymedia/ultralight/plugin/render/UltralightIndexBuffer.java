@@ -31,7 +31,8 @@ import java.nio.ByteBuffer;
  */
 @NativeType("ultralight::IndexBuffer")
 public class UltralightIndexBuffer {
-    private final @NativeType("uint8_t[]") ByteBuffer data;
+    private final @NativeType("uint8_t[]")
+    ByteBuffer data;
 
     /**
      * Constructs a new index buffer wrapping an existing byte buffer.

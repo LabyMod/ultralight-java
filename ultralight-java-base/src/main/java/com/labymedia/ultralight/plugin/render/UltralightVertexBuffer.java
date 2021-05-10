@@ -39,7 +39,7 @@ public class UltralightVertexBuffer {
      * Constructs a new {@link UltralightVertexBuffer} wrapping an existing native buffer.
      *
      * @param format The format of the buffer
-     * @param data The data to wrap of the buffer
+     * @param data   The data to wrap of the buffer
      */
     @NativeCall
     public UltralightVertexBuffer(UltralightVertexBufferFormat format, @NativeType("uint8_t[]") ByteBuffer data) {

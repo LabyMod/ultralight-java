@@ -29,4 +29,4 @@ namespace ultralight_java {
         ptr->deleter(ptr->ptr_value);
         delete ptr;
     }
-}
+} // namespace ultralight_java

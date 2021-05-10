@@ -20,6 +20,7 @@
 #pragma once
 
 #include <Ultralight/platform/Logger.h>
+
 #include "ultralight_java/util/jni_reference_wrapper.hpp"
 
 namespace ultralight_java {
@@ -44,4 +45,4 @@ namespace ultralight_java {
          */
         void LogMessage(ultralight::LogLevel log_level, const ultralight::String16 &message) final;
     };
-}
+} // namespace ultralight_java

@@ -26,11 +26,11 @@ namespace ultralight_java {
      * Class used for interfacing with ultralight::Platform from java.
      */
     class UltralightPlatformJNI {
-      private:
+    private:
         // Global ref to a java instance object
         static jobject global_instance;
 
-      public:
+    public:
         /**
          * Retrieves the java object matching the platform instance object.
          * If the instance does not exist yet, it is created.
@@ -114,4 +114,4 @@ namespace ultralight_java {
 
         static void use_opengl_driver(JNIEnv *env, jobject java_instance);
     };
-}
+} // namespace ultralight_java

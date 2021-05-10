@@ -14,11 +14,12 @@ include(CheckSymbolExists)
 # Set CMake options #
 #####################
 set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_CURRENT_LIST_DIR}/../3rdparty/cmake")
 
 ################################
 # Set up 3rdparty dependencies #
 ################################
-add_subdirectory(3rdparty)
+include(Ultralight)
 
 #####################
 # Find dependencies #

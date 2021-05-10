@@ -56,4 +56,4 @@ namespace ultralight_java {
          */
         void WritePlainText(const ultralight::String16 &text) final;
     };
-}
+} // namespace ultralight_java

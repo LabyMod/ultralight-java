@@ -182,7 +182,7 @@ namespace ultralight_java {
             env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
         // Check if any exception occurred while doing so
-        if (env->ExceptionCheck())
+        if(env->ExceptionCheck())
             return;
 
         // Remove the existing gpu driver
@@ -191,7 +191,7 @@ namespace ultralight_java {
         // Get rid of the existing gpu driver
         delete runtime.bridged_gpu_driver;
 
-        if (java_gpu_driver) {
+        if(java_gpu_driver) {
             // Create and set the new gpu driver
             runtime.bridged_gpu_driver = new BridgedGPUDriver(env, java_gpu_driver);
             platform->set_gpu_driver(runtime.bridged_gpu_driver);
@@ -199,20 +199,19 @@ namespace ultralight_java {
             // NUll out the gpu driver
             runtime.bridged_gpu_driver = nullptr;
         }
-
     }
 
     void UltralightPlatformJNI::set_gpu_driver_pointer(JNIEnv *env, jobject java_instance, jlong handle) {
         auto *platform = reinterpret_cast<ultralight::Platform *>(
             env->CallLongMethod(java_instance, runtime.object_with_handle.get_handle_method));
 
-        if (env->ExceptionCheck())
+        if(env->ExceptionCheck())
             return;
 
         platform->set_gpu_driver(nullptr);
 
         delete runtime.bridged_gpu_driver;
-        if (handle) {
+        if(handle) {
             auto *driver = (ultralight::GPUDriver *) handle;
             runtime.bridged_gpu_driver = driver;
             platform->set_gpu_driver(driver);

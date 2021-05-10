@@ -283,8 +283,7 @@ namespace ultralight_java {
         // Retrieve information about the UltralightCommandList class
         runtime.ultralight_render_target.clazz = reinterpret_cast<jclass>(
             env->NewGlobalRef(env->FindClass("com/labymedia/ultralight/plugin/render/UltralightRenderTarget")));
-        runtime.ultralight_render_target
-            .constructor = env->GetMethodID(
+        runtime.ultralight_render_target.constructor = env->GetMethodID(
             runtime.ultralight_render_target.clazz,
             "<init>",
             "("
@@ -297,8 +296,7 @@ namespace ultralight_java {
             "Lcom/labymedia/ultralight/bitmap/UltralightBitmapFormat;"
             "[F"
             "J"
-            ")V"
-            );
+            ")V");
 
         // Retrieve information about the UltralightCommand class
         runtime.ultralight_command.clazz = reinterpret_cast<jclass>(

@@ -94,7 +94,7 @@ public final class DatabindJavascriptClass {
         for (Method method : methods) {
             String name = method.getName();
 
-            if(method.getName().equals("valueOf") && method.getDeclaringClass().isEnum()) {
+            if (method.getName().equals("valueOf") && method.getDeclaringClass().isEnum()) {
                 // Skip the valueOf method of enums because it breaks Javascript internals
                 continue;
             }
@@ -156,11 +156,11 @@ public final class DatabindJavascriptClass {
         try {
             // Invoke constructor with constructed arguments
             return context.makeObject(bake(), new Data(method.newInstance(parameters.toArray()), null));
-        } catch(IllegalAccessException exception) {
+        } catch (IllegalAccessException exception) {
             throw new JavascriptInteropException("Unable to access constructor: " + method.getName(), exception);
-        } catch(InvocationTargetException exception) {
+        } catch (InvocationTargetException exception) {
             throw new JavascriptInteropException("Constructor threw an exception", exception);
-        } catch(InstantiationException exception) {
+        } catch (InstantiationException exception) {
             throw new JavascriptInteropException("Unable to create instance", exception);
         }
     }
@@ -221,7 +221,7 @@ public final class DatabindJavascriptClass {
         if (field != null) {
             try {
                 return conversionUtils.toJavascript(context, field.get(privateData.instance), field.getType());
-            } catch(IllegalAccessException exception) {
+            } catch (IllegalAccessException exception) {
                 throw new JavascriptInteropException("Unable to access field: " + field.getName(), exception);
             }
         }
@@ -264,7 +264,7 @@ public final class DatabindJavascriptClass {
             try {
                 field.set(privateData.instance, conversionUtils.fromJavascript(value, field.getType()));
                 return true;
-            } catch(IllegalAccessException exception) {
+            } catch (IllegalAccessException exception) {
                 throw new JavascriptInteropException("Unable to access field: " + field.getName() +
                         " (" + exception.getMessage() + ")", exception);
             }

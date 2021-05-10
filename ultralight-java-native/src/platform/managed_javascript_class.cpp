@@ -59,7 +59,8 @@
         lock.get())
 
 namespace ultralight_java {
-    ManagedJavascriptPrivateData::ManagedJavascriptPrivateData(JNIEnv *env, jobject reference) : reference(env->NewGlobalRef(reference)), ref_count(0) {
+    ManagedJavascriptPrivateData::ManagedJavascriptPrivateData(JNIEnv *env, jobject reference)
+        : reference(env->NewGlobalRef(reference)), ref_count(0) {
     }
 
     ManagedJavascriptPrivateData::~ManagedJavascriptPrivateData() {
@@ -165,7 +166,6 @@ namespace ultralight_java {
                 runtime.javascript_object_finalizer.finalize_javascript_object,
                 java_object.get());
         }
-
 
         if(private_data->deref()) {
             env->DeleteGlobalRef(private_data->get_inner());
@@ -287,7 +287,7 @@ namespace ultralight_java {
                     java_context.get(),
                     java_object.get(),
                     java_property_name.get()));
-            
+
         } else {
             env->CallVoidMethod(java_lock, runtime.javascript_context_lock.unlock_method);
             return nullptr;

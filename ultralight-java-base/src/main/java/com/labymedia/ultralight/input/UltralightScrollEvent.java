@@ -19,9 +19,9 @@
 
 package com.labymedia.ultralight.input;
 
-import java.lang.annotation.Native;
-
 import com.labymedia.ultralight.annotation.NativeType;
+
+import java.lang.annotation.Native;
 
 /**
  * A generic scroll event.

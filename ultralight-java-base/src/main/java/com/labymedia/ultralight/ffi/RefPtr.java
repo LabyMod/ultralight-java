@@ -47,7 +47,9 @@ public class RefPtr<T> implements ObjectWithHandle {
     }
 
     @Override
-    public @NativeType("ultralight::RefPtr *") @Unsigned long getHandle() {
+    public @NativeType("ultralight::RefPtr *")
+    @Unsigned
+    long getHandle() {
         return handle.get();
     }
 

@@ -12,7 +12,7 @@ static boolean isWindows() {
 
 File getGitExecutable() {
     String gitExe = isWindows() ? "git.exe" : "git"
-    return System.getenv("PATH")?.split(File.pathSeparator)?.collect {file("${it}/${gitExe}") }?.find {it.canExecute() }
+    return System.getenv("PATH")?.split(File.pathSeparator)?.collect { file("${it}/${gitExe}") }?.find { it.canExecute() }
 }
 
 String getBranchName() {
@@ -62,7 +62,7 @@ String getCommit() {
 
 
 String branchName = getBranchName()
-switch(branchName) {
+switch (branchName) {
     case "master":
         version = versionFromFile
         break

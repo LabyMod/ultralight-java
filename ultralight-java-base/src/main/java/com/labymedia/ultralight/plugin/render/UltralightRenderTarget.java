@@ -33,14 +33,26 @@ import com.labymedia.ultralight.bitmap.UltralightBitmapFormat;
  */
 public class UltralightRenderTarget {
     private final boolean isEmpty;
-    private final @Unsigned @NativeType("uint32_t") long width;
-    private final @Unsigned @NativeType("uint32_t") long height;
-    private final @Unsigned @NativeType("uint32_t") long textureId;
-    private final @Unsigned @NativeType("uint32_t") long textureWidth;
-    private final @Unsigned @NativeType("uint32_t") long textureHeight;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long width;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long height;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long textureId;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long textureWidth;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long textureHeight;
     private final UltralightBitmapFormat textureFormat;
     private final float[] uvCoords;
-    private final @Unsigned @NativeType("uint32_t") long renderBufferId;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long renderBufferId;
 
     /**
      * Constructs a new {@link UltralightRenderTarget}.

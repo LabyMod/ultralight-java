@@ -286,7 +286,7 @@ namespace ultralight_java {
 
             return java_exception_message ? Util::create_jsstring_ref_from_jstring(env, java_exception_message) :
                                             JSStringCreateWithUTF8CString("<No error message provided>");
-        })();
+        }) ();
 
         if(java_exception_message) {
             env->DeleteLocalRef(java_exception_message);

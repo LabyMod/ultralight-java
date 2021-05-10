@@ -22,17 +22,16 @@
 /* Header for class com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil */
 
 #ifndef _Included_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
-#define _Included_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
-#ifdef __cplusplus
+#    define _Included_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
+#    ifdef __cplusplus
 extern "C" {
-#endif
+#    endif
 /*
  * Class:     com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
  * Method:    createOpenGLContext
  * Signature: (JFZZ)J
  */
-JNIEXPORT jlong JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_createOpenGLContext(
+JNIEXPORT jlong JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_createOpenGLContext(
     JNIEnv *e, jobject, jlong window, jboolean msaa);
 
 /*
@@ -40,8 +39,7 @@ Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_createOpenGLCont
  * Method:    getDriverFromContext
  * Signature: (J)J
  */
-JNIEXPORT jlong JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_getDriverFromContext(
+JNIEXPORT jlong JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_getDriverFromContext(
     JNIEnv *, jobject, jlong contextHandle);
 
 /*
@@ -50,9 +48,7 @@ Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_getDriverFromCon
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_beginSynchronize(JNIEnv *,
-                                                                 jobject,
-                                                                 jlong handle);
+Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_beginSynchronize(JNIEnv *, jobject, jlong handle);
 
 /*
  * Class:     com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
@@ -60,9 +56,7 @@ Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_beginSynchronize
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_endSynchronize(JNIEnv *,
-                                                               jobject,
-                                                               jlong handle);
+Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_endSynchronize(JNIEnv *, jobject, jlong handle);
 
 /*
  * Class:     com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
@@ -70,8 +64,7 @@ Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_endSynchronize(J
  * Signature: (J)Z
  */
 JNIEXPORT jboolean JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_hasCommandsPending(
-    JNIEnv *, jobject, jlong handle);
+Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_hasCommandsPending(JNIEnv *, jobject, jlong handle);
 
 /*
  * Class:     com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
@@ -79,22 +72,14 @@ Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_hasCommandsPendi
  * Signature: (J)V
  */
 JNIEXPORT void JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_drawCommandList(JNIEnv *,
-                                                                jobject,
-                                                                jlong handle);
+Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_drawCommandList(JNIEnv *, jobject, jlong handle);
 
-JNIEXPORT void JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_setActiveWindow(JNIEnv *,
-                                                                jobject,
-                                                                jlong handle,
-                                                                jlong window);
-JNIEXPORT void JNICALL
-Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_bindTexture(JNIEnv *, jobject,
-                                                            jlong handle,
-                                                            jlong textureId,
-                                                            jlong texture);
+JNIEXPORT void JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_setActiveWindow(
+    JNIEnv *, jobject, jlong handle, jlong window);
+JNIEXPORT void JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_bindTexture(
+    JNIEnv *, jobject, jlong handle, jlong textureId, jlong texture);
 
-#ifdef __cplusplus
+#    ifdef __cplusplus
 }
-#endif
+#    endif
 #endif

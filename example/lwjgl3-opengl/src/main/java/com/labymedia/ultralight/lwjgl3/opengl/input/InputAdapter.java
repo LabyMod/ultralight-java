@@ -81,7 +81,7 @@ public class InputAdapter {
         // Send the event
         view.fireKeyEvent(event);
 
-        if((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_ENTER || key == GLFW_KEY_TAB)) {
+        if ((action == GLFW_PRESS || action == GLFW_REPEAT) && (key == GLFW_KEY_ENTER || key == GLFW_KEY_TAB)) {
             // These keys need to be translated specially
             String text = key == GLFW_KEY_ENTER ? "\r" : "\t";
             UltralightKeyEvent extraEvent = new UltralightKeyEvent()
@@ -129,11 +129,11 @@ public class InputAdapter {
                 .type(UltralightMouseEventType.MOVED);
 
         // Translate the mouse state to the event
-        if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
             event.button(UltralightMouseEventButton.LEFT);
-        } else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
+        } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_MIDDLE) == GLFW_PRESS) {
             event.button(UltralightMouseEventButton.MIDDLE);
-        } else if(glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
+        } else if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT) == GLFW_PRESS) {
             event.button(UltralightMouseEventButton.RIGHT);
         }
 
@@ -154,7 +154,7 @@ public class InputAdapter {
         double y;
 
         // Use a memory stack so we don't have to worry about freeing allocations
-        try(MemoryStack stack = MemoryStack.stackPush()) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
             DoubleBuffer buffer = stack.callocDouble(2);
 
             // Retrieve the current cursor pos
@@ -172,7 +172,7 @@ public class InputAdapter {
                 .type(action == GLFW_PRESS ? UltralightMouseEventType.DOWN : UltralightMouseEventType.UP);
 
         // Sort out the button
-        switch(button) {
+        switch (button) {
             case GLFW_MOUSE_BUTTON_LEFT:
                 event.button(UltralightMouseEventButton.LEFT);
                 break;
@@ -215,7 +215,7 @@ public class InputAdapter {
      * @param focus  Whether the window gained focus
      */
     public void focusCallback(long window, boolean focus) {
-        if(focus) {
+        if (focus) {
             view.focus();
         } else {
             view.unfocus();
@@ -231,19 +231,19 @@ public class InputAdapter {
     private int glfwToUltralightModifiers(int modifiers) {
         int ultralightModifiers = 0;
 
-        if((modifiers & GLFW_MOD_ALT) != 0) {
+        if ((modifiers & GLFW_MOD_ALT) != 0) {
             ultralightModifiers |= UltralightInputModifier.ALT_KEY;
         }
 
-        if((modifiers & GLFW_MOD_CONTROL) != 0) {
+        if ((modifiers & GLFW_MOD_CONTROL) != 0) {
             ultralightModifiers |= UltralightInputModifier.CTRL_KEY;
         }
 
-        if((modifiers & GLFW_MOD_SUPER) != 0) {
+        if ((modifiers & GLFW_MOD_SUPER) != 0) {
             ultralightModifiers |= UltralightInputModifier.META_KEY;
         }
 
-        if((modifiers & GLFW_MOD_SHIFT) != 0) {
+        if ((modifiers & GLFW_MOD_SHIFT) != 0) {
             ultralightModifiers |= UltralightInputModifier.SHIFT_KEY;
         }
 
@@ -257,7 +257,7 @@ public class InputAdapter {
      * @return The translated Ultralight key, or {@link UltralightKey#UNKNOWN}, if the key could not be translated
      */
     private UltralightKey glfwToUltralightKey(int key) {
-        switch(key) {
+        switch (key) {
             case GLFW_KEY_SPACE:
                 return UltralightKey.SPACE;
             case GLFW_KEY_APOSTROPHE:

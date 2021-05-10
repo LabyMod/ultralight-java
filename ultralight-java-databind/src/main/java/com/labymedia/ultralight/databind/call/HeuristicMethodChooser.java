@@ -61,7 +61,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
             // needs a Javascript context
             boolean injectContext = executable.isAnnotationPresent(InjectJavascriptContext.class);
             int paramMod = injectContext ? 1 : 0;
-            
+
             int currentPenalty = 0;
             CallData.VarArgsType varArgsType = null;
 

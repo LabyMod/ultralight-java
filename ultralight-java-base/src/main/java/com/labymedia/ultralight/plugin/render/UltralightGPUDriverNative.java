@@ -21,17 +21,17 @@ package com.labymedia.ultralight.plugin.render;
 
 public interface UltralightGPUDriverNative {
 
-  long getDriverHandle();
+    long getDriverHandle();
 
-  void beginSynchronize();
+    void beginSynchronize();
 
-  void endSynchronize();
+    void endSynchronize();
 
-  boolean hasCommandsPending();
+    boolean hasCommandsPending();
 
-  void drawCommandList();
+    void drawCommandList();
 
-  void bindTexture(long textureId, long texture);
+    void bindTexture(long textureId, long texture);
 
-  void setActiveWindow(long window);
+    void setActiveWindow(long window);
 }

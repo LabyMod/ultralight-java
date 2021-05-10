@@ -53,4 +53,4 @@ namespace ultralight_java {
          */
         static void set_name(JNIEnv *env, jobject java_instance, jstring java_name);
     };
-}
+} // namespace ultralight_java

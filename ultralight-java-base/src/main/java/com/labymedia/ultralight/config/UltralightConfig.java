@@ -19,9 +19,9 @@
 
 package com.labymedia.ultralight.config;
 
+import com.labymedia.ultralight.UltralightPlatform;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.annotation.Unsigned;
-import com.labymedia.ultralight.UltralightPlatform;
 
 import java.lang.annotation.Native;
 

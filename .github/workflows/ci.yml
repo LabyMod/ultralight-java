@@ -1,12 +1,12 @@
 name: CI
-on: [push]
+on: [ push ]
 
 jobs:
   build-binaries-unix:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-latest]
+        os: [ macos-latest, ubuntu-latest ]
 
     name: ${{ matrix.os }} build
     runs-on: ${{ matrix.os }}
@@ -20,10 +20,10 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 8
-      - name: Build native with gradle (Windows)
+      - name: Build native with gradle
         run: "./gradlew -PCI=true -Pultralight-java.base.native-binaries-folder=native-binaries/ultralight ultralight-java-native:build"
         shell: bash
-      - name: Build gpu driver native with gradle (Windows)
+      - name: Build gpu driver native with gradle
         run: "./gradlew -PCI=true -Pultralight-java.base.native-binaries-folder=native-binaries/ultralight -Pultralight-java.gpu.native-binaries-folder=native-binaries/ultralight-gpu ultralight-java-gpu-native:build"
         shell: bash
       - name: Upload artifacts
@@ -68,8 +68,7 @@ jobs:
           path: native-binaries/ultralight-gpu/Debug
 
   build-jars:
-    needs: [build-binaries-unix, build-binaries-windows]
-#    needs: [build-binaries-windows]
+    needs: [ build-binaries-unix, build-binaries-windows ]
     runs-on: ubuntu-latest # Doesn't matter, but linux tends to be the fastest
 
     name: Build final jars

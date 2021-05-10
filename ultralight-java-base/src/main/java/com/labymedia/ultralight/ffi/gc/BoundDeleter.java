@@ -46,7 +46,7 @@ public class BoundDeleter<T> {
      * @return {@code true} if the object has been deleted, {@code false} otherwise
      */
     public boolean delete() {
-        if(deleted) {
+        if (deleted) {
             return false;
         }
 
