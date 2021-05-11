@@ -36,7 +36,7 @@ public class JavascriptInteropException extends Exception {
      * Constructs a new {@link JavascriptInteropException} with the given message caused by another exception.
      *
      * @param message The message to pass on to Javascript
-     * @param cause The exception causing this exception
+     * @param cause   The exception causing this exception
      */
     public JavascriptInteropException(String message, Throwable cause) {
         super(message, cause);

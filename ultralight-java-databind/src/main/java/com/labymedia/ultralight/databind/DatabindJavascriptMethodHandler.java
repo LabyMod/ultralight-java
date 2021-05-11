@@ -115,7 +115,7 @@ public final class DatabindJavascriptMethodHandler {
             Class<?> suggestedReturnType = method.getReturnType();
 
             if (ret != null) {
-               suggestedReturnType = ret.getClass();
+                suggestedReturnType = ret.getClass();
             }
 
             // Invoke method with constructed arguments

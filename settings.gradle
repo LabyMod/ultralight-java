@@ -4,4 +4,7 @@ include 'ultralight-java-base'
 include 'ultralight-java-native'
 include 'ultralight-java-databind'
 
+include 'ultralight-java-gpu'
+include 'ultralight-java-gpu-native'
+
 include 'example:lwjgl3-opengl'

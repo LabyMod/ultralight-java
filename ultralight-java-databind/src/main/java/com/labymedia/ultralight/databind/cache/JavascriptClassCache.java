@@ -36,7 +36,7 @@ public interface JavascriptClassCache {
     /**
      * Puts a class into the cache.
      *
-     * @param name The name of the class to cache
+     * @param name            The name of the class to cache
      * @param javascriptClass The class instance to cache
      * @return javascriptClass
      */

@@ -21,7 +21,8 @@ package com.labymedia.ultralight.lwjgl3.opengl.input;
 
 import com.labymedia.ultralight.plugin.clipboard.UltralightClipboard;
 
-import static org.lwjgl.glfw.GLFW.*;
+import static org.lwjgl.glfw.GLFW.glfwGetClipboardString;
+import static org.lwjgl.glfw.GLFW.glfwSetClipboardString;
 
 /**
  * Example clipboard using GLFW as backend.

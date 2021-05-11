@@ -25,14 +25,14 @@ import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.config.FontHinting;
 import com.labymedia.ultralight.config.UltralightConfig;
 import com.labymedia.ultralight.config.UltralightViewConfig;
+import com.labymedia.ultralight.gpu.UltralightOpenGLGPUDriverNative;
 import com.labymedia.ultralight.javascript.JavascriptContextLock;
-import com.labymedia.ultralight.lwjgl3.opengl.gpu.GPUDriverGL;
 import com.labymedia.ultralight.lwjgl3.opengl.input.ClipboardAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
-import org.lwjgl.glfw.GLFW;
+import org.lwjgl.opengl.GL30;
 
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
 import static org.lwjgl.opengl.GL20.*;
@@ -50,7 +50,7 @@ public class WebController {
     private ExampleLoadListener loadListener;
     private InputAdapter inputAdapter;
 
-    private GPUDriverGL driver;
+    private UltralightOpenGLGPUDriverNative driver;
 
     private long lastJavascriptGarbageCollections;
 
@@ -79,7 +79,7 @@ public class WebController {
     }
 
     public void initGPUDriver() {
-        this.driver = new GPUDriverGL();
+        this.driver = new UltralightOpenGLGPUDriverNative(this.window, false);
 
         this.platform.setGPUDriver(this.driver);
         this.renderer = UltralightRenderer.create();
@@ -91,6 +91,7 @@ public class WebController {
                         .initialDeviceScale(1.0)
                         .isTransparent(true)
         );
+        view.setDeviceScale(100);
         this.viewListener = new ExampleViewListener(cursorManager);
         this.view.setViewListener(viewListener);
         this.loadListener = new ExampleLoadListener(view);
@@ -151,8 +152,8 @@ public class WebController {
      * Render the current image using OpenGL
      */
     public void render() {
-        this.driver.getContext().setActiveWindow(this.window);
-
+        this.driver.setActiveWindow(this.window);
+        glfwMakeContextCurrent(window);
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
 
         if (this.driver.hasCommandsPending()) {
@@ -162,14 +163,17 @@ public class WebController {
         }
 
         glPopAttrib();
-       this.renderHtmlTexture(this.view, this.window);
+
+        GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+        GL30.glBindRenderbuffer(GL30.GL_RENDERBUFFER, 0);
+
+        this.renderHtmlTexture(this.view, this.window);
         glfwMakeContextCurrent(window);
 
     }
 
     private void renderHtmlTexture(UltralightView view, long window) {
-        driver.getContext().setActiveWindow(window);
-        glfwMakeContextCurrent(window);
+        driver.setActiveWindow(window);
         long text = view.renderTarget().getTextureId();
         int width = (int) view.width();
         int height = (int) view.height();
@@ -177,6 +181,7 @@ public class WebController {
         glEnable(GL_TEXTURE_2D);
         // Set up the OpenGL state for rendering of a fullscreen quad
         glPushAttrib(GL_ENABLE_BIT | GL_COLOR_BUFFER_BIT | GL_TRANSFORM_BIT);
+
         this.driver.bindTexture(0, text);
 
         glUseProgram(0);

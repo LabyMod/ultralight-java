@@ -112,7 +112,7 @@ public class JavascriptObject extends JavascriptValue {
      * Sets a property of the object using the given property key.
      *
      * @param propertyKey The key of the property to set
-     * @param value The new value of the property
+     * @param value       The new value of the property
      * @param attributes  A combination of {@link JavascriptPropertyAttributes} logically OR'ed together
      * @throws JavascriptException If an error occurs while setting the property
      */
@@ -145,7 +145,7 @@ public class JavascriptObject extends JavascriptValue {
      * Sets a property of the object using the given index.
      *
      * @param propertyIndex The index of the property to set
-     * @param value The new value of the property
+     * @param value         The new value of the property
      * @throws JavascriptException If an error occurs while setting the property
      */
     public native void setPropertyAtIndex(
@@ -177,7 +177,7 @@ public class JavascriptObject extends JavascriptValue {
      * Calls the object as a function.
      *
      * @param thisObject The object to use as {@code this} during the call, or {@code null}, to use the global object
-     * @param arguments The arguments to pass to the function
+     * @param arguments  The arguments to pass to the function
      * @return The result of the invocation
      * @throws JavascriptException If an error occurs while invoking the function
      */

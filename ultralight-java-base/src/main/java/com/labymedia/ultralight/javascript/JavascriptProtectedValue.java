@@ -46,9 +46,9 @@ public class JavascriptProtectedValue {
      * @throws IllegalStateException    If the value has been revived already
      */
     public JavascriptValue revive(JavascriptContextLock lock) {
-        if(lock == null) {
+        if (lock == null) {
             throw new IllegalArgumentException(new NullPointerException("lock"));
-        } else if(handle == 0) {
+        } else if (handle == 0) {
             throw new IllegalStateException("The value has been revived already");
         }
 

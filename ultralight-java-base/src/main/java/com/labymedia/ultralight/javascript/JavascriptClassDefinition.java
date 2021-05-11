@@ -23,7 +23,6 @@ import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.ffi.gc.DeletableObject;
 import com.labymedia.ultralight.javascript.interop.*;
-import com.labymedia.ultralight.javascript.interop.*;
 
 /**
  * Builder class for creating class definitions for Javascript classes. Used to produce {@link
