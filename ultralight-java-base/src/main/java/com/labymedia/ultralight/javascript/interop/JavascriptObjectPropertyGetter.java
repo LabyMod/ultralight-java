@@ -19,12 +19,12 @@
 
 package com.labymedia.ultralight.javascript.interop;
 
-import com.labymedia.ultralight.javascript.JavascriptObject;
 import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.javascript.JavascriptContext;
-import com.labymedia.ultralight.javascript.JavascriptValue;
+import com.labymedia.ultralight.javascript.JavascriptObject;
 import com.labymedia.ultralight.javascript.JavascriptType;
+import com.labymedia.ultralight.javascript.JavascriptValue;
 
 /**
  * Callback for retrieving properties from a Javascript object.
@@ -41,8 +41,8 @@ public interface JavascriptObjectPropertyGetter {
      * @param object       The object to search for the property
      * @param propertyName A string containing the name of the property to get
      * @return The property's value if object has the property, otherwise {@code null}, to return the literal null
-     *         value, construct a {@link JavascriptValue} with the {@link JavascriptType#NULL}
-     *         type
+     * value, construct a {@link JavascriptValue} with the {@link JavascriptType#NULL}
+     * type
      * @throws JavascriptInteropException If an error occurs while retrieving the property
      */
     @NativeCall

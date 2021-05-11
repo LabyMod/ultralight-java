@@ -56,7 +56,7 @@ public class ViewContextProvider implements ContextProvider {
         //
         // In a multithreaded environment this call should move the callback to the thread hosting Ultralight.
         // This call does not need to block even if the callback is executed asynchronously.
-        try(JavascriptContextLock lock = view.lockJavascriptContext()) {
+        try (JavascriptContextLock lock = view.lockJavascriptContext()) {
             callback.accept(lock);
         }
     }
@@ -78,7 +78,7 @@ public class ViewContextProvider implements ContextProvider {
          * For example, given an UltralightView {@code view} and a JavascriptValue {@code value}, it can be tested if
          * the value belongs to the view using:
          * <blockquote>
-         *     <pre>
+         * <pre>
          *         JavascriptValue value = ...;
          *         UltralightView view = ...;
          *

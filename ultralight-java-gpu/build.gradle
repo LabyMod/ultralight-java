@@ -1,0 +1,34 @@
+plugins {
+    id("java-library")
+    id 'maven-publish'
+}
+
+group 'com.labymedia'
+
+jar {
+    manifest {
+        attributes(
+                'Automatic-Module-Name': 'com.labymedia.ultralight.gpu'
+        )
+    }
+}
+
+processResources {
+    if (project.getProperties().get("ultralight-java.gpu.native-binaries-folder") == null) {
+        dependsOn(':ultralight-java-gpu-native:build')
+    }
+    from(rootProject.file(project.getProperties().getOrDefault("ultralight-java.gpu.native-binaries-folder", project(":ultralight-java-gpu-native").buildDir.toPath().toString() + "/nativeBinaries").toString())) {
+        into "native-binaries"
+    }
+}
+
+commonPublish(project) {
+    pom {
+        name = "UltralightGPUJava"
+        description = "Ultralight native GPU driver for Java"
+    }
+}
+
+dependencies {
+    implementation(project(":ultralight-java-base"))
+}

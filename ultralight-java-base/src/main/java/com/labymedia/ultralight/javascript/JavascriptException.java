@@ -32,8 +32,9 @@ public class JavascriptException extends RuntimeException {
 
     /**
      * Constructs a new {@link JavascriptException}
+     *
      * @param message The message describing when the exception occurred
-     * @param value The value that has been thrown by Javascript
+     * @param value   The value that has been thrown by Javascript
      */
     @NativeCall
     public JavascriptException(String message, JavascriptValue value) {

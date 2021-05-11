@@ -125,7 +125,7 @@ public class ExampleViewListener implements UltralightViewListener {
      * @param popupRect Popups can optionally request certain dimensions and coordinates via window.open(). You can
      *                  choose to respect these or not by resizing/moving the View to this rect.
      * @return The view to display the new URL in, or {@code null}, if the request should not be further handled by
-     *         Ultralight
+     * Ultralight
      */
     @Override
     public UltralightView onCreateChildView(String openerUrl, String targetUrl, boolean isPopup, IntRect popupRect) {

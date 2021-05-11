@@ -1,14 +1,7 @@
-import net.jan.gradle.cmake.tasks.CMakeBuildTask
+import com.labymedia.gradle.cmake.tasks.CMakeBuildTask
 import org.apache.tools.ant.taskdefs.condition.Os
 
-buildscript {
-    dependencies {
-        classpath files("gradle-cmake.jar")
-    }
-}
-
-
-apply plugin: "net.jan.gradle.cmake"
+apply plugin: "com.labymedia.cmake-gradle"
 apply plugin: "net.minecrell.licenser"
 
 group 'com.labymedia'
@@ -29,7 +22,7 @@ def ultralightOsIdentifier = {
 }
 
 task build(type: CMakeBuildTask) {
-    sourceDirectory file("src/main/c")
+    sourceDirectory file(".")
     generationDirectory new File(buildDir, "cmake-gen-" + ultralightOsIdentifier())
 
     cmake {
@@ -40,6 +33,9 @@ task build(type: CMakeBuildTask) {
             ]
         }
 
+
+        def nativeBinariesDir = rootProject.file(project.getProperties().getOrDefault("ultralight-java.base.native-binaries-folder", "$buildDir/nativeBinaries").toString())
+        println("Build native binaries to folder $nativeBinariesDir");
         variables = [
                 "CMAKE_BUILD_TYPE"              : java.util.Optional.of("Release"),
                 "CMAKE_RUNTIME_OUTPUT_DIRECTORY": java.util.Optional.of(nativeBinariesDir.absolutePath),
@@ -81,7 +77,7 @@ license {
 
     tasks {
         directory {
-            files = project.files("src/main/c")
+            files = project.files(".")
             include "include/**/*.h", "include/**/*.hpp", "src/**/*.c", "src/**/*.cpp"
         }
     }

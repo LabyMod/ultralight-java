@@ -31,19 +31,33 @@ import com.labymedia.ultralight.math.Vec4;
  */
 @NativeType("ultralight::GPUState")
 public class UltralightGPUState {
-    private final @Unsigned @NativeType("uint32_t") long viewportWidth;
-    private final @Unsigned @NativeType("uint32_t") long viewportHeight;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long viewportWidth;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long viewportHeight;
     private final UltralightMatrix4x4 transformMatrix;
     private final boolean enableTexturing;
     private final boolean enableBlend;
     private final UltralightShaderType shaderType;
-    private final @Unsigned @NativeType("uint32_t") long renderBufferId;
-    private final @Unsigned @NativeType("uint32_t") long texture1Id;
-    private final @Unsigned @NativeType("uint32_t") long texture2Id;
-    private final @Unsigned @NativeType("uint32_t") long texture3Id;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long renderBufferId;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long texture1Id;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long texture2Id;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long texture3Id;
     private final float[] uniformScalar;
     private final Vec4[] uniformVector;
-    private final @Unsigned @NativeType("uint8_t") short clipSize;
+    private final @Unsigned
+    @NativeType("uint8_t")
+    short clipSize;
     private final UltralightMatrix4x4[] clip;
     private final boolean enableScissor;
     private final IntRect scissorRect;
@@ -112,7 +126,9 @@ public class UltralightGPUState {
      *
      * @return The viewport width in pixels
      */
-    @Unsigned @NativeType("uint32_t") public long getViewportWidth() {
+    @Unsigned
+    @NativeType("uint32_t")
+    public long getViewportWidth() {
         return viewportWidth;
     }
 
@@ -121,7 +137,9 @@ public class UltralightGPUState {
      *
      * @return The viewport height in pixels
      */
-    @Unsigned @NativeType("uint32_t") public long getViewportHeight() {
+    @Unsigned
+    @NativeType("uint32_t")
+    public long getViewportHeight() {
         return viewportHeight;
     }
 
@@ -171,7 +189,9 @@ public class UltralightGPUState {
      *
      * @return The id of the render buffer to use
      */
-    @Unsigned @NativeType("uint32_t") public long getRenderBufferId() {
+    @Unsigned
+    @NativeType("uint32_t")
+    public long getRenderBufferId() {
         return renderBufferId;
     }
 
@@ -180,7 +200,9 @@ public class UltralightGPUState {
      *
      * @return The id of the texture to bind to slot #1, or {@code 0}, if none
      */
-    @Unsigned @NativeType("uint32_t") public long getTexture1Id() {
+    @Unsigned
+    @NativeType("uint32_t")
+    public long getTexture1Id() {
         return texture1Id;
     }
 
@@ -189,7 +211,9 @@ public class UltralightGPUState {
      *
      * @return The id of the texture to bind to slot #2, or {@code 0}, if none
      */
-    @Unsigned @NativeType("uint32_t") public long getTexture2Id() {
+    @Unsigned
+    @NativeType("uint32_t")
+    public long getTexture2Id() {
         return texture2Id;
     }
 
@@ -198,7 +222,9 @@ public class UltralightGPUState {
      *
      * @return The id of the texture to bind to slot #3, or {@code 0}, if none
      */
-    @Unsigned @NativeType("uint32_t") public long getTexture3Id() {
+    @Unsigned
+    @NativeType("uint32_t")
+    public long getTexture3Id() {
         return texture3Id;
     }
 
@@ -225,7 +251,9 @@ public class UltralightGPUState {
      *
      * @return The clip size passed to the pixel shader
      */
-    @Unsigned @NativeType("uint8_t") public short getClipSize() {
+    @Unsigned
+    @NativeType("uint8_t")
+    public short getClipSize() {
         return clipSize;
     }
 

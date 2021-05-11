@@ -27,14 +27,14 @@ import java.lang.annotation.Native;
 public class UltralightViewConfig {
     /**
      * TODO: Adjust source links
-     *
-     *  When enabled, the View will be rendered to an offscreen GPU texture
-     *  using the GPU driver set in Platform::set_gpu_driver. You can fetch
-     *  details for the texture via View::render_target.
-     *
-     *  When disabled (the default), the View will be rendered to an offscreen
-     *  pixel buffer. This pixel buffer can optionally be provided by the user --
-     *  for more info see <Ultralight/platform/Surface.h> and View::surface.
+     * <p>
+     * When enabled, the View will be rendered to an offscreen GPU texture
+     * using the GPU driver set in Platform::set_gpu_driver. You can fetch
+     * details for the texture via View::render_target.
+     * <p>
+     * When disabled (the default), the View will be rendered to an offscreen
+     * pixel buffer. This pixel buffer can optionally be provided by the user --
+     * for more info see <Ultralight/platform/Surface.h> and View::surface.
      */
     @Native
     private boolean isAccelerated = false;

@@ -57,7 +57,7 @@ public class CursorAdapter {
      * @param cursor The new {@link UltralightCursor} to display
      */
     public void notifyCursorUpdated(UltralightCursor cursor) {
-        switch(cursor) {
+        switch (cursor) {
             case CROSS:
                 glfwSetCursor(window, crosshairCursor);
                 break;

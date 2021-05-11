@@ -7,8 +7,6 @@ plugins {
 group 'com.labymedia'
 apply from: 'version.gradle'
 
-apply from: 'ci.gradle'
-
 static String getSigningProperty(String name) {
     return System.getenv("SIGNING_${name}")
 }
@@ -23,7 +21,7 @@ ext.commonPublish = { Project currentProject, Closure config ->
             def releaseRepo = "https://oss.sonatype.org/service/local/staging/deploy/maven2/"
             def snapshotRepo = "https://oss.sonatype.org/content/repositories/snapshots/"
 
-            if(!version.endsWith("-UNSTABLE")) {
+            if (!version.endsWith("-UNSTABLE")) {
                 maven {
                     url version.endsWith("-SNAPSHOT") ? snapshotRepo : releaseRepo
                     name "OSS${version.endsWith("-SNAPSHOT") ? "Snapshots" : "Release"}HostingRepository"
@@ -72,7 +70,7 @@ ext.commonPublish = { Project currentProject, Closure config ->
         }
     }
 
-    if(rootProject.hasProperty("enableSigning")) {
+    if (rootProject.hasProperty("enableSigning")) {
         currentProject.signing {
             def signingKey = getSigningProperty("KEY")
             def signingPassword = getSigningProperty("PASSWORD")
@@ -93,6 +91,9 @@ subprojects {
         apply plugin: "net.minecrell.licenser"
         apply plugin: "signing"
 
+        sourceCompatibility = 1.8
+        targetCompatibility = 1.8
+
         license {
             header = rootProject.file("LICENSE_HEADER")
 
@@ -107,4 +108,8 @@ subprojects {
             withJavadocJar()
         }
     }
+}
+
+subprojects {
+    version = rootProject.version
 }

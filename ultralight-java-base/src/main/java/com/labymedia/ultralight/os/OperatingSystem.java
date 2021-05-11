@@ -75,11 +75,11 @@ public enum OperatingSystem {
     public static OperatingSystem get() {
         String systemName = System.getProperty("os.name", "unknown").toLowerCase();
 
-        if(systemName.contains("nux") || systemName.contains("nix")) {
+        if (systemName.contains("nux") || systemName.contains("nix")) {
             return LINUX;
-        } else if(systemName.contains("mac")) {
+        } else if (systemName.contains("mac")) {
             return MAC_OS;
-        } else if(systemName.contains("windows")) {
+        } else if (systemName.contains("windows")) {
             return WINDOWS;
         } else {
             return UNKNOWN;

@@ -88,12 +88,14 @@ public final class JavascriptConversionUtils {
             return context.makeString((String) object);
         } else if (javaClass.isArray()) {
             // Arrays required a recursive conversion
-            Object[] array = (Object[]) object;
-            JavascriptValue[] values = new JavascriptValue[array.length];
+            // Reflective access to handle primitive arrays too
+            int length = Array.getLength(object);
+            JavascriptValue[] values = new JavascriptValue[length];
 
-            for (int i = 0; i < array.length; i++) {
+            for (int i = 0; i < length; i++) {
                 // Recursive call
-                values[i] = toJavascript(context, array[i], array[i].getClass());
+                Object value = Array.get(object, i);
+                values[i] = toJavascript(context, value, value.getClass());
             }
 
             return context.makeArray(values);
@@ -134,10 +136,12 @@ public final class JavascriptConversionUtils {
      * @return The converted value
      */
     public Object fromJavascript(JavascriptValue value, Class<?> type) {
+        JavascriptType javascriptType = value.getType();
+
         if (type == JavascriptValue.class) {
             return value;
         } else if (type == JavascriptObject.class) {
-            if (!value.isObject()) {
+            if (javascriptType != JavascriptType.OBJECT) {
                 throw new IllegalArgumentException("Can not convert a non-object Javascript value to " + type.getName());
             }
 
@@ -145,12 +149,12 @@ public final class JavascriptConversionUtils {
             return value instanceof JavascriptObject ? (JavascriptObject) value : value.toObject();
         }
 
-        if (value.isNull() || value.isUndefined() || type == void.class || type == Void.class || type == null) {
+        if (javascriptType == JavascriptType.NULL || javascriptType == JavascriptType.UNDEFINED || type == void.class || type == Void.class || type == null) {
             // Special handling of Javascript null and undefined
             if (type != null && type.isPrimitive() && type != void.class) {
                 // Primitives can not be null in Java
                 throw new IllegalArgumentException(
-                        "Can not convert " + (value.isNull() ? "null" : "undefined") + " to " + type.getName());
+                        "Can not convert " + (javascriptType == JavascriptType.NULL ? "null" : "undefined") + " to " + type.getName());
             }
 
             // Map Javascript null and undefined to Java null
@@ -160,7 +164,7 @@ public final class JavascriptConversionUtils {
         // Flatten the type to reduce checks
         type = toPrimitiveClass(type);
 
-        if (value.isBoolean()) {
+        if (javascriptType == JavascriptType.BOOLEAN) {
             // Simple boolean conversion
             if (type != boolean.class && type != Object.class) {
                 throw new IllegalArgumentException("Can not convert Javascript boolean to " + type.getName());
@@ -168,7 +172,7 @@ public final class JavascriptConversionUtils {
 
             // One-to-one mapping
             return value.toBoolean();
-        } else if (value.isNumber()) {
+        } else if (javascriptType == JavascriptType.NUMBER) {
             // Number conversion
             Number number = value.toNumber();
             if (type == Object.class) {
@@ -192,7 +196,7 @@ public final class JavascriptConversionUtils {
             }
 
             throw new IllegalArgumentException("Can not convert Javascript number to " + type.getName());
-        } else if (value.isString()) {
+        } else if (javascriptType == JavascriptType.STRING) {
             String str = value.toString();
 
             if (type.isAssignableFrom(String.class) || type == Object.class) {
@@ -214,7 +218,7 @@ public final class JavascriptConversionUtils {
             }
 
             throw new IllegalArgumentException("Can not convert Javascript string to " + type.getName());
-        } else if (value.isObject()) {
+        } else if (javascriptType == JavascriptType.OBJECT) {
             JavascriptObject object = value.toObject();
             if (value.isDate()) {
                 // Date's are primitives in Javascript
@@ -294,18 +298,20 @@ public final class JavascriptConversionUtils {
      * @return The inferred type or null if the value is null or undefined
      */
     public static Class<?> determineType(JavascriptValue value) {
-        if (value.isNull() || value.isUndefined()) {
+        JavascriptType type = value.getType();
+
+        if (type == JavascriptType.NULL || type == JavascriptType.UNDEFINED) {
             return null;
         }
 
         // Check primitives first
-        if (value.isBoolean()) {
+        if (type == JavascriptType.BOOLEAN) {
             return boolean.class;
-        } else if (value.isNumber()) {
+        } else if (type == JavascriptType.NUMBER) {
             return Number.class;
-        } else if (value.isString()) {
+        } else if (type == JavascriptType.STRING) {
             return String.class;
-        } else if (value.isObject()) {
+        } else if (type == JavascriptType.OBJECT) {
             // Value is an object, deep check
             JavascriptObject object = value.toObject();
 

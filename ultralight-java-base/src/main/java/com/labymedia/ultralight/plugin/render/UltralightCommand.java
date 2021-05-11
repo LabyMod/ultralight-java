@@ -32,17 +32,23 @@ public class UltralightCommand {
     private final UltralightGPUState gpuState;
 
     // The following members are only used with UltralightCommandType.DRAW_GEOMETRY
-    private final @Unsigned @NativeType("uint32_t") long geometryId;
-    private final @Unsigned @NativeType("uint32_t") long indicesCount;
-    private final @Unsigned @NativeType("uint32_t") long indicesOffset;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long geometryId;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long indicesCount;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long indicesOffset;
 
     /**
      * Constructs a new {@link UltralightCommand}.
      *
-     * @param commandType The type of the command
-     * @param gpuState The  GPU state parameters for the command
-     * @param geometryId The geometry ID to bind, only valid for draw geometry commands
-     * @param indicesCount The number of indices, only valid for draw geometry commands
+     * @param commandType   The type of the command
+     * @param gpuState      The  GPU state parameters for the command
+     * @param geometryId    The geometry ID to bind, only valid for draw geometry commands
+     * @param indicesCount  The number of indices, only valid for draw geometry commands
      * @param indicesOffset The index to start from, only valid for draw geometry commands
      */
     @NativeCall
@@ -84,7 +90,9 @@ public class UltralightCommand {
      *
      * @return The geometry ID to bind
      */
-    public @Unsigned @NativeType("uint32_t") long getGeometryId() {
+    public @Unsigned
+    @NativeType("uint32_t")
+    long getGeometryId() {
         return geometryId;
     }
 
@@ -94,7 +102,9 @@ public class UltralightCommand {
      *
      * @return The amount of indices to draw
      */
-    public @Unsigned @NativeType("uint32_t") long getIndicesCount() {
+    public @Unsigned
+    @NativeType("uint32_t")
+    long getIndicesCount() {
         return indicesCount;
     }
 
@@ -104,7 +114,9 @@ public class UltralightCommand {
      *
      * @return The index to start from
      */
-    public @Unsigned @NativeType("uint32_t") long getIndicesOffset() {
+    public @Unsigned
+    @NativeType("uint32_t")
+    long getIndicesOffset() {
         return indicesOffset;
     }
 }

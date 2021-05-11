@@ -33,7 +33,8 @@ public class Vec4 {
     /**
      * Constructs a new, empty 4D vector.
      */
-    public Vec4() {}
+    public Vec4() {
+    }
 
     /**
      * Constructs a new 4D vector with the components set.
@@ -62,7 +63,7 @@ public class Vec4 {
      * @param value The array to copy the values from, must be exactly 4 floats
      */
     public Vec4(float[] value) {
-        if(value.length != 4) {
+        if (value.length != 4) {
             throw new IllegalArgumentException("Expected value to be exactly 4 floats");
         }
 

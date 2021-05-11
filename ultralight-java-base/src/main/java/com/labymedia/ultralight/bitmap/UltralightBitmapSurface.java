@@ -19,8 +19,8 @@
 
 package com.labymedia.ultralight.bitmap;
 
-import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.UltralightSurface;
+import com.labymedia.ultralight.UltralightView;
 
 /**
  * The default Surface implementation, backed by a Bitmap.

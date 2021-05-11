@@ -19,10 +19,10 @@
 
 package com.labymedia.ultralight.javascript.interop;
 
-import com.labymedia.ultralight.javascript.JavascriptContext;
-import com.labymedia.ultralight.javascript.JavascriptObject;
 import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
+import com.labymedia.ultralight.javascript.JavascriptContext;
+import com.labymedia.ultralight.javascript.JavascriptObject;
 
 /**
  * Callback for testing if a Javascript object has a certain property.
@@ -36,8 +36,8 @@ public interface JavascriptObjectHasPropertyTester {
      * This callback enables optimization in cases where only a property's existence needs to be known, not its value,
      * and computing its value would be expensive.
      *
-     * @param context The execution context to use
-     * @param object The object to search for the property
+     * @param context      The execution context to use
+     * @param object       The object to search for the property
      * @param propertyName A string containing the name of the property look up
      * @return {@code true} if object has the property, otherwise {@code false}
      */
