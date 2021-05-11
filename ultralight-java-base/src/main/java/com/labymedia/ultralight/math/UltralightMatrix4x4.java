@@ -49,7 +49,8 @@ public class UltralightMatrix4x4 implements ObjectWithHandle {
         this.handle = new DeletableObject<>(construct(), UltralightMatrix4x4::delete);
     }
 
-    public native @NativeType("float*") float[] getData();
+    public native @NativeType("float*")
+    float[] getData();
 
     /**
      * Set to identity matrix.

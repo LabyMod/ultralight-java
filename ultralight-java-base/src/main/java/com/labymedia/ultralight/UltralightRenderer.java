@@ -72,10 +72,9 @@ public class UltralightRenderer implements ObjectWithHandle {
     /**
      * Create a new View.
      *
-     * @param width   The initial width, in pixels.
-     * @param height  The initial height, in pixels.
-     * @param config  Configuration details for the View.
-     *
+     * @param width  The initial width, in pixels.
+     * @param height The initial height, in pixels.
+     * @param config Configuration details for the View.
      * @return The created view
      */
     public native UltralightView createView(
@@ -107,7 +106,9 @@ public class UltralightRenderer implements ObjectWithHandle {
     public native void logMemoryUsage();
 
     @Override
-    public @NativeType("void *") @Unsigned long getHandle() {
+    public @NativeType("void *")
+    @Unsigned
+    long getHandle() {
         return ptr.getHandle();
     }
 }

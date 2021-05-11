@@ -38,7 +38,7 @@ public interface JavascriptObjectInitializer {
      * <b>The parameters are only valid for the duration of execution of this method!</b>
      *
      * @param context The execution context to use
-     * @param object The JSObject being created
+     * @param object  The JSObject being created
      */
     @NativeCall
     void initializeJavascriptObject(JavascriptContext context, JavascriptObject object);

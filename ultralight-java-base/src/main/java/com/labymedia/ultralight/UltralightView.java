@@ -323,6 +323,7 @@ public class UltralightView implements ObjectWithHandle {
 
     /**
      * Sets the viewport scale factor.
+     *
      * @param deviceScale the scale factor to set
      */
     public native void setDeviceScale(double deviceScale);

@@ -7,8 +7,6 @@ plugins {
 group 'com.labymedia'
 apply from: 'version.gradle'
 
-apply from: 'ci.gradle'
-
 static String getSigningProperty(String name) {
     return System.getenv("SIGNING_${name}")
 }
@@ -110,4 +108,8 @@ subprojects {
             withJavadocJar()
         }
     }
+}
+
+subprojects {
+    version = rootProject.version
 }

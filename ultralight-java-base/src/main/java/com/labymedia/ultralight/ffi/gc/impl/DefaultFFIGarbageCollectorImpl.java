@@ -19,10 +19,10 @@
 
 package com.labymedia.ultralight.ffi.gc.impl;
 
-import com.labymedia.ultralight.util.Util;
 import com.labymedia.ultralight.ffi.gc.BoundDeleter;
 import com.labymedia.ultralight.ffi.gc.DeletableObject;
 import com.labymedia.ultralight.ffi.gc.FFIGarbageCollector;
+import com.labymedia.ultralight.util.Util;
 
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -71,7 +71,7 @@ public class DefaultFFIGarbageCollectorImpl implements FFIGarbageCollector {
                 Reference<? extends DeletableObject<?>> reference = queue.remove();
                 BoundDeleter<?> deleter = deleters.remove(reference);
 
-                if(deleter == null) {
+                if (deleter == null) {
                     // Hopefully no-op
                     throw new IllegalStateException(
                             "Object in reference queue which does not have a deleter associated");

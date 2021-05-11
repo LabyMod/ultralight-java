@@ -24,14 +24,15 @@ package com.labymedia.ultralight.util;
  */
 public class Util {
     // Static class
-    private Util() {}
+    private Util() {
+    }
 
     /**
      * Method to simply force cast any type to any type. Use with caution,
      * absolutely no checks are done. This is often useful when generic signatures
      * begin to clash and you can ensure that it is safe to erase them.
      *
-     * @param o The object to cast
+     * @param o   The object to cast
      * @param <T> The target type
      * @return The casted object
      */

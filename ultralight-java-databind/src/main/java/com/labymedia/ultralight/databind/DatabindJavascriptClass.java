@@ -275,6 +275,7 @@ public final class DatabindJavascriptClass {
 
         if (field != null) {
             this.propertyCaller.callFieldSet(privateData.instance, field, conversionUtils.fromJavascript(value, field.getType()));
+            return true;
         }
 
         if (methods.containsKey(propertyName)) {

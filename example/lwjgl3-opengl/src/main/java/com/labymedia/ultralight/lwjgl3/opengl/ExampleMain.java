@@ -21,6 +21,7 @@ package com.labymedia.ultralight.lwjgl3.opengl;
 
 import com.labymedia.ultralight.UltralightJava;
 import com.labymedia.ultralight.UltralightLoadException;
+import com.labymedia.ultralight.gpu.UltralightGPUDriverNativeUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,7 +43,7 @@ public class ExampleMain {
 
         // Get the existing native library path
         String libraryPath = System.getProperty("java.library.path");
-        if(libraryPath != null) {
+        if (libraryPath != null) {
             // There is a path set already, append our natives dir
             libraryPath += File.pathSeparator + nativesDir.toAbsolutePath().toString();
         } else {
@@ -58,7 +59,11 @@ public class ExampleMain {
         // This only extracts the native library for ultralight-java-base, but not the other Ultralight libraries.
         // It is your task to get them into the run directory, possibly by extracting them on your own.
         UltralightJava.extractNativeLibrary(nativesDir);
-
+        try {
+            UltralightGPUDriverNativeUtil.extractAndLoadNativeLibraries(nativesDir);
+        } catch (IOException exception) {
+            throw new RuntimeException(exception);
+        }
         // Load the native libraries from the given directory. This method makes sure everything is loaded in the
         // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as
         // the second parameter.
@@ -95,7 +100,7 @@ public class ExampleMain {
                     Paths.get("./style.css"),
                     StandardCopyOption.REPLACE_EXISTING
             );
-        } catch(IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }

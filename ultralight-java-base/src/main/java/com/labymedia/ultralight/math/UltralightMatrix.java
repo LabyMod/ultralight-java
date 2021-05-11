@@ -91,9 +91,9 @@ public class UltralightMatrix implements ObjectWithHandle {
      * Set to an orthographic projection matrix suitable for use with our
      * vertex shaders. Optionally flip the y-coordinate space (eg, for OpenGL).
      *
-     * @param screenWidth The width of the projection
+     * @param screenWidth  The width of the projection
      * @param screenHeight The height of the projection
-     * @param flipY Whether the y coordinate space should be flipped
+     * @param flipY        Whether the y coordinate space should be flipped
      */
     public native void setOrthographicProjection(@NativeType("double") double screenWidth, @NativeType(
             "double") double screenHeight, @NativeType("bool") boolean flipY);
