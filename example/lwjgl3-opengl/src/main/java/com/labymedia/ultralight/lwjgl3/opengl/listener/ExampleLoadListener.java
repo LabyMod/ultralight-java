@@ -22,7 +22,6 @@ package com.labymedia.ultralight.lwjgl3.opengl.listener;
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.databind.Databind;
 import com.labymedia.ultralight.databind.DatabindConfiguration;
-import com.labymedia.ultralight.databind.DatabindJavascriptClass;
 import com.labymedia.ultralight.databind.api.JavaAPI;
 import com.labymedia.ultralight.javascript.*;
 import com.labymedia.ultralight.lwjgl3.opengl.support.ViewContextProvider;

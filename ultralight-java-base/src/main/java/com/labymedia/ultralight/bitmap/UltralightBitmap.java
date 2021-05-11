@@ -19,12 +19,12 @@
 
 package com.labymedia.ultralight.bitmap;
 
-import com.labymedia.ultralight.math.IntRect;
 import com.labymedia.ultralight.annotation.NativeCall;
 import com.labymedia.ultralight.annotation.NativeType;
 import com.labymedia.ultralight.annotation.Unsigned;
 import com.labymedia.ultralight.ffi.ObjectWithHandle;
 import com.labymedia.ultralight.ffi.RefPtr;
+import com.labymedia.ultralight.math.IntRect;
 
 import java.nio.ByteBuffer;
 
@@ -107,14 +107,18 @@ public class UltralightBitmap implements ObjectWithHandle {
      *
      * @return The width in pixels
      */
-    public native @NativeType("uint32_t") @Unsigned long width();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long width();
 
     /**
      * Get the height in pixels.
      *
      * @return The height in pixels
      */
-    public native @NativeType("uint32_t") @Unsigned long height();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long height();
 
     /**
      * Get the bounds as an {@link IntRect}.
@@ -135,21 +139,27 @@ public class UltralightBitmap implements ObjectWithHandle {
      *
      * @return The number of bytes per pixel
      */
-    public native @NativeType("uint32_t") @Unsigned long bpp();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long bpp();
 
     /**
      * Get the number of bytes between each row (this is always &gt;= width * {@link #bpp()}).
      *
      * @return The number of bytes between each row
      */
-    public native @NativeType("uint32_t") @Unsigned long rowBytes();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long rowBytes();
 
     /**
      * Get the size in bytes of the pixel buffer.
      *
      * @return The size in bytes of the pixel buffer
      */
-    public native @NativeType("size_t") @Unsigned long size();
+    public native @NativeType("size_t")
+    @Unsigned
+    long size();
 
     /**
      * Whether or not this Bitmap owns the pixel buffer and will destroy it

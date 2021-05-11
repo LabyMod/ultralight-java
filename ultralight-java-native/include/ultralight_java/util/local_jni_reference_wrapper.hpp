@@ -45,7 +45,7 @@ namespace ultralight_java {
          * @return The created object
          */
         template <typename... Args>
-        static LocalJNIReferenceWrapper construct(JNIEnv *env, jclass clazz, jmethodID constructor, Args &&... args) {
+        static LocalJNIReferenceWrapper construct(JNIEnv *env, jclass clazz, jmethodID constructor, Args &&...args) {
             return LocalJNIReferenceWrapper(env, env->NewObject(clazz, constructor, std::forward<Args>(args)...));
         }
 
@@ -110,7 +110,8 @@ namespace ultralight_java {
          *
          * @param env THe environment to use for wrapping the null pointer
          */
-        explicit LocalJNIReferenceWrapper(JNIEnv *env) : env(env), reference(nullptr) {}
+        explicit LocalJNIReferenceWrapper(JNIEnv *env) : env(env), reference(nullptr) {
+        }
 
         /**
          * Constructs a new JNIReferenceWrapper wrapping a jobject.

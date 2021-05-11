@@ -30,9 +30,15 @@ import com.labymedia.ultralight.annotation.Unsigned;
  */
 @NativeType("ultralight::RenderBuffer")
 public class UltralightRenderBuffer {
-    private final @Unsigned @NativeType("uint32_t") long textureId;
-    private final @Unsigned @NativeType("uint32_t") long width;
-    private final @Unsigned @NativeType("uint32_t") long height;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long textureId;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long width;
+    private final @Unsigned
+    @NativeType("uint32_t")
+    long height;
     private final boolean hasStencilBuffer;
     private final boolean hasDepthBuffer;
 

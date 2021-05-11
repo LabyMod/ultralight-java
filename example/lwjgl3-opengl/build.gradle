@@ -1,5 +1,5 @@
-import org.apache.tools.ant.taskdefs.condition.Os
 import groovy.json.JsonOutput
+import org.apache.tools.ant.taskdefs.condition.Os
 
 plugins {
     id 'application'
@@ -8,11 +8,11 @@ plugins {
 group 'com.labymedia'
 
 def lwjglClassifier = {
-    if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         return "natives-windows"
-    } else if(Os.isFamily(Os.FAMILY_MAC)) {
+    } else if (Os.isFamily(Os.FAMILY_MAC)) {
         return "natives-macos"
-    } else if(Os.isFamily(Os.FAMILY_UNIX)) {
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         return "natives-linux"
     } else {
         throw new UnsupportedOperationException("This OS is not supported")
@@ -36,11 +36,10 @@ dependencies {
 
     implementation group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2'
     runtimeOnly group: 'org.lwjgl', name: 'lwjgl-glfw', version: '3.2.2', classifier: lwjglClassifier()
-
 }
 
 def runDir = file("run")
-if(!runDir.exists() && !runDir.mkdirs()) {
+if (!runDir.exists() && !runDir.mkdirs()) {
     throw new GradleException("Failed to create run directory")
 }
 
@@ -48,11 +47,11 @@ def ultralightOsIdentifier = {
     def bitName = (System.getProperty("os.arch", "?").contains("64") ||
             System.getProperty("sun.arch.data.model", "?").contains("64")) ? "64" : "32"
 
-    if(Os.isFamily(Os.FAMILY_WINDOWS)) {
+    if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         return "win-x" + bitName
-    } else if(Os.isFamily(Os.FAMILY_MAC)) {
+    } else if (Os.isFamily(Os.FAMILY_MAC)) {
         return "mac-x" + bitName
-    } else if(Os.isFamily(Os.FAMILY_UNIX)) {
+    } else if (Os.isFamily(Os.FAMILY_UNIX)) {
         return "linux-x" + bitName
     } else {
         throw new UnsupportedOperationException("This OS is not supported")

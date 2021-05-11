@@ -19,8 +19,8 @@
 
 #pragma once
 
-#include <jni.h>
 #include <exception>
+#include <jni.h>
 
 #include "ultralight_java/util/jni_reference_wrapper.hpp"
 
@@ -60,4 +60,4 @@ namespace ultralight_java {
          */
         void throw_to_java(JNIEnv *env);
     };
-}
+} // namespace ultralight_java

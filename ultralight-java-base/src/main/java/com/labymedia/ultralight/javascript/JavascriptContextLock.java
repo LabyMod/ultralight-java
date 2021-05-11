@@ -76,9 +76,9 @@ public class JavascriptContextLock implements AutoCloseable, ObjectWithHandle {
      * Releases the lock if it has not been released already.
      */
     public void unlock() {
-        if(isLocked) {
+        if (isLocked) {
             // Notify all objects that the lock is being closed
-            for(JavascriptLockedObject object : lockedObjects) {
+            for (JavascriptLockedObject object : lockedObjects) {
                 object.contextUnlocking();
             }
 
@@ -91,7 +91,7 @@ public class JavascriptContextLock implements AutoCloseable, ObjectWithHandle {
 
     @Override
     public long getHandle() {
-        if(!isLocked) {
+        if (!isLocked) {
             throw new IllegalStateException("JavascriptContextLock is not locked anymore");
         }
 

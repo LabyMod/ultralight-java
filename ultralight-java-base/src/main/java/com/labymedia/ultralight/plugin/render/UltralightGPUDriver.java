@@ -26,9 +26,9 @@ import com.labymedia.ultralight.bitmap.UltralightBitmap;
 
 /**
  * GPUDriver interface, dispatches GPU calls to the native driver.
- *
+ * <p>
  * If you are using {@link UltralightRenderer#create()}, you will need to provide your own
- *
+ * <p>
  * implementation of this class if you have enabled the GPU renderer in the
  * Config.
  *
@@ -51,7 +51,9 @@ public interface UltralightGPUDriver {
      *
      * @return The next available texture ID
      */
-    @Unsigned @NativeType("uint32_t") long nextTextureId();
+    @Unsigned
+    @NativeType("uint32_t")
+    long nextTextureId();
 
     /**
      * Create a texture with a certain ID and optional bitmap.
@@ -86,7 +88,9 @@ public interface UltralightGPUDriver {
      *
      * @return The next available render buffer ID
      */
-    @Unsigned @NativeType("uint32_t") long nextRenderBufferId();
+    @Unsigned
+    @NativeType("uint32_t")
+    long nextRenderBufferId();
 
     /**
      * Create a render buffer with certain ID and buffer description.
@@ -109,7 +113,9 @@ public interface UltralightGPUDriver {
      *
      * @return The next available geometry ID
      */
-    @Unsigned @NativeType("uint32_t") long nextGeometryId();
+    @Unsigned
+    @NativeType("uint32_t")
+    long nextGeometryId();
 
     /**
      * Create geometry with certain ID and vertex/index data.

@@ -21,8 +21,8 @@
 
 #include <jni.h>
 #include <string>
-#include <vector>
 #include <unordered_map>
+#include <vector>
 
 namespace ultralight_java {
     class UltralightJavaRuntime;
@@ -31,7 +31,7 @@ namespace ultralight_java {
     /**
      * Class for simplifying the bridging of java enums
      */
-    template<typename t_Native>
+    template <typename t_Native>
     class JavaEnum {
     private:
         std::unordered_map<jobject, t_Native> java_to_native_values;
@@ -50,17 +50,20 @@ namespace ultralight_java {
          * @param value The value mapped to the key
          * @param other The other arguments, recursively passed to index() again
          */
-        template<typename t_Key, typename t_Value, typename ...t_Other>
+        template <typename t_Key, typename t_Value, typename... t_Other>
         inline void index(t_Key &&key, t_Value &&value, t_Other &&...other) {
-            native_to_name_values.insert(std::make_pair<t_Native, std::string>(static_cast<t_Native &&>(key),
-                                                                               static_cast<std::string &&>(value)));
+            native_to_name_values.insert(
+                std::make_pair<
+                    t_Native,
+                    std::string>(static_cast<t_Native &&>(key), static_cast<std::string &&>(value)));
             index(std::forward<t_Other>(other)...);
         }
 
         /**
          * Stub method to allow the sequence of arguments to end
          */
-        inline void index() {}
+        inline void index() {
+        }
 
     public:
         /**
@@ -69,7 +72,7 @@ namespace ultralight_java {
          * @tparam t_Args The types of the arguments
          * @param args The argument to use for mapping, always [key, value] pairs split across arguments
          */
-        template<typename ...t_Args>
+        template <typename... t_Args>
         explicit JavaEnum(t_Args &&...args) {
             static_assert(sizeof...(args) % 2 == 0, "Size of arguments needs to be even");
             index(std::forward<t_Args>(args)...);
@@ -85,7 +88,7 @@ namespace ultralight_java {
         bool init(JNIEnv *env, const std::string &class_name) {
             // Find the class
             jclass clazz = env->FindClass(class_name.c_str());
-            if (!clazz) {
+            if(!clazz) {
                 // Class not found
                 return false;
             }
@@ -96,13 +99,13 @@ namespace ultralight_java {
 
             // Find the required methods
             jmethodID value_of_method =
-                    env->GetStaticMethodID(clazz, "valueOf", ("(Ljava/lang/String;)" + class_signature).c_str());
+                env->GetStaticMethodID(clazz, "valueOf", ("(Ljava/lang/String;)" + class_signature).c_str());
             if(!value_of_method) {
                 return false;
             }
 
             // Iterate over all known constants
-            for (const auto &[native, name] : native_to_name_values) {
+            for(const auto &[native, name] : native_to_name_values) {
                 // Invoke the Enum#valueOf(String) method to get a reference to the
                 // named element
                 jstring name_str = env->NewStringUTF(name.c_str());
@@ -184,4 +187,4 @@ namespace ultralight_java {
     UltralightJavaRuntime *JavaEnum<t_Native>::_runtime() {
         return &runtime;
     }
-}
+} // namespace ultralight_java

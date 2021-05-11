@@ -50,8 +50,8 @@ public class UltralightSurface implements ObjectWithHandle {
     /**
      * Constructs a new {@link UltralightSurface} from an underlying handle.
      *
-     * @param view The view this surface belongs to, used to prevent the view from
-     *             being freed to early
+     * @param view   The view this surface belongs to, used to prevent the view from
+     *               being freed to early
      * @param handle The underlying handle
      */
     @NativeCall
@@ -65,7 +65,8 @@ public class UltralightSurface implements ObjectWithHandle {
      *
      * @return The width
      */
-    public native @NativeType("uint32_t") @Unsigned
+    public native @NativeType("uint32_t")
+    @Unsigned
     long width();
 
     /**
@@ -73,35 +74,43 @@ public class UltralightSurface implements ObjectWithHandle {
      *
      * @return The height
      */
-    public native @NativeType("uint32_t") @Unsigned long height();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long height();
 
     /**
      * Number of bytes between rows (usually width * 4).
      *
      * @return The number of bytes between rows
      */
-    public native @NativeType("uint32_t") @Unsigned long rowBytes();
+    public native @NativeType("uint32_t")
+    @Unsigned
+    long rowBytes();
 
     /**
      * Size in bytes.
      *
      * @return The size in bytes
      */
-    public native @NativeType("size_t") @Unsigned long size();
+    public native @NativeType("size_t")
+    @Unsigned
+    long size();
 
     /**
-     *  Lock the pixel buffer and get a pointer to the beginning of the data
-     *  for reading/writing.
-     *  <p>
-     *  Native pixel format is premultiplied BGRA 32-bit (8 bits per channel).
+     * Lock the pixel buffer and get a pointer to the beginning of the data
+     * for reading/writing.
+     * <p>
+     * Native pixel format is premultiplied BGRA 32-bit (8 bits per channel).
      *
      * @return A buffer containing the pixels
      * @see #unlockPixels()
      */
-    public native @NativeType("void *") ByteBuffer lockPixels();
+    public native @NativeType("void *")
+    ByteBuffer lockPixels();
 
     /**
      * Unlock the pixel buffer.
+     *
      * @see #lockPixels()
      */
     public native void unlockPixels();
@@ -111,7 +120,7 @@ public class UltralightSurface implements ObjectWithHandle {
      * <p>
      * This should never be called while pixels are locked.
      *
-     * @param width The new width in pixels
+     * @param width  The new width in pixels
      * @param height The new height in pixels
      */
     public native void resize(@NativeType("uint32_t") @Unsigned long width, @NativeType("uint32_t") @Unsigned long height);

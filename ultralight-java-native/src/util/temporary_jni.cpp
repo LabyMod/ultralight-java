@@ -53,4 +53,4 @@ namespace ultralight_java {
     JNIEnv *TemporaryJNI::operator->() {
         return env;
     }
-}
+} // namespace ultralight_java

@@ -22,15 +22,15 @@
 #include "ultralight_java/util/temporary_jni.hpp"
 
 namespace ultralight_java {
-    JNIReferenceWrapper::JNIReferenceWrapper(JNIReferenceWrapper &&other) noexcept: reference(other.reference) {
+    JNIReferenceWrapper::JNIReferenceWrapper(JNIReferenceWrapper &&other) noexcept : reference(other.reference) {
         other.reference = nullptr;
     }
 
-    JNIReferenceWrapper::JNIReferenceWrapper(JNIEnv *env, jobject reference) : reference(
-            env->NewGlobalRef(reference)) {}
+    JNIReferenceWrapper::JNIReferenceWrapper(JNIEnv *env, jobject reference) : reference(env->NewGlobalRef(reference)) {
+    }
 
     JNIReferenceWrapper::~JNIReferenceWrapper() {
-        if (reference) {
+        if(reference) {
             TemporaryJNI jni;
             jni->DeleteGlobalRef(reference);
         }
@@ -47,4 +47,4 @@ namespace ultralight_java {
     jobject JNIReferenceWrapper::get() {
         return reference;
     }
-}
+} // namespace ultralight_java

@@ -20,12 +20,13 @@
 #include "ultralight_java/java_bridges/bridged_logger.hpp"
 
 #include "ultralight_java/java_bridges/proxied_java_exception.hpp"
-#include "ultralight_java/util/temporary_jni.hpp"
 #include "ultralight_java/ultralight_java_instance.hpp"
+#include "ultralight_java/util/temporary_jni.hpp"
 #include "ultralight_java/util/util.hpp"
 
 namespace ultralight_java {
-    BridgedLogger::BridgedLogger(JNIEnv *env, jobject logger) : JNIReferenceWrapper(env, logger) {}
+    BridgedLogger::BridgedLogger(JNIEnv *env, jobject logger) : JNIReferenceWrapper(env, logger) {
+    }
 
     void BridgedLogger::LogMessage(ultralight::LogLevel log_level, const ultralight::String16 &message) {
         TemporaryJNI env;
@@ -46,4 +47,4 @@ namespace ultralight_java {
         // Possibly throw exception if one occurred
         ProxiedJavaException::throw_if_any(env);
     }
-}
+} // namespace ultralight_java

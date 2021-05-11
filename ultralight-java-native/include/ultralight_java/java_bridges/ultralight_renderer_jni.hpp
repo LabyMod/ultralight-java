@@ -46,12 +46,7 @@ namespace ultralight_java {
          * @param java_config The view config
          * @return The java object wrapping the created view
          */
-        static jobject create_view(
-            JNIEnv *env,
-            jobject instance,
-            jlong width,
-            jlong height,
-            jobject java_config);
+        static jobject create_view(JNIEnv *env, jobject instance, jlong width, jlong height, jobject java_config);
 
         /**
          * Calls the ultralight::Renderer::Update method.

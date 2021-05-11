@@ -31,12 +31,12 @@ public class FFIGarbageCollectorController {
     /**
      * Submits a new object for deletion with a given deleter.
      *
-     * @param object The object to listen to deletion for
+     * @param object  The object to listen to deletion for
      * @param deleter The deleter to run when the object gets garbage collected
-     * @param <T> The type to garbage collect
+     * @param <T>     The type to garbage collect
      */
     public static <T> void submit(DeletableObject<T> object, BoundDeleter<T> deleter) {
-        if(collector == null) {
+        if (collector == null) {
             // The user has not overwritten the collector
             collector = new DefaultFFIGarbageCollectorImpl();
         }
@@ -56,7 +56,7 @@ public class FFIGarbageCollectorController {
      * @throws IllegalStateException If the collector has been set already
      */
     public static void setCollector(FFIGarbageCollector collector) {
-        if(FFIGarbageCollectorController.collector != null) {
+        if (FFIGarbageCollectorController.collector != null) {
             throw new IllegalStateException("The garbage collector has been set already, " +
                     "try setting it earlier if this has not been done by you");
         }

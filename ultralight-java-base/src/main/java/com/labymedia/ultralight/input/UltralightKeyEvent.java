@@ -240,6 +240,7 @@ public class UltralightKeyEvent {
      *                       identifier from.
      * @return The key identifier
      */
-    public static native @NativeType("ultralight::String") String getKeyIdentifierFromVirtualKeyCode(
+    public static native @NativeType("ultralight::String")
+    String getKeyIdentifierFromVirtualKeyCode(
             UltralightKey virtualKeyCode);
 }

@@ -79,4 +79,6 @@ license {
             include "include/**/*.h", "include/**/*.hpp", "src/**/*.c", "src/**/*.cpp"
         }
     }
+
+    exclude('include/KHR/khrplatform.h')
 }

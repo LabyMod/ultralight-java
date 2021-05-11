@@ -45,7 +45,7 @@ public class UltralightJava {
         try {
             // Try to extract the library with the architecture included in the name
             // This will be the case in production environments
-            if(extractResource(
+            if (extractResource(
                     "/native-binaries/" + nameWithArchitecture,
                     nativesDir.resolve(nameWithArchitecture)
             )) {
@@ -62,7 +62,7 @@ public class UltralightJava {
         try {
             // Try to to extract the library without the architecture in the name
             // This will be the case in development environments
-            if(extractResource(
+            if (extractResource(
                     "/native-binaries/" + nameWithoutArchitecture,
                     nativesDir.resolve(nameWithoutArchitecture)
             )) {
@@ -81,19 +81,19 @@ public class UltralightJava {
      * Extracts the given resource path to the given file. Parent directories are created as required.
      *
      * @param resourcePath The resource path to extract
-     * @param targetFile The path to the file to extract the resource to
+     * @param targetFile   The path to the file to extract the resource to
      * @return {@code true} if the resource has been extracted, {@code false} otherwise
      * @throws IOException If an I/O error occurs during extraction
      */
     private static boolean extractResource(String resourcePath, Path targetFile) throws IOException {
-        try(InputStream stream = UltralightJava.class.getResourceAsStream(resourcePath)) {
-            if(stream == null) {
+        try (InputStream stream = UltralightJava.class.getResourceAsStream(resourcePath)) {
+            if (stream == null) {
                 return false;
             }
 
             // Retrieve the target directory
             Path targetDir = targetFile.getParent();
-            if(!Files.isDirectory(targetDir)) {
+            if (!Files.isDirectory(targetDir)) {
                 // Create the target directory
                 Files.createDirectories(targetDir);
             }
@@ -119,7 +119,7 @@ public class UltralightJava {
      * Loads the ultralight libraries from the given directory and optionally
      * also pre-loads dependencies to prevent dynamic linker issues.
      *
-     * @param nativesDir The directory to load the natives from
+     * @param nativesDir           The directory to load the natives from
      * @param autoloadDependencies If {@code true}, the library will automatically load dependencies
      * @throws UltralightLoadException If loading ultralight fails
      */
@@ -127,7 +127,7 @@ public class UltralightJava {
         OperatingSystem operatingSystem = OperatingSystem.get();
         Architecture architecture = Architecture.get();
 
-        if(autoloadDependencies) {
+        if (autoloadDependencies) {
             // Iterate over dependencies, ORDER MATTERS!
             //
             // ultralight-java depends on AppCore and Ultralight
@@ -138,7 +138,7 @@ public class UltralightJava {
             // 3. Ultralight
             // 4. AppCore <-- TODO: remove
             // 5. ultralight-java
-            for(String library : new String[] {"UltralightCore", "WebCore", "Ultralight", "AppCore"}) {
+            for (String library : new String[]{"UltralightCore", "WebCore", "Ultralight", "AppCore"}) {
                 Path libraryPath = determineLibraryPath(nativesDir, library, operatingSystem, architecture);
                 try {
                     System.load(libraryPath.toAbsolutePath().toString());

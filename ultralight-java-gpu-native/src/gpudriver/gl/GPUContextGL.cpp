@@ -18,23 +18,24 @@
  */
 
 #include "ultralight_java/gpudriver/gl/GPUContextGL.h"
-#include "ultralight_java/gpudriver/gl/GPUDriverGL.h"
+
 #include <ultralight_java/gpudriver/gl/glad.h>
+
+#include "ultralight_java/gpudriver/gl/GPUDriverGL.h"
 
 namespace ultralight {
 
-GPUContextGL::GPUContextGL(void* window, bool enable_msaa) :
-    msaa_enabled_(enable_msaa) {
+    GPUContextGL::GPUContextGL(void *window, bool enable_msaa) : msaa_enabled_(enable_msaa) {
 
-  window_ = window;
-  active_window_ = window_;
-  // TODO: enable msaa, GLFW currently has num_samples == 0 in glfwWindowHint
-  int samples = 4;
-  if (!samples) {
-    msaa_enabled_ = false;
-  }
+        window_ = window;
+        active_window_ = window_;
+        // TODO: enable msaa, GLFW currently has num_samples == 0 in glfwWindowHint
+        int samples = 4;
+        if(!samples) {
+            msaa_enabled_ = false;
+        }
 
-  driver_.reset(new ultralight::GPUDriverGL(this));
-}
+        driver_.reset(new ultralight::GPUDriverGL(this));
+    }
 
-}  // namespace ultralight
+} // namespace ultralight

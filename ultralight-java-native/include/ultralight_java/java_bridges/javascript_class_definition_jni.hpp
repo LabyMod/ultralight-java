@@ -89,7 +89,6 @@ namespace ultralight_java {
         static jobject static_function(
             JNIEnv *env, jobject java_instance, jstring java_name, jobject java_function, jint attributes);
 
-
         /**
          * Sets the initializer of this definition.
          *

@@ -18,10 +18,11 @@
  */
 
 #pragma once
-#include <Ultralight/platform/GPUDriver.h>
 #include <Ultralight/platform/Config.h>
-#include "ultralight_java/gpudriver/common/GPUDriverImpl.h"
+#include <Ultralight/platform/GPUDriver.h>
 #include <memory>
+
+#include "ultralight_java/gpudriver/common/GPUDriverImpl.h"
 
 typedef struct GLFWwindow GLFWwindow;
 
@@ -29,37 +30,53 @@ typedef struct GLFWwindow GLFWwindow;
 
 namespace ultralight {
 
-class GPUContextGL {
- protected:
-  std::unique_ptr<ultralight::GPUDriverImpl> driver_;
-  void* window_;
-  void* active_window_ = nullptr;
-  bool msaa_enabled_;
- public:
-  GPUContextGL(void * window, bool enable_msaa);
+    class GPUContextGL {
+    protected:
+        std::unique_ptr<ultralight::GPUDriverImpl> driver_;
+        void *window_;
+        void *active_window_ = nullptr;
+        bool msaa_enabled_;
 
-  virtual ~GPUContextGL() {}
+    public:
+        GPUContextGL(void *window, bool enable_msaa);
 
-  virtual ultralight::GPUDriverImpl* driver() const { return driver_.get(); }
+        virtual ~GPUContextGL() {
+        }
 
-  virtual ultralight::FaceWinding face_winding() const { return ultralight::kFaceWinding_CounterClockwise; }
+        virtual ultralight::GPUDriverImpl *driver() const {
+            return driver_.get();
+        }
 
-  virtual void BeginDrawing() {}
+        virtual ultralight::FaceWinding face_winding() const {
+            return ultralight::kFaceWinding_CounterClockwise;
+        }
 
-  virtual void EndDrawing() {}
+        virtual void BeginDrawing() {
+        }
 
-  virtual bool msaa_enabled() const { return msaa_enabled_; }
+        virtual void EndDrawing() {
+        }
 
-  // An offscreen window dedicated to maintaining the OpenGL context.
-  // All other windows created during lifetime of the app share this context.
-  virtual void* window() { return window_; }
+        virtual bool msaa_enabled() const {
+            return msaa_enabled_;
+        }
 
-  // FBOs are not shared across contexts in OpenGL 3.2 (AFAIK), we luckily
-  // don't need to share them across multiple windows anyways so we temporarily
-  // set the active GL context to the "active window" when creating FBOs.
-  virtual void set_active_window(void* win) { active_window_ = win; }
+        // An offscreen window dedicated to maintaining the OpenGL context.
+        // All other windows created during lifetime of the app share this context.
+        virtual void *window() {
+            return window_;
+        }
 
-  virtual void* active_window() { return active_window_; }
-};
+        // FBOs are not shared across contexts in OpenGL 3.2 (AFAIK), we luckily
+        // don't need to share them across multiple windows anyways so we temporarily
+        // set the active GL context to the "active window" when creating FBOs.
+        virtual void set_active_window(void *win) {
+            active_window_ = win;
+        }
 
-}  // namespace ultralight
+        virtual void *active_window() {
+            return active_window_;
+        }
+    };
+
+} // namespace ultralight

@@ -603,4 +603,6 @@ void main(void) {
 
 )";
 
-static std::string shader_fill_frag() { return shader_fill_frag1 + shader_fill_frag2; }
+static std::string shader_fill_frag() {
+    return shader_fill_frag1 + shader_fill_frag2;
+}

@@ -1,4 +1,4 @@
-plugins{
+plugins {
     id("java-library")
     id 'maven-publish'
 }
@@ -14,7 +14,7 @@ jar {
 }
 
 processResources {
-    if(project.getProperties().get("ultralight-java.gpu.native-binaries-folder") == null) {
+    if (project.getProperties().get("ultralight-java.gpu.native-binaries-folder") == null) {
         dependsOn(':ultralight-java-gpu-native:build')
     }
     from(rootProject.file(project.getProperties().getOrDefault("ultralight-java.gpu.native-binaries-folder", project(":ultralight-java-gpu-native").buildDir.toPath().toString() + "/nativeBinaries").toString())) {
@@ -29,6 +29,6 @@ commonPublish(project) {
     }
 }
 
-dependencies{
+dependencies {
     implementation(project(":ultralight-java-base"))
 }
