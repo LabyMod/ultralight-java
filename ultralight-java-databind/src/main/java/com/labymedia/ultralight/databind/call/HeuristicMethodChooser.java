@@ -53,7 +53,7 @@ public final class HeuristicMethodChooser implements MethodChooser {
             Collection<? extends T> possibilities, Class<?>[] sourceParameterTypes, JavascriptValue[] javascriptValues) {
         // The default penalty needs to be higher than the maximum penalty produced by the selection process
         int penalty = Integer.MAX_VALUE;
-        Set<CallData<T>> availableMethods = new HashSet<>();
+        List<CallData<T>> availableMethods = new ArrayList<>(possibilities.size());
 
         tryNextMethod:
         for (T executable : possibilities) {

@@ -30,7 +30,9 @@ import com.labymedia.ultralight.javascript.JavascriptValue;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 /**
  * Invocation handler for Javascript functions bound to functional interfaces.
@@ -91,8 +93,7 @@ class FunctionalInvocationHandler implements InvocationHandler {
             return method.invoke(this, args);
         }
 
-        CountDownLatch awaiter = new CountDownLatch(1);
-        GuardedInvocationResult result = new GuardedInvocationResult();
+        CompletableFuture<Object> future = new CompletableFuture<>();
 
         contextProvider.syncWithJavascript((contextLock) -> {
             try {
@@ -112,21 +113,26 @@ class FunctionalInvocationHandler implements InvocationHandler {
                     protectedValue.get().value = object.protect();
 
                     JavascriptValue returnValue = object.callAsFunction(null, arguments);
-                    result.returnValue = databind.getConversionUtils().fromJavascript(
+                    future.complete(databind.getConversionUtils().fromJavascript(
                             returnValue,
-                            returnValue != null ? returnValue.getClass() : method.getReturnType()
-                    );
+                            returnValue.getClass()
+                    ));
                 }
             } catch (Throwable t) {
                 // Capture exceptions to prevent deadlocking
-                result.throwable = t;
+                future.completeExceptionally(t);
             }
-            awaiter.countDown();
         });
-        awaiter.await();
 
-        if (result.throwable != null) {
-            Throwable t = result.throwable;
+        if (CompletableFuture.class.isAssignableFrom(method.getReturnType())) {
+            // A future is expected so we let the user handle it
+            return future;
+        }
+
+        try {
+            return future.get();
+        } catch (ExecutionException exception) {
+            Throwable t = exception.getCause();
 
             if (t instanceof RuntimeException || t instanceof Error) {
                 // Unchecked, rethrow as is
@@ -144,8 +150,6 @@ class FunctionalInvocationHandler implements InvocationHandler {
             // Checked exception which has not been declared as thrown by the interface method
             throw new RuntimeException("Exception thrown while invoking Javascript method", t);
         }
-
-        return result.returnValue;
     }
 
     /**
@@ -165,14 +169,6 @@ class FunctionalInvocationHandler implements InvocationHandler {
             this.contextProvider = contextProvider;
             this.value = value;
         }
-    }
-
-    /**
-     * Helper class for handling the results of asynchronous method invocations including exceptions.
-     */
-    private static class GuardedInvocationResult {
-        private Throwable throwable;
-        private Object returnValue;
     }
 
     /**
