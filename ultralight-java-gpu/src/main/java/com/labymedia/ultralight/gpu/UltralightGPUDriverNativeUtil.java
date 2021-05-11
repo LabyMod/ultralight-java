@@ -163,7 +163,6 @@ public class UltralightGPUDriverNativeUtil {
 
     /**
      * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
-     * @param handle GPUDriver handle
      */
     public native long createOpenGLContext(long window, boolean msaa);
 
