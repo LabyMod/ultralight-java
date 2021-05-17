@@ -21,6 +21,8 @@ package com.labymedia.ultralight.gpu;
 
 import com.labymedia.ultralight.plugin.render.UltralightGPUDriverNative;
 
+import java.util.Queue;
+
 /**
  * Default native OpenGL implementation of the ultralight gpu driver
  */
@@ -31,9 +33,9 @@ public class UltralightOpenGLGPUDriverNative implements UltralightGPUDriverNativ
     private final UltralightGPUDriverNativeUtil util;
 
 
-    public UltralightOpenGLGPUDriverNative(long window, boolean msaa) {
+    public UltralightOpenGLGPUDriverNative(long window, boolean msaa, long glfwLoaderFunction ) {
         this.util = UltralightGPUDriverNativeUtil.getInstance();
-        this.contextHandle = util.createOpenGLContext(window, msaa);
+        this.contextHandle = util.createOpenGLContext(window, msaa, glfwLoaderFunction);
         this.driverHandle = util.getDriverFromContext(this.contextHandle);
     }
 

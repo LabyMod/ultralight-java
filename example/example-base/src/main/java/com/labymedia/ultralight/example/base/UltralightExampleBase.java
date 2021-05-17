@@ -17,11 +17,12 @@
  * Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  */
 
-package com.labymedia.ultralight.lwjgl3.opengl;
+package com.labymedia.ultralight.example.base;
 
 import com.labymedia.ultralight.UltralightJava;
 import com.labymedia.ultralight.UltralightLoadException;
 import com.labymedia.ultralight.gpu.UltralightGPUDriverNativeUtil;
+import org.lwjgl.glfw.GLFW;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,14 +31,28 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
-/**
- * Entry pointer for the example application.
- */
-public class ExampleMain {
-    public static void main(String[] args) throws UltralightLoadException {
-        // Example resources
-        extractResources();
+public abstract class UltralightExampleBase {
 
+    private final UltralightExampleConfiguration ultralightExampleConfiguration;
+
+    public UltralightExampleBase() {
+        try {
+
+            this.ultralightExampleConfiguration = new UltralightExampleConfiguration();
+            this.setupNatives();
+
+            this.configure(this.ultralightExampleConfiguration);
+
+            // Example resources
+            extractResources();
+            this.begin();
+        } catch (UltralightLoadException exception) {
+            //Process will end here. Just wrapped in a RuntimeException so no example has to create a constructor
+            throw new RuntimeException(exception);
+        }
+    }
+
+    private void setupNatives() throws UltralightLoadException {
         // Get a directory to put natives into
         Path nativesDir = Paths.get(".");
 
@@ -59,49 +74,36 @@ public class ExampleMain {
         // This only extracts the native library for ultralight-java-base, but not the other Ultralight libraries.
         // It is your task to get them into the run directory, possibly by extracting them on your own.
         UltralightJava.extractNativeLibrary(nativesDir);
-        try {
-            UltralightGPUDriverNativeUtil.extractAndLoadNativeLibraries(nativesDir);
-        } catch (IOException exception) {
-            throw new RuntimeException(exception);
-        }
+
         // Load the native libraries from the given directory. This method makes sure everything is loaded in the
         // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as
         // the second parameter.
         UltralightJava.load(nativesDir);
+        UltralightGPUDriverNativeUtil.extractNativeLibrary(nativesDir);
 
-        // Create and run a simple test application
-        ExampleApplication application = new ExampleApplication();
-        application.centerWindow();
-        application.run();
+    }
 
-        // The user has requested the application to stop
-        application.stop();
+    public void configure(UltralightExampleConfiguration ultralightExampleConfiguration) {
+    }
+
+    public void begin() {
     }
 
     /**
      * Helper function to set up the run directory with jar resources.
      */
-    public static void extractResources() {
+    private void extractResources() {
         try {
-            Files.copy(
-                    ExampleMain.class.getResourceAsStream("/example.html"),
-                    Paths.get("./example.html"),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            Files.copy(
-                    ExampleMain.class.getResourceAsStream("/example.js"),
-                    Paths.get("./example.js"),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
-
-            Files.copy(
-                    ExampleMain.class.getResourceAsStream("/style.css"),
-                    Paths.get("./style.css"),
-                    StandardCopyOption.REPLACE_EXISTING
-            );
+            for (String path : this.ultralightExampleConfiguration.getResourcesToExtract()) {
+                Files.copy(
+                        UltralightExampleBase.class.getResourceAsStream("/" + path),
+                        Paths.get("./" + path),
+                        StandardCopyOption.REPLACE_EXISTING
+                );
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
     }
+
 }
