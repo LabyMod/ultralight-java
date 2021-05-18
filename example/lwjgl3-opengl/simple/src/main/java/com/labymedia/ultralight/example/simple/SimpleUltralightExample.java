@@ -52,7 +52,6 @@ public class SimpleUltralightExample extends UltralightExampleBase {
                     );
                     context.getPlatform().usePlatformFontLoader();
                 });
-        context.getMainWindow().show();
     }
 
     @Override
@@ -84,7 +83,7 @@ public class SimpleUltralightExample extends UltralightExampleBase {
 
         System.out.println(context.getMainWindow().getView().getDeviceScale());
         GL.createCapabilities();
-        while (true){
+        while (!GLFW.glfwWindowShouldClose(minecraftWindow)){
             GLFW.glfwMakeContextCurrent(minecraftWindow);
             GLFW.glfwPollEvents();
 
@@ -120,7 +119,9 @@ public class SimpleUltralightExample extends UltralightExampleBase {
 
             GLFW.glfwSwapBuffers(minecraftWindow);
         }
+        GLFW.glfwDestroyWindow(minecraftWindow);
 
+        System.exit(0);
 
     }
 

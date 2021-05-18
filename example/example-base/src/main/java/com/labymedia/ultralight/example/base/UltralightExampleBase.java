@@ -79,7 +79,7 @@ public abstract class UltralightExampleBase {
         // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as
         // the second parameter.
         UltralightJava.load(nativesDir);
-        UltralightGPUDriverNativeUtil.extractNativeLibrary(nativesDir);
+        UltralightGPUDriverNativeUtil.extractAndLoadNativeLibraries(nativesDir);
 
     }
 
