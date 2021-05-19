@@ -1,7 +1,8 @@
+import com.labymedia.gradle.cmake.GradleCMakePlugin
 import com.labymedia.gradle.cmake.tasks.CMakeBuildTask
 import org.apache.tools.ant.taskdefs.condition.Os
 
-apply plugin: "com.labymedia.cmake-gradle"
+apply plugin: GradleCMakePlugin
 apply plugin: "net.minecrell.licenser"
 
 group 'com.labymedia'

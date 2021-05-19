@@ -297,6 +297,8 @@ namespace ultralight_java {
 
         static void set_device_scale(JNIEnv *env, jobject instance, jdouble device_scale);
 
+        static jdouble device_scale(JNIEnv *env, jobject instance);
+
         /**
          * Checks if this view needs a repaint
          *

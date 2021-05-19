@@ -380,6 +380,15 @@ namespace ultralight_java {
         view->set_device_scale(device_scale);
     }
 
+    jdouble UltralightViewJNI::device_scale(JNIEnv *env, jobject instance){
+        auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
+        if(env->ExceptionCheck()) {
+            return 0;
+        }
+
+        return view->device_scale();
+    }
+
     jboolean UltralightViewJNI::needs_paint(JNIEnv *env, jobject instance) {
         auto view = UltralightRefPtrJNI::unwrap_ref_ptr<ultralight::View>(env, instance);
         if(env->ExceptionCheck()) {

@@ -207,7 +207,7 @@ namespace ultralight_java {
             /**
              * Native methods that should be bound
              */
-            std::array<JNINativeMethod, 32> native_methods;
+            std::array<JNINativeMethod, 33> native_methods;
         } ultralight_view;
 
         struct {
