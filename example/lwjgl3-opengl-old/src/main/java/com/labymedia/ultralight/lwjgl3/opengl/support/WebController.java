@@ -32,6 +32,7 @@ import com.labymedia.ultralight.lwjgl3.opengl.input.CursorAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.input.InputAdapter;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleLoadListener;
 import com.labymedia.ultralight.lwjgl3.opengl.listener.ExampleViewListener;
+import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL30;
 
 import static org.lwjgl.glfw.GLFW.glfwMakeContextCurrent;
@@ -70,7 +71,7 @@ public class WebController {
                 new UltralightConfig()
                         .forceRepaint(false)
                         .resourcePath("./resources/")
-                        .fontHinting(FontHinting.NORMAL)
+                        .fontHinting(FontHinting.SMOOTH)
         );
         this.platform.usePlatformFontLoader();
         this.platform.setFileSystem(new ExampleFileSystem());
@@ -79,7 +80,7 @@ public class WebController {
     }
 
     public void initGPUDriver() {
-        this.driver = new UltralightOpenGLGPUDriverNative(this.window, false);
+        this.driver = new UltralightOpenGLGPUDriverNative(this.window, false, GLFW.Functions.GetProcAddress);
 
         this.platform.setGPUDriver(this.driver);
         this.renderer = UltralightRenderer.create();
@@ -91,7 +92,6 @@ public class WebController {
                         .initialDeviceScale(1.0)
                         .isTransparent(true)
         );
-        view.setDeviceScale(100);
         this.viewListener = new ExampleViewListener(cursorManager);
         this.view.setViewListener(viewListener);
         this.loadListener = new ExampleLoadListener(view);

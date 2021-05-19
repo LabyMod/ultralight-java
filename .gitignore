@@ -3,7 +3,7 @@ out/
 .gradle/
 .idea/
 cmake-build-*/
-run/
+**/run/
 bin/
 .vscode/
 .settings/

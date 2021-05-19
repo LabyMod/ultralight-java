@@ -2,10 +2,14 @@ rootProject.name = 'ultralight-java'
 
 include 'ultralight-java-base'
 include 'ultralight-java-native'
+include 'ultralight-java-glfw-opengl-util'
 include 'ultralight-java-databind'
 include 'ultralight-java-databind-codegen'
 
 include 'ultralight-java-gpu'
 include 'ultralight-java-gpu-native'
 
-include 'example:lwjgl3-opengl'
+include 'example:example-base'
+include 'example:lwjgl3-opengl:simple'
+include 'example:lwjgl3-opengl-old'
+

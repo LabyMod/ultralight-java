@@ -19,6 +19,7 @@
 
 package com.labymedia.ultralight.gpu;
 
+import com.labymedia.ultralight.UltralightLoadException;
 import com.labymedia.ultralight.os.Architecture;
 import com.labymedia.ultralight.os.OperatingSystem;
 
@@ -39,24 +40,28 @@ public class UltralightGPUDriverNativeUtil {
      * Extracts all native libraries for ultralight-java-gpu to a given directory.
      *
      * @param nativesDir the path to extract the native libraries to
-     * @throws IOException if native libraries could not be extracted or read
+     *                   //     * @throws IOException if native libraries could not be extracted or read
      */
-    public static void extractNativeLibrary(Path nativesDir) throws IOException {
+    public static void extractNativeLibrary(Path nativesDir) throws UltralightLoadException {
         OperatingSystem operatingSystem = OperatingSystem.get();
         Architecture architecture = Architecture.get();
 
         String nameWithArch = operatingSystem.mapLibraryName("ultralight-java-gpu-" + architecture.getBits());
-        if (extractResource(nameWithArch, nativesDir.resolve(nameWithArch))) {
-            return;
+        try {
+            if (extractResource(nameWithArch, nativesDir.resolve(nameWithArch))) {
+                return;
+            }
+
+            String nameWithoutArch = operatingSystem.mapLibraryName("ultralight-java-gpu");
+
+            if (extractResource(nameWithoutArch, nativesDir.resolve(nameWithoutArch))) {
+                return;
+            }
+        } catch (IOException e) {
+            throw new UltralightLoadException("Failed to extract native library", e);
         }
 
-        String nameWithoutArch = operatingSystem.mapLibraryName("ultralight-java-gpu");
-
-        if (extractResource(nameWithoutArch, nativesDir.resolve(nameWithoutArch))) {
-            return;
-        }
-
-        throw new RuntimeException("Failed to extract native library.");
+        throw new UltralightLoadException("Failed to extract native library.");
     }
 
     /**
@@ -141,9 +146,9 @@ public class UltralightGPUDriverNativeUtil {
      * Extracts all native libraries for ultralight-java-gpu to a given directory and loads them through JNI.
      *
      * @param nativesDir the native directory to save the libraries to
-     * @throws IOException if native libraries could not be extracted or read
+     * @throws UltralightLoadException if native libraries could not be extracted or read
      */
-    public static void extractAndLoadNativeLibraries(Path nativesDir) throws IOException {
+    public static void extractAndLoadNativeLibraries(Path nativesDir) throws UltralightLoadException {
         extractNativeLibrary(nativesDir);
         load(nativesDir);
     }
@@ -164,35 +169,35 @@ public class UltralightGPUDriverNativeUtil {
     /**
      * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      */
-    public native long createOpenGLContext(long window, boolean msaa);
+    public native long createOpenGLContext(long window, boolean msaa, long loaderFunction);
 
     /**
-     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      * @param context GPUDriver context handle
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      */
     public native long getDriverFromContext(long context);
 
     /**
-     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      * @param handle GPUDriver handle
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      */
     public native void beginSynchronize(long handle);
 
     /**
-     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      * @param handle GPUDriver handle
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      */
     public native void endSynchronize(long handle);
 
     /**
-     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      * @param handle GPUDriver handle
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      */
     public native boolean hasCommandsPending(long handle);
 
     /**
-     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      * @param handle GPUDriver handle
+     * @see <a href="https://docs.ultralig.ht/docs/using-a-custom-gpudriver">Ultralight GPU driver implementation guide</a>
      */
     public native void drawCommandList(long handle);
 

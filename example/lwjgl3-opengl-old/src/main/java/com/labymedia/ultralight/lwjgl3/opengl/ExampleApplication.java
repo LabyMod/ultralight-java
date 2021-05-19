@@ -234,7 +234,7 @@ public class ExampleApplication {
         int frameCount = 0;
 
         // Create the drawing helper, used to keep state for drawing the rotating triangle
-        OpenGLDrawer drawer = new OpenGLDrawer();
+//        OpenGLDrawer drawer = new OpenGLDrawer();
 
         // Keep running until a window close is requested
         while (!glfwWindowShouldClose(window)) {
@@ -248,7 +248,7 @@ public class ExampleApplication {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Draw the triangle and then Ultralight on top of it
-            drawer.draw();
+//            drawer.draw();
             webController.render();
 
             // Super bad implementation of FPS display...
