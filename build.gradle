@@ -33,7 +33,7 @@ ext.commonPublish = { Project currentProject, Closure config ->
                 }
 
                 maven {
-                    setUrl("https://dist.labymod.net/api/v1/maven/release")
+                    setUrl(System.getenv("FLINT_DISTRIBUTOR_URL"))
                     name = "Flint"
 
                     def publishToken = System.getenv("FLINT_DISTRIBUTOR_PUBLISH_TOKEN")
