@@ -33,7 +33,14 @@ ext.commonPublish = { Project currentProject, Closure config ->
                 }
 
                 maven {
-                    setUrl(System.getenv("FLINT_DISTRIBUTOR_URL"))
+                    def distributorUrl = System.getenv("FLINT_DISTRIBUTOR_URL")
+
+                    if (distributorUrl == null && project.hasProperty("net.flintmc.distributor.url")) {
+                        distributorUrl = project.property("net.flintmc.distributor.url").toString()
+                    }
+
+                    setUrl(distributorUrl)
+
                     name = "Flint"
 
                     def publishToken = System.getenv("FLINT_DISTRIBUTOR_PUBLISH_TOKEN")
