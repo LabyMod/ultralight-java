@@ -106,6 +106,8 @@ jobs:
         if: github.ref == 'refs/heads/master'
         run: "./gradlew -PCI=true -PenableSigning -Pultralight-java.base.native-binaries-folder=native-binaries/ultralight -Pultralight-java.gpu.native-binaries-folder=native-binaries/ultralight-gpu publish"
         env:
+          FLINT_DISTRIBUTOR_PUBLISH_TOKEN: ${{ secrets.FLINT_DISTRIBUTOR_PUBLISH_TOKEN }}
+          FLINT_DISTRIBUTOR_URL: ${{ secrets.FLINT_DISTRIBUTOR_URL }}
           SIGNING_KEY: ${{ secrets.signingKey }}
           SIGNING_PASSWORD: ${{ secrets.signingPassword }}
           OSSHR_USER: ${{ secrets.osshrUser }}
