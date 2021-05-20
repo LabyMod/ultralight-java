@@ -31,6 +31,28 @@ ext.commonPublish = { Project currentProject, Closure config ->
                         password getAuthenticationProperty("osshrPassword", "OSSHR_PASSWORD")
                     }
                 }
+
+                maven {
+                    setUrl("https://dist.labymod.net/api/v1/maven/release")
+                    name = "Flint"
+
+                    def publishToken = System.getenv("FLINT_DISTRIBUTOR_PUBLISH_TOKEN")
+
+                    if (publishToken == null && project.hasProperty("net.flintmc.distributor.publish-token")) {
+                        publishToken = project.property("net.flintmc.distributor.publish-token").toString()
+                    }
+
+                    if (publishToken != null) {
+                        credentials(HttpHeaderCredentials.class) {
+                            name = "Publish-Token"
+                            value = publishToken
+                        }
+
+                        authentication {
+                            create("header", HttpHeaderAuthentication.class)
+                        }
+                    }
+                }
             }
         }
 
