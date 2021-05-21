@@ -60,12 +60,12 @@ jobs:
         uses: actions/upload-artifact@v1
         with:
           name: native-binaries-ultralight
-          path: native-binaries/ultralight/Debug
+          path: native-binaries/ultralight
       - name: Upload gpu artifacts
         uses: actions/upload-artifact@v1
         with:
           name: native-binaries-ultralight-gpu
-          path: native-binaries/ultralight-gpu/Debug
+          path: native-binaries/ultralight-gpu
 
   build-jars:
     needs: [ build-binaries-unix, build-binaries-windows ]

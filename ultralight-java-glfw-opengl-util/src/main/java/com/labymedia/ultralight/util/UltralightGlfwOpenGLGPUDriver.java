@@ -43,7 +43,7 @@ public class UltralightGlfwOpenGLGPUDriver implements UltralightOpenGLGPUDriver 
      * Set the {@link UltralightOpenGLGPUDriverNative} instance to the {@link com.labymedia.ultralight.UltralightPlatform}.
      */
     @Override
-    public void initialise(UltralightGlfwOpenGLContext context) {
+    public void initialize(UltralightGlfwOpenGLContext context) {
         this.driverNative = new UltralightOpenGLGPUDriverNative(context.getMainWindow().getWindowHandle(), this.msaa, GLFW.Functions.GetProcAddress);
         this.context = context;
         this.context.getPlatform().setGPUDriver(this.driverNative);

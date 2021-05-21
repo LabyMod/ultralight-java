@@ -1,0 +1,33 @@
+plugins {
+    id("java-library")
+    id("maven-publish")
+}
+
+group = "com.labymedia"
+
+jar {
+    manifest {
+        attributes(
+                'Automatic-Module-Name': 'com.labymedia.ultralight.util'
+        )
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation(project(":ultralight-java-base"))
+    implementation(project(":ultralight-java-gpu"))
+
+    implementation(group: "org.lwjgl", name: "lwjgl-glfw", version: "3.2.2")
+    implementation(group: "org.lwjgl", name: "lwjgl-opengl", version: "3.2.2")
+}
+
+commonPublish(project) {
+    pom {
+        name = "UltralightJavaGlfwOpenGLUtil"
+        description = "Ultralight Java Glfw OpenGL Util"
+    }
+}

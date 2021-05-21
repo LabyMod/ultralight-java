@@ -22,7 +22,6 @@ package com.labymedia.ultralight.util;
 import com.labymedia.ultralight.UltralightPlatform;
 import com.labymedia.ultralight.UltralightView;
 import com.labymedia.ultralight.config.UltralightViewConfig;
-import com.labymedia.ultralight.gpu.UltralightGPUDriverNativeUtil;
 import com.labymedia.ultralight.plugin.render.UltralightGPUDriver;
 import com.labymedia.ultralight.plugin.render.UltralightGPUDriverNative;
 import org.lwjgl.glfw.GLFW;
@@ -55,7 +54,7 @@ public class UltralightGlfwOpenGLWindow {
      */
     private UltralightGlfwOpenGLWindow(UltralightGlfwOpenGLContext context, int width, int height, String title, long sharedWindow) {
         this.context = context;
-        this.context.postAndWait(() -> initialize(width, height, title, sharedWindow));
+        initialize(width, height, title, sharedWindow);
     }
 
     private void initialize(int width, int height, String title, long sharedWindow) {
@@ -95,7 +94,7 @@ public class UltralightGlfwOpenGLWindow {
      *
      * @return this
      * @see UltralightOpenGLGPUDriver#renderTexture(UltralightGlfwOpenGLWindow)
-     * @see UltralightOpenGLGPUDriver#initialise(UltralightGlfwOpenGLContext)
+     * @see UltralightOpenGLGPUDriver#initialize(UltralightGlfwOpenGLContext)
      * @see UltralightPlatform#setGPUDriver(UltralightGPUDriverNative)
      * @see UltralightPlatform#setGPUDriver(UltralightGPUDriver)
      * @see UltralightPlatform#setGPUDriverPointer(long)
