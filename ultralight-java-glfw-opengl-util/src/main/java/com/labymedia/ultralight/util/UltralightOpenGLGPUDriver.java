@@ -29,7 +29,7 @@ public interface UltralightOpenGLGPUDriver {
      *
      * @param context the context to initialize
      */
-    void initialise(UltralightGlfwOpenGLContext context);
+    void initialize(UltralightGlfwOpenGLContext context);
 
     /**
      * Update web content and render it to an OpenGL texture.
