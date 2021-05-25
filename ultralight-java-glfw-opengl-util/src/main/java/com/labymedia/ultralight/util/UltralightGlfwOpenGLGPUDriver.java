@@ -19,70 +19,66 @@
 
 package com.labymedia.ultralight.util;
 
-import com.labymedia.ultralight.gpu.UltralightGPUDriverNativeUtil;
 import com.labymedia.ultralight.gpu.UltralightOpenGLGPUDriverNative;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL11C;
 
 /**
  * GPU Driver implementation of {@link com.labymedia.ultralight.plugin.render.UltralightGPUDriver}.
  */
 public class UltralightGlfwOpenGLGPUDriver implements UltralightOpenGLGPUDriver {
 
-    private final boolean msaa;
-    private UltralightOpenGLGPUDriverNative driverNative;
-    private UltralightGlfwOpenGLContext context;
-    private Long renderTargetId;
+  private final boolean msaa;
+  private UltralightOpenGLGPUDriverNative driverNative;
+  private UltralightGlfwOpenGLContext context;
 
-    private UltralightGlfwOpenGLGPUDriver(boolean msaa) {
-        this.msaa = msaa;
-    }
+  private UltralightGlfwOpenGLGPUDriver(boolean msaa) {
+    this.msaa = msaa;
+  }
 
-    /**
-     * Set the {@link UltralightOpenGLGPUDriverNative} instance to the {@link com.labymedia.ultralight.UltralightPlatform}.
-     */
-    @Override
-    public void initialise(UltralightGlfwOpenGLContext context) {
-        this.driverNative = new UltralightOpenGLGPUDriverNative(context.getMainWindow().getWindowHandle(), this.msaa, GLFW.Functions.GetProcAddress);
-        this.context = context;
-        this.context.getPlatform().setGPUDriver(this.driverNative);
-    }
+  /**
+   * Set the {@link UltralightOpenGLGPUDriverNative} instance to the {@link com.labymedia.ultralight.UltralightPlatform}.
+   */
+  @Override
+  public void initialise(UltralightGlfwOpenGLContext context) {
+    this.driverNative = new UltralightOpenGLGPUDriverNative(context.getMainWindow().getWindowHandle(), this.msaa, GLFW.Functions.GetProcAddress);
+    this.context = context;
+    this.context.getPlatform().setGPUDriver(this.driverNative);
+  }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void renderTexture(UltralightGlfwOpenGLWindow window) {
-        this.context.postAndWait(() -> {
-            this.driverNative.setActiveWindow(window.getWindowHandle());
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void renderTexture(UltralightGlfwOpenGLWindow window) {
+    this.context.postAndWait(() -> {
+      this.driverNative.setActiveWindow(window.getWindowHandle());
 
-            UltralightRendererInstanceHolder.getRenderer().render();
-            if (this.driverNative.hasCommandsPending()) {
-                this.driverNative.drawCommandList();
-            }
-            this.renderTargetId = window.getView().renderTarget().getTextureId();
-            GL11.glFinish();
-        });
-    }
+      UltralightRendererInstanceHolder.getRenderer().render();
+      if (this.driverNative.hasCommandsPending()) {
+        this.driverNative.drawCommandList();
+      }
+      GL11.glFinish();
+    });
+  }
 
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void bindTexture(UltralightGlfwOpenGLWindow window) {
-        this.driverNative.bindTexture(0, this.renderTargetId);
-    }
+  /**
+   * {@inheritDoc}
+   */
+  @Override
+  public void bindTexture(UltralightGlfwOpenGLWindow window) {
+    this.driverNative.bindTexture(0, window.postAndWait(() -> window.getView().renderTarget().getTextureId()));
+  }
 
-    /**
-     * Create a new instance of {@link UltralightGlfwOpenGLGPUDriver}.
-     * Should only be called once, since the {@link UltralightGlfwOpenGLContext} can also only be instantiated once due to some Ultralight limitations.
-     *
-     * @param msaa define if MSAA should active for the new driver
-     * @return the constructed driver instance
-     */
-    public static UltralightGlfwOpenGLGPUDriver create(boolean msaa) {
-        return new UltralightGlfwOpenGLGPUDriver(msaa);
-    }
+  /**
+   * Create a new instance of {@link UltralightGlfwOpenGLGPUDriver}.
+   * Should only be called once, since the {@link UltralightGlfwOpenGLContext} can also only be instantiated once due to some Ultralight limitations.
+   *
+   * @param msaa define if MSAA should active for the new driver
+   * @return the constructed driver instance
+   */
+  public static UltralightGlfwOpenGLGPUDriver create(boolean msaa) {
+    return new UltralightGlfwOpenGLGPUDriver(msaa);
+  }
 }
