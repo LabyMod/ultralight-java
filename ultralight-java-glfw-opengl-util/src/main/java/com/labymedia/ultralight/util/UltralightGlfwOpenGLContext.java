@@ -150,7 +150,7 @@ public class UltralightGlfwOpenGLContext {
      * @return the created sub window
      */
     public synchronized UltralightGlfwOpenGLWindow createSubWindow(int width, int height, String title) {
-        UltralightGlfwOpenGLWindow window = UltralightGlfwOpenGLWindow.create(this, width, height, title, this.getMainWindow().getWindowHandle());
+        UltralightGlfwOpenGLWindow window = UltralightGlfwOpenGLWindow.create(this, width, height, title, this.getMainWindow().getParentWindow());
         this.subWindows.add(window);
         return window;
     }
