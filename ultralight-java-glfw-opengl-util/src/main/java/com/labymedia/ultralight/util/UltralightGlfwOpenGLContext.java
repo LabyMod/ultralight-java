@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.concurrent.*;
 import java.util.function.Consumer;
 
-import static org.lwjgl.glfw.GLFW.glfwInit;
 import static org.lwjgl.opengl.GL.createCapabilities;
 
 /**
@@ -63,16 +62,17 @@ public class UltralightGlfwOpenGLContext {
         this.driver = driver;
         this.thread = new UltralightThread();
         this.subWindows = new HashSet<>();
-        this.postAndWait(() -> initialize(mainWindowWidth, mainWindowHeight, mainWindowTitle, parentWindow));
+        initialize(mainWindowWidth, mainWindowHeight, mainWindowTitle, parentWindow);
     }
 
     private void initialize(int mainWindowWidth, int mainWindowHeight, String mainWindowTitle, long parentWindow) {
-        glfwInit();
         this.mainWindow = UltralightGlfwOpenGLWindow.create(this, mainWindowWidth, mainWindowHeight, mainWindowTitle, parentWindow);
-        this.mainWindow.makeContext();
-        createCapabilities();
-        this.platform = UltralightPlatform.instance();
-        this.driver.initialise(this);
+        this.postAndWait(() -> {
+            this.mainWindow.makeContext();
+            createCapabilities();
+            this.platform = UltralightPlatform.instance();
+            this.driver.initialize(this);
+        });
     }
 
     /**
@@ -203,7 +203,7 @@ public class UltralightGlfwOpenGLContext {
      * @param window the window to render
      * @return this
      * @see UltralightOpenGLGPUDriver#renderTexture(UltralightGlfwOpenGLWindow)
-     * @see UltralightOpenGLGPUDriver#initialise(UltralightGlfwOpenGLContext)
+     * @see UltralightOpenGLGPUDriver#initialize(UltralightGlfwOpenGLContext)
      * @see UltralightPlatform#setGPUDriver(UltralightGPUDriverNative)
      * @see UltralightPlatform#setGPUDriver(UltralightGPUDriver)
      * @see UltralightPlatform#setGPUDriverPointer(long)

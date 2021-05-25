@@ -19,6 +19,7 @@ processResources {
     }
     from(rootProject.file(project.getProperties().getOrDefault("ultralight-java.base.native-binaries-folder", project(":ultralight-java-native").buildDir.toPath().toString() + "/nativeBinaries").toString())) {
         into "native-binaries"
+        include("*.dll", "*.so", "*.dylib")
     }
 }
 
