@@ -39,6 +39,7 @@ import static org.lwjgl.glfw.GLFW.*;
  */
 public class UltralightGlfwOpenGLWindow {
 
+    private final long parentWindow;
     private final UltralightGlfwOpenGLContext context;
     private long windowHandle;
     private UltralightView view;
@@ -54,12 +55,13 @@ public class UltralightGlfwOpenGLWindow {
      */
     private UltralightGlfwOpenGLWindow(UltralightGlfwOpenGLContext context, int width, int height, String title, long sharedWindow) {
         this.context = context;
-        initialize(width, height, title, sharedWindow);
+        this.parentWindow = sharedWindow;
+        initialize(width, height, title);
     }
 
-    private void initialize(int width, int height, String title, long sharedWindow) {
+    private void initialize(int width, int height, String title) {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-        this.windowHandle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, sharedWindow);
+        this.windowHandle = GLFW.glfwCreateWindow(width, height, title, MemoryUtil.NULL, this.parentWindow);
     }
 
     private UltralightView createView() {
@@ -291,5 +293,12 @@ public class UltralightGlfwOpenGLWindow {
     public UltralightGlfwOpenGLWindow bindTexture() {
         this.context.bindTexture(this);
         return this;
+    }
+
+    /**
+     * @return the specified parent window of this window or {@link MemoryUtil#NULL}.
+     */
+    public long getParentWindow() {
+        return this.parentWindow;
     }
 }
