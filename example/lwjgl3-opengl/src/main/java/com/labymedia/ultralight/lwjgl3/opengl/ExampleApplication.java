@@ -171,7 +171,6 @@ public class ExampleApplication {
         setCallback(GLFW::glfwSetScrollCallback, inputAdapter::scrollCallback);
         setCallback(GLFW::glfwSetWindowFocusCallback, inputAdapter::focusCallback);
 
-
         // Manually update focus for the first time
         inputAdapter.focusCallback(window, glfwGetWindowAttrib(window, GLFW_FOCUSED) != 0);
 
@@ -234,7 +233,7 @@ public class ExampleApplication {
         int frameCount = 0;
 
         // Create the drawing helper, used to keep state for drawing the rotating triangle
-//        OpenGLDrawer drawer = new OpenGLDrawer();
+        OpenGLDrawer drawer = new OpenGLDrawer();
 
         // Keep running until a window close is requested
         while (!glfwWindowShouldClose(window)) {
@@ -248,7 +247,7 @@ public class ExampleApplication {
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Draw the triangle and then Ultralight on top of it
-//            drawer.draw();
+            drawer.draw();
             webController.render();
 
             // Super bad implementation of FPS display...
