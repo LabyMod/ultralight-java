@@ -60,8 +60,6 @@ namespace ultralight_java {
         // Copy over all properties from the java config
         ultralight::Config config;
 
-        ASSIGN_CONFIG_STRING(resource_path, "resourcePath can't be null");
-
         auto java_cache_path = reinterpret_cast<jstring>(
             env->GetObjectField(java_config, config_type.cache_path_field));
         if(!java_cache_path) {

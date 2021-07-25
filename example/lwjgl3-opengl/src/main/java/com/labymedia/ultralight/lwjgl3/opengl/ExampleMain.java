@@ -45,7 +45,7 @@ public class ExampleMain {
         String libraryPath = System.getProperty("java.library.path");
         if (libraryPath != null) {
             // There is a path set already, append our natives dir
-            libraryPath += File.pathSeparator + nativesDir.toAbsolutePath().toString();
+            libraryPath += File.pathSeparator + nativesDir.toAbsolutePath();
         } else {
             // There is no path set, make our natives dir the current path
             libraryPath = nativesDir.toAbsolutePath().toString();
