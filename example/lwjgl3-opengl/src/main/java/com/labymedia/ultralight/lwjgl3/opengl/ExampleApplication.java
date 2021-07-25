@@ -227,7 +227,7 @@ public class ExampleApplication {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
         // Load a local test file
-        webController.loadURL("https://youtube.com");
+        webController.loadURL("file:///example.html");
 
         double lastTime = glfwGetTime();
         int frameCount = 0;
