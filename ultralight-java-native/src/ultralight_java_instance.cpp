@@ -111,8 +111,6 @@ namespace ultralight_java {
 
         auto &ultralight_config = runtime.ultralight_config;
         ultralight_config
-            .resource_path_field = env->GetFieldID(ultralight_config_class, "resourcePath", "Ljava/lang/String;");
-        ultralight_config
             .cache_path_field = env->GetFieldID(ultralight_config_class, "cachePath", "Ljava/lang/String;");
         ultralight_config.face_winding_field =
             env->GetFieldID(ultralight_config_class, "faceWinding", "Lcom/labymedia/ultralight/config/FaceWinding;");

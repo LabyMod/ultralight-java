@@ -75,7 +75,6 @@ namespace ultralight_java {
              */
             jclass clazz;
 
-            /* String */ jfieldID resource_path_field;
             /* String */ jfieldID cache_path_field;
             /* FaceWinding */ jfieldID face_winding_field;
             /* FontHinting */ jfieldID font_hinting_field;
