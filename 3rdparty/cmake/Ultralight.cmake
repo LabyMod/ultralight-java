@@ -28,11 +28,11 @@ endif ()
 # Ultralight
 set(ULTRALIGHT_DIR "${CMAKE_CURRENT_BINARY_DIR}/ultralight-${ULTRALIGHT_OS_NAME}-${ULTRALIGHT_ARCH}")
 set(ULTRALIGHT_ARCHIVE "${ULTRALIGHT_DIR}/ultralight.7z")
-# 5011dbfee009074ca5883588fc164b5ba44bf165
-# Fix repaint bug on Windows (thanks for the report Dark Empath!)
+# b8daecd797a6ae8c373ec8cf140c1bb2ae6dde2e
+# Fix bug in last commit (SDK packager install script copied resources to resources/resources)
 #
-# https://github.com/ultralight-ux/Ultralight/tree/5011dbfee009074ca5883588fc164b5ba44bf165
-set(ULTRALIGHT_VERSION "5011dbf")
+# https://github.com/ultralight-ux/Ultralight/tree/b8daecd797a6ae8c373ec8cf140c1bb2ae6dde2e
+set(ULTRALIGHT_VERSION "b8daecd")
 
 # Check the version of ultralight
 set(ULTRALIGHT_VERSION_FILE "${ULTRALIGHT_DIR}/.version")

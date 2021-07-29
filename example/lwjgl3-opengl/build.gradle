@@ -67,7 +67,7 @@ run {
 }
 
 task copyResources(type: Copy) {
-    from new File(project(':ultralight-java-native').buildDir, "cmake-gen-${ultralightOsIdentifier()}/3rdparty/ultralight-${ultralightOsIdentifier()}/bin")
+    from new File(project(':ultralight-java-native').buildDir, "cmake-gen-${ultralightOsIdentifier()}/ultralight-${ultralightOsIdentifier()}/bin")
     include "**/*.dll", "**/*.so", "**/*.dylib", "resources/*"
     into runDir
 }

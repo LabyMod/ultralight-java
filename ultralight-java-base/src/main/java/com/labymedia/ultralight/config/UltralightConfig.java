@@ -35,14 +35,6 @@ import java.lang.annotation.Native;
 @NativeType("ultralight::Config")
 public class UltralightConfig {
     /**
-     * The file path to the directory that contains Ultralight's bundled
-     * resources (eg, cacert.pem and other localized resources).
-     */
-    @NativeType("ultralight::String16")
-    @Native
-    private String resourcePath;
-
-    /**
      * The file path to a writable directory that will be used to store cookies,
      * cached resources, and other persistent data.
      */
@@ -166,14 +158,10 @@ public class UltralightConfig {
     private long minSmallHeapSize = 1024 * 1024;
 
     /**
-     * Sets the resourcePath field of this instance.
-     *
-     * @param resourcePath The new value of the field
-     * @return this
-     * @see #resourcePath
+     * @deprecated This does nothing anymore
      */
-    public UltralightConfig resourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
+    @Deprecated
+    public UltralightConfig resourcePath(@SuppressWarnings("unused") String unused) {
         return this;
     }
 

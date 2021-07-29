@@ -9,7 +9,5 @@ include 'ultralight-java-databind-codegen'
 include 'ultralight-java-gpu'
 include 'ultralight-java-gpu-native'
 
-include 'example:example-base'
-include 'example:lwjgl3-opengl:simple'
-include 'example:lwjgl3-opengl-old'
+include 'example:lwjgl3-opengl'
 
