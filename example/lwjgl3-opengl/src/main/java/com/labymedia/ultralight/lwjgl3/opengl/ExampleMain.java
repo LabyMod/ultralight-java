@@ -64,8 +64,10 @@ public class ExampleMain {
         // Load the native libraries from the given directory. This method makes sure everything is loaded in the
         // correct order. If you want to manually load all natives, either don't use this function or pass 'false' as
         // the second parameter.
-        UltralightGPUDriverNativeUtil.load(nativesDir);
-        UltralightJava.load(nativesDir);
+        // Note that this order matters, as the libraries needed for the GPU Driver in the Ultralight SDK
+        // need to be loaded before the GPU driver.
+         UltralightJava.load(nativesDir);
+         UltralightGPUDriverNativeUtil.load(nativesDir);
 
         // Create and run a simple test application
         ExampleApplication application = new ExampleApplication();
