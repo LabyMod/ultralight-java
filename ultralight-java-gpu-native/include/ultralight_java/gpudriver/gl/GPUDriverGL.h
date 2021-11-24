@@ -99,6 +99,7 @@ namespace ultralight {
         virtual void DrawCommandList() override;
 
         void BindUltralightTexture(uint32_t ultralight_texture_id);
+        uint32_t GetGlTextureId(uint32_t ultralight_texture_id);
 
         void LoadPrograms();
         void DestroyPrograms();

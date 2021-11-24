@@ -33,5 +33,7 @@ public interface UltralightGPUDriverNative {
 
     void bindTexture(long textureId, long texture);
 
+    int getGlTextureId(long texture);
+
     void setActiveWindow(long window);
 }

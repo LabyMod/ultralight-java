@@ -91,3 +91,8 @@ JNIEXPORT void JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNati
     auto *driver = (ultralight::GPUDriverGL *) handle;
     driver->BindTexture(textureId, texture);
 }
+
+JNIEXPORT jint JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_getGlTextureId (JNIEnv *, jobject, jlong handle, jlong texture) {
+    auto *driver = (ultralight::GPUDriverGL *) handle;
+    return (jint) driver->GetGlTextureId(texture);
+}

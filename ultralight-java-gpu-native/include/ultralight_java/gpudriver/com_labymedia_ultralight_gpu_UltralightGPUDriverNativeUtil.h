@@ -79,6 +79,14 @@ JNIEXPORT void JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNati
 JNIEXPORT void JNICALL Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_bindTexture(
     JNIEnv *, jobject, jlong handle, jlong textureId, jlong texture);
 
+/*
+ * Class:     com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil
+ * Method:    getGlTextureId
+ * Signature: (JJ)I
+ */
+JNIEXPORT jint JNICALL
+Java_com_labymedia_ultralight_gpu_UltralightGPUDriverNativeUtil_getGlTextureId(JNIEnv *, jobject, jlong handle, jlong texture);
+
 #    ifdef __cplusplus
 }
 #    endif
