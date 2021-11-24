@@ -320,6 +320,12 @@ namespace ultralight {
         CHECK_GL();
     }
 
+    uint32_t GPUDriverGL::GetGlTextureId(uint32_t ultralight_texture_id) {
+        TextureEntry &entry = texture_map[ultralight_texture_id];
+        ResolveIfNeeded(entry.render_buffer_id);
+        return entry.tex_id;
+    }
+
     void GPUDriverGL::DestroyTexture(uint32_t texture_id) {
         TextureEntry &entry = texture_map[texture_id];
         glDeleteTextures(1, &entry.tex_id);

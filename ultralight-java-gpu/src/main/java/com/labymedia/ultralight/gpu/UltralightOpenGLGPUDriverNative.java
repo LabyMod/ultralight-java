@@ -94,6 +94,11 @@ public class UltralightOpenGLGPUDriverNative implements UltralightGPUDriverNativ
         this.util.bindTexture(this.driverHandle, textureId, texture);
     }
 
+    @Override
+    public int getGlTextureId(long texture) {
+        return this.util.getGlTextureId(this.driverHandle, texture);
+    }
+
     /**
      * Set which GLFW context should be active.
      *

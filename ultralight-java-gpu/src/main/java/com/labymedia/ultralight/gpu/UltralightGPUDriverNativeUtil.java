@@ -211,6 +211,16 @@ public class UltralightGPUDriverNativeUtil {
     public native void bindTexture(long handle, long textureId, long texture);
 
     /**
+     * Get the OpenGL texture id for a given driver-specific texture index.
+     *
+     * @param handle    OpenGL context handle
+     * @param texture   Ultralight renderTarget texture id
+     *
+     * @return          OpenGL texture id
+     */
+    public native int getGlTextureId(long handle, long texture);
+
+    /**
      * Set which GLFW context should be active.
      *
      * @param handle OpenGL context handle
